@@ -158,6 +158,52 @@
             .container { background: white; box-shadow: none; border: none; max-width: 100%; padding: 0; margin: 0; }
             #surat { padding: 2.5cm; width: 100%; box-sizing: border-box; } 
         }
+		
+/* --- TAMPILAN KHUSUS HP (MOBILE) --- */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px; /* Kurangi padding wadah utama */
+            }
+            
+            #surat {
+                padding: 20px !important; /* Margin surat dikecilkan dari 2.5cm jadi 20px */
+                font-size: 11pt; /* Font sedikit disesuaikan */
+            }
+
+            /* Agar tabel Nama/Kelas tidak terlalu mepet */
+            #surat table td {
+                padding-bottom: 5px;
+            }
+
+            /* Judul Header E-IZIN */
+            header {
+                padding: 10px;
+                flex-direction: column; /* Tombol navigasi turun ke bawah judul */
+                gap: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.1rem !important;
+                text-align: center;
+            }
+
+            /* Tombol Navigasi di HP */
+            .nav-icons button {
+                width: 45px; height: 45px; /* Tombol diperbesar biar gampang dipencet */
+            }
+            
+            /* Pop-up Modal agar tidak terlalu lebar di HP */
+            .modal-card {
+                width: 85%;
+                padding: 20px;
+            }
+        }		
+		
+		
+		
+		
+		
+		
     </style>
 </head>
 <body>
