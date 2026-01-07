@@ -53,9 +53,8 @@
                 <div class="grid grid-cols-2 gap-4">
                     <input id="nis" readonly class="input-modern opacity-50" placeholder="NIS">
                     <select id="alasan" class="input-modern">
-                        <option>Sakit</option>
-                        <option>Urusan Keluarga</option>
-                        <option>Mendesak</option>
+                        <option>sakit</option>
+                        <option>urusan keluarga</option>
                     </select>
                 </div>
                 <input id="nama_wali" required placeholder="NAMA ORANG TUA / WALI" oninput="this.value=this.value.toUpperCase()" class="input-modern">
@@ -187,8 +186,8 @@
             doc.setFontSize(11).setFont("helvetica","normal").text("Kepada Yth,", 20, y); y += 6;
             doc.text(`Bapak/Ibu Guru Wali Kelas ${d.kelas}`, 20, y); y += 6;
             doc.text("SMPN 110 Jakarta", 20, y); y += 12;
-            doc.text("Dengan hormat, yang bertanda tangan di bawah ini:", 20, y); y += 9;
-            const fields = [["Nama Orang Tua/Wali", d.nama_wali], ["Nama Siswa", d.nama_murid], ["NIS", d.nis], ["Kelas", d.kelas]];
+            doc.text("Saya yang bertanda tangan di bawah ini, Orang Tua/Wali dari:", 20, y); y += 9;
+            const fields = [["Nama Siswa", d.nama_murid], ["NIS", d.nis], ["Kelas", d.kelas]];
             fields.forEach(f => { doc.text(f[0], 25, y); doc.text(":", 70, y); doc.text(f[1], 73, y); y += 6; });
             y += 6; const splitIsi = doc.splitTextToSize(`Memberitahukan bahwa anak kami tersebut tidak dapat mengikuti kegiatan belajar di sekolah pada tanggal ${tgl} dikarenakan ${alasanLengkap}.`, 170);
             doc.text(splitIsi, 20, y); y += (splitIsi.length * 6) + 6;
@@ -269,3 +268,4 @@
 </body>
 
 </html>
+
