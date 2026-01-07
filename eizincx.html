@@ -9,40 +9,35 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
-    
     <style>
-        body { background: radial-gradient(circle at top right, #0f172a, #020617); color: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top right, #0f172a, #020617); color: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2rem; }
         .tab-btn.active { background: linear-gradient(135deg, #22d3ee, #0ea5e9); color: #020617; box-shadow: 0 8px 20px -4px rgba(34, 211, 238, 0.4); }
         .filter-btn { padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; transition: 0.3s; background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; }
         .filter-btn.active { background: #22d3ee; color: #020617; border-color: #22d3ee; }
         .input-modern { background: rgba(2, 6, 23, 0.5) !important; border: 1px solid #334155 !important; border-radius: 12px !important; padding: 10px !important; width: 100% !important; text-align: center !important; color: white !important; font-size: 0.9rem; }
-        .swal2-popup-custom { background: rgba(30, 41, 59, 0.95) !important; backdrop-filter: blur(20px) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 2rem !important; padding: 2rem !important; text-align: center !important; }
-        .swal2-title { color: #22d3ee !important; font-weight: 800 !important; }
-        .swal2-confirm { background: linear-gradient(135deg, #22d3ee, #0ea5e9) !important; color: #020617 !important; font-weight: 700 !important; border-radius: 1rem !important; }
-        .swal2-input-center { text-align: center !important; margin: 20px auto !important; background: rgba(2, 6, 23, 0.6) !important; border: 1px solid rgba(34, 211, 238, 0.3) !important; border-radius: 1rem !important; color: #22d3ee !important; width: 80% !important; }
+        .input-kode { background: rgba(2, 6, 23, 0.6) !important; border: 1px solid rgba(34, 211, 238, 0.3) !important; border-radius: 12px !important; color: #22d3ee !important; text-align: center !important; letter-spacing: 0.5em; font-weight: bold; width: 180px !important; margin: 10px auto !important; height: 45px !important; }
+        .chart-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.6)); border: 1px solid rgba(255, 255, 255, 0.05); position: relative; overflow: hidden; }
         .table-container { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
         table { width: 100%; border-collapse: collapse; }
-        thead th { padding: 10px; font-size: 0.6rem; text-transform: uppercase; color: #22d3ee; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(30, 41, 59, 0.5); text-align: center; }
-        td { padding: 10px 4px; text-align: center !important; font-size: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.05); white-space: nowrap; vertical-align: middle; }
-        .text-nama { font-weight: 600; color: #ffffff; }
-        .text-alasan { color: #22d3ee; font-style: italic; }
-        .text-waktu { color: #94a3b8; font-size: 0.65rem; }
+        thead th { padding: 12px; font-size: 0.65rem; color: #22d3ee; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        td { padding: 12px 6px; text-align: center; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #cbd5e1; }
+        .swal2-popup-custom { background: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(20px) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 2rem !important; padding-bottom: 2rem !important; }
     </style>
 </head>
-<body class="min-h-screen p-4 pb-20">
+<body class="p-4 pb-20">
 
     <header class="max-w-4xl mx-auto mb-8 mt-6 text-center">
-        <div class="glass p-6 shadow-2xl">
-            <h1 class="text-3xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">SMPN  110  JAKARTA</h1>
+        <div class="glass p-6">
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">SMPN 110 JAKARTA</h1>
             <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.4em] font-bold">E-Izin Digital System</p>
         </div>
     </header>
 
     <nav class="flex justify-center gap-3 mb-8">
-        <button class="tab-btn active px-6 py-3 rounded-2xl bg-slate-800/40 text-sm font-semibold" onclick="showTab('izin', this)">📝 Form</button>
-        <button class="tab-btn px-6 py-3 rounded-2xl bg-slate-800/40 text-sm font-semibold" onclick="verifyAccess('wali', this)">👩‍🏫 Wali</button>
-        <button class="tab-btn px-6 py-3 rounded-2xl bg-slate-800/40 text-sm font-semibold" onclick="verifyAccess('piket', this)">🕘 Piket</button>
+        <button class="tab-btn active px-6 py-3 rounded-2xl text-sm font-semibold transition-all" onclick="showTab('izin', this)">📝 Form</button>
+        <button class="tab-btn px-6 py-3 rounded-2xl text-sm font-semibold transition-all" onclick="verifyAccess('wali', this)">👩‍🏫 Wali</button>
+        <button class="tab-btn px-6 py-3 rounded-2xl text-sm font-semibold transition-all" onclick="verifyAccess('piket', this)">🕘 Piket</button>
     </nav>
 
     <main class="max-w-4xl mx-auto">
@@ -59,53 +54,46 @@
                 </div>
                 <input id="nama_wali" required placeholder="NAMA ORANG TUA / WALI" oninput="this.value=this.value.toUpperCase()" class="input-modern">
                 <textarea id="keterangan" rows="2" placeholder="detail alasan..." oninput="this.value=this.value.toLowerCase()" class="input-modern"></textarea>
-                <button type="submit" class="w-full bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-900 font-extrabold py-4 rounded-2xl shadow-lg active:scale-95 transition-all">KIRIM SURAT IZIN</button>
+                <button type="submit" class="w-full bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-900 font-extrabold py-4 rounded-2xl active:scale-95 transition-all">KIRIM SURAT IZIN & WA</button>
             </form>
         </section>
 
-        <section id="wali" class="tab-content hidden glass p-4">
-            <div class="flex justify-center items-center mb-4 px-1 border-b border-slate-700/50 pb-3">
-                <h2 id="judul_wali" class="font-bold text-cyan-400 text-[13px] uppercase tracking-widest text-center">Data Izin Kelas</h2>
-            </div>
+        <section id="wali" class="tab-content hidden glass p-6">
+            <h2 id="judul_wali" class="font-bold text-cyan-400 text-sm uppercase tracking-widest text-center mb-12">Data Izin Kelas</h2>
             <div class="table-container overflow-x-auto">
                 <table>
-                    <thead><tr><th width="30px">No</th><th width="100px">Tanggal & Jam</th><th>Nama Siswa</th><th>Alasan</th></tr></thead>
+                    <thead><tr><th>No</th><th>Tanggal</th><th>Nama Siswa</th><th>Alasan</th></tr></thead>
                     <tbody id="wali_data"></tbody>
                 </table>
             </div>
         </section>
 
         <section id="piket" class="tab-content hidden glass p-6">
-            <div class="flex flex-col mb-6 gap-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-cyan-400 text-sm">Monitoring Piket</h2>
+            <div class="flex flex-col mb-6 gap-6">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="font-bold text-cyan-400 text-sm uppercase tracking-widest">Monitoring Piket</h2>
                     <div class="flex gap-2">
-                        <button onclick="loadPiket()" class="p-2 bg-slate-800 rounded-xl border border-slate-700">🔄</button>
+                        <button onclick="loadPiket()" class="p-2 bg-slate-800 rounded-xl border border-slate-700 hover:bg-slate-700">🔄</button>
+                        <button onclick="toggleGrafik()" class="p-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/50 rounded-xl">📊</button>
                         <button onclick="hapusSemuaPiket()" class="p-2 bg-red-500/10 text-red-500 border border-red-500/50 rounded-xl">🗑️</button>
                     </div>
                 </div>
-                <div class="flex justify-center gap-2">
+                <div id="section-grafik" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                        <div class="chart-card p-6 rounded-3xl h-[250px]"><canvas id="chartHarian"></canvas></div>
+                        <div class="chart-card p-6 rounded-3xl h-[250px]"><canvas id="chartBulanan"></canvas></div>
+                    </div>
+                </div>
+                <div class="flex justify-center gap-2 mb-4">
                     <button class="filter-btn active" onclick="filterPiket('ALL', this)">ALL</button>
-                    <button class="filter-btn" onclick="filterPiket('7', this)">KELAS 7</button>
-                    <button class="filter-btn" onclick="filterPiket('8', this)">KELAS 8</button>
-                    <button class="filter-btn" onclick="filterPiket('9', this)">KELAS 9</button>
+                    <button class="filter-btn" onclick="filterPiket('7', this)">KLS 7</button>
+                    <button class="filter-btn" onclick="filterPiket('8', this)">KLS 8</button>
+                    <button class="filter-btn" onclick="filterPiket('9', this)">KLS 9</button>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700">
-                    <h3 class="text-[10px] text-center mb-2 text-slate-400 uppercase font-bold">Tren Harian (7 Hari Terakhir)</h3>
-                    <canvas id="chartHarian"></canvas>
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700">
-                    <h3 class="text-[10px] text-center mb-2 text-slate-400 uppercase font-bold">Tren Bulanan</h3>
-                    <canvas id="chartBulanan"></canvas>
-                </div>
-            </div>
-
             <div class="table-container overflow-x-auto">
                 <table>
-                    <thead><tr><th width="35px">No</th><th width="100px">Tanggal & Jam</th><th width="50px">Kls</th><th>Nama</th><th>Alasan</th><th width="45px">Aksi</th></tr></thead>
+                    <thead><tr><th>No</th><th>Waktu Lengkap</th><th>Kls</th><th>Nama</th><th>Alasan</th><th class="text-center">Aksi</th></tr></thead>
                     <tbody id="piket_data"></tbody>
                 </table>
             </div>
@@ -114,7 +102,19 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3z6H93gZe0--8J5Z2FOjGR_PoBQuX2zirWZ_VfCAiYTH9BwZiOzz4cZ5seR71J6p9gQ/exec"; 
-       const DAFTAR_AKSES = { "7A": "7 A", "7B": "7 B", "7C": "7 C", "7D": "7 D","7E": "7 E", "7F": "7 F","8A": "8 A", "8B": "8 B","8C": "8 C", "8D": "8 D","8E": "8 E", "8F": "8 F", "9A": "9 A","9B": "9 B","9C": "9 C","9D": "9 D","9E": "9 E","9F": "9 F", "110": "ALL" };
+        const DAFTAR_AKSES = { "7A":"7 A","7B":"7 B","7C":"7 C","7D":"7 D","7E":"7 E","7F":"7 F","8A":"8 A","8B":"8 B","8C":"8 C","8D":"8 D","8E":"8 E","8F":"8 F","9A":"9 A","9B":"9 B","9C":"9 C","9D":"9 D","9E":"9 E","9F":"9 F","110":"ALL" };
+        
+        // --- TAMBAHKAN NOMOR WA WALI KELAS DI SINI (Gunakan format 62...) ---
+        const WA_WALI = {
+            "7 A": "6281234567890",
+            "7 B": "6281234567891",
+            "7 C": "6281234567892",
+            "7 D": "6281234567893",
+            "7 E": "6281234567894",
+            "7 F": "6281234567895",
+            "8 F": "628567856766",
+            // Tambahkan terus sampai kelas terakhir...
+        };
 
         let MASTER = [], RAW_PIKET = [], KELAS_AKTIF = "", chartH, chartB;
 
@@ -127,15 +127,15 @@
 
         async function verifyAccess(id, btn) {
             const { value: password } = await Swal.fire({
-                title: 'OTENTIKASI GURU', html: 'Masukkan kode akses', input: 'password',
-                customClass: { popup: 'swal2-popup-custom', input: 'swal2-input-center' },
+                title: 'PIN AKSES', input: 'password',
+                customClass: { popup: 'swal2-popup-custom', input: 'input-kode' },
                 confirmButtonText: 'MASUK', showCancelButton: true
             });
             if (DAFTAR_AKSES[password]) {
                 KELAS_AKTIF = DAFTAR_AKSES[password];
-                if (id === 'wali') { showTab(id, btn); loadWali(); } 
-                else if (id === 'piket' && KELAS_AKTIF === "ALL") { showTab(id, btn); loadPiket(); }
-            } else if (password !== undefined) { Swal.fire({ icon: 'error', title: 'PASSWORD SALAH', customClass: { popup: 'swal2-popup-custom' } }); }
+                showTab(id, btn);
+                id === 'wali' ? loadWali() : loadPiket();
+            } else if (password) { Swal.fire({ icon: 'error', title: 'PIN SALAH', customClass: { popup: 'swal2-popup-custom' } }); }
         }
 
         async function loadMaster() {
@@ -145,16 +145,15 @@
                 MASTER = Object.entries(d).map(([nis, v]) => ({ nis, nama: v.nama, kelas: v.kelas }));
                 const ks = document.getElementById('kelas_select');
                 const kelasSet = [...new Set(MASTER.map(s => s.kelas))].sort();
-                ks.innerHTML = '<option value="">-- pilih kelas --</option>';
-                kelasSet.forEach(k => ks.innerHTML += `<option value="${k}">${k}</option>`);
-            } catch(e) { console.error("Database Error"); }
+                ks.innerHTML = '<option value="">-- pilih kelas --</option>' + kelasSet.map(k => `<option value="${k}">${k}</option>`).join('');
+            } catch(e) { console.error("DB Error"); }
         }
 
         function filterNama() {
-            const k = document.getElementById('kelas_select').value, ns = document.getElementById('nama_murid');
-            ns.innerHTML = '<option value="">-- pilih nama --</option>';
+            const k = document.getElementById('kelas_select').value;
+            const ns = document.getElementById('nama_murid');
             let filtered = MASTER.filter(s => s.kelas === k).sort((a,b) => a.nama.localeCompare(b.nama));
-            filtered.forEach((s, i) => ns.innerHTML += `<option value="${i}">${s.nama}</option>`);
+            ns.innerHTML = '<option value="">-- pilih nama --</option>' + filtered.map((s, i) => `<option value="${i}">${s.nama}</option>`).join('');
         }
 
         function isiDataSiswa() {
@@ -168,104 +167,121 @@
             const idx = document.getElementById('nama_murid').value, k = document.getElementById('kelas_select').value;
             let cf = MASTER.filter(s => s.kelas === k).sort((a,b) => a.nama.localeCompare(b.nama));
             const s = cf[idx];
-            Swal.fire({ title: 'MEMPROSES', allowOutsideClick: false, customClass: { popup: 'swal2-popup-custom' }, didOpen: () => Swal.showLoading() });
-            const data = { kelas: s.kelas, nis: s.nis, nama_murid: s.nama, nama_wali: document.getElementById('nama_wali').value, alasan: document.getElementById('alasan').value, keterangan: document.getElementById('keterangan').value };
+            
+            Swal.fire({ title: 'MEMPROSES...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), customClass: { popup: 'swal2-popup-custom' } });
+            
+            const data = { 
+                kelas: s.kelas, 
+                nis: s.nis, 
+                nama_murid: s.nama, 
+                nama_wali: document.getElementById('nama_wali').value, 
+                alasan: document.getElementById('alasan').value, 
+                keterangan: document.getElementById('keterangan').value 
+            };
+
             try {
+                // 1. Kirim ke Database (Google Sheets)
                 await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) });
+                
+                // 2. Generate PDF
                 generatePDF(data);
-                Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Surat telah dikirim.', customClass: { popup: 'swal2-popup-custom' } });
+                
+                // 3. Kirim WhatsApp
+                kirimWhatsApp(data);
+
+                Swal.fire({ icon: 'success', title: 'BERHASIL DIKIRIM', text: 'PDF sedang diunduh dan WhatsApp akan terbuka.', customClass: { popup: 'swal2-popup-custom' } });
                 document.getElementById('izinForm').reset();
-            } catch(e) { Swal.fire({ icon: 'error', title: 'GAGAL', customClass: { popup: 'swal2-popup-custom' } }); }
+            } catch(e) { 
+                Swal.fire({ icon: 'error', title: 'GAGAL', customClass: { popup: 'swal2-popup-custom' } }); 
+            }
         };
+
+        function kirimWhatsApp(d) {
+            const nomorWali = WA_WALI[d.kelas] || ""; // Ambil nomor berdasarkan kelas
+            const tgl = new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
+            
+            if (nomorWali) {
+                const pesan = `*SURAT IZIN DIGITAL SMPN 110 JAKARTA*%0A%0AYth. Bapak/Ibu Wali Kelas ${d.kelas},%0A%0ASaya orang tua dari:%0A- Nama: ${d.nama_murid}%0A- NIS: ${d.nis}%0A- Kelas: ${d.kelas}%0A%0AMemberitahukan bahwa anak kami tersebut tidak dapat sekolah pada ${tgl} dikarenakan *${d.alasan.toUpperCase()}* ${d.keterangan ? '('+d.keterangan+')' : ''}.%0A%0ATerima kasih.%0A(Dikirim otomatis via E-Izin)`;
+                
+                // Buka WhatsApp di tab baru
+                window.open(`https://wa.me/${nomorWali}?text=${pesan}`, '_blank');
+            } else {
+                console.log("Nomor WA Wali Kelas belum diset untuk kelas ini.");
+            }
+        }
 
         function generatePDF(d) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const tgl = new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
-            const alasanLengkap = d.keterangan ? `${d.alasan} (${d.keterangan})` : d.alasan;
-            let y = 40; doc.setFontSize(16).setFont("helvetica","bold").text("SURAT IZIN TIDAK MASUK SEKOLAH", 105, 25, { align: "center" });
-            doc.setFontSize(11).setFont("helvetica","normal").text("Kepada Yth,", 20, y); y += 6;
-            doc.text(`Bapak/Ibu Guru Wali Kelas ${d.kelas}`, 20, y); y += 6;
-            doc.text("SMPN 110 Jakarta", 20, y); y += 12;
-            doc.text("Saya yang bertanda tangan di bawah ini, Orang Tua/Wali dari:", 20, y); y += 9;
-            const fields = [["Nama Siswa", d.nama_murid], ["NIS", d.nis], ["Kelas", d.kelas]];
-            fields.forEach(f => { doc.text(f[0], 25, y); doc.text(":", 70, y); doc.text(f[1], 73, y); y += 6; });
-            y += 6; const splitIsi = doc.splitTextToSize(`Memberitahukan bahwa anak kami tersebut tidak dapat mengikuti kegiatan belajar di sekolah pada tanggal ${tgl} dikarenakan ${alasanLengkap}.`, 170);
-            doc.text(splitIsi, 20, y); y += (splitIsi.length * 6) + 6;
-            doc.text("Demikian surat izin ini kami sampaikan. Atas perhatiannya kami ucapkan terima kasih.", 20, y); y += 24;
-            doc.text(`Jakarta, ${tgl}`, 130, y); y += 6; doc.text("Hormat Kami,", 130, y); y += 18;
-            doc.setFont("helvetica","bold").text(`( ${d.nama_wali} )`, 130, y); doc.save(`Izin_${d.nama_murid}.pdf`);
+            doc.setFontSize(16).setFont("helvetica","bold").text("SURAT IZIN TIDAK MASUK SEKOLAH", 105, 25, { align: "center" });
+            doc.setFontSize(11).setFont("helvetica","normal").text(`Kepada Yth,\nBapak/Ibu Guru Wali Kelas ${d.kelas}\nSMPN 110 Jakarta\n\n\nSaya yang bertanda tangan di bawah ini, Orang Tua/Wali dari:`, 20, 40);
+            let y = 70; [["Nama Siswa", d.nama_murid], ["NIS", d.nis], ["Kelas", d.kelas]].forEach(f => { doc.text(f[0], 25, y); doc.text(": " + f[1], 50, y); y += 6; });
+            const msg = doc.splitTextToSize(`Memberitahukan bahwa anak kami tersebut tidak dapat mengikuti kegiatan belajar pada tanggal ${tgl} dikarenakan ${d.alasan} ${d.keterangan ? '('+d.keterangan+')' : ''}.`, 170);
+            doc.text(msg, 20, y + 6);
+            doc.text(`Jakarta, ${tgl}\nHormat Kami,\n\n\n\n\n( ${d.nama_wali} )`, 130, y + 30);
+            doc.save(`Izin_${d.nama_murid}.pdf`);
         }
 
         async function loadWali() {
-            if(!KELAS_AKTIF) return;
-            document.getElementById('judul_wali').innerText = KELAS_AKTIF === "ALL" ? "DATA IZIN SELURUH KELAS" : `DATA IZIN KELAS ${KELAS_AKTIF}`;
+            document.getElementById('judul_wali').innerText = KELAS_AKTIF === "ALL" ? "DATA IZIN SEMUA KELAS" : `DATA IZIN KELAS ${KELAS_AKTIF}`;
             const r = await fetch(`${SCRIPT_URL}?mode=izin&kelas=${KELAS_AKTIF}`); 
             let data = await r.json();
-            data.sort((a, b) => a.nama.localeCompare(b.nama));
-            document.getElementById('wali_data').innerHTML = data.map((x, i) => `<tr><td>${i+1}</td><td class="text-waktu">${x.tanggal}</td><td class="text-nama">${x.nama}</td><td class="text-alasan">${x.alasan}</td></tr>`).join('');
+            document.getElementById('wali_data').innerHTML = data.sort((a,b) => a.nama.localeCompare(b.nama)).map((x, i) => `<tr><td>${i+1}</td><td>${x.tanggal}</td><td class="font-bold text-white">${x.nama}</td><td class="italic text-cyan-400">${x.alasan}</td></tr>`).join('');
         }
 
         async function loadPiket() {
             const r = await fetch(`${SCRIPT_URL}?mode=piket`); 
             RAW_PIKET = await r.json(); 
-            updateCharts(RAW_PIKET);
+            if(!document.getElementById('section-grafik').classList.contains('hidden')) updateCharts(RAW_PIKET);
             filterPiket('ALL', document.querySelector('.filter-btn.active'));
-        }
-
-        function renderPiket(data) {
-            document.getElementById('piket_data').innerHTML = data.map((x, i) => `<tr><td>${i+1}</td><td class="text-waktu">${x.tanggal}</td><td class="font-bold text-cyan-400">${x.kelas}</td><td class="text-nama">${x.nama}</td><td class="text-alasan">${x.alasan}</td><td><button onclick="hapusRow(${x.row})" class="text-red-400">🗑️</button></td></tr>`).join('');
         }
 
         function filterPiket(tingkat, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            let filtered = (tingkat === 'ALL') ? [...RAW_PIKET].sort((a,b) => a.kelas.localeCompare(b.kelas)) : RAW_PIKET.filter(i => i.kelas.startsWith(tingkat)).sort((a,b) => a.nama.localeCompare(b.nama));
-            renderPiket(filtered);
+            let filtered = (tingkat === 'ALL') ? RAW_PIKET : RAW_PIKET.filter(i => i.kelas.startsWith(tingkat));
+            document.getElementById('piket_data').innerHTML = filtered.sort((a,b) => a.kelas.localeCompare(b.kelas)).map((x, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td class="text-[10px] leading-tight">${x.tanggal}</td>
+                    <td class="text-cyan-400 font-bold">${x.kelas}</td>
+                    <td>${x.nama}</td>
+                    <td>${x.alasan}</td>
+                    <td class="flex justify-center items-center">
+                        <button onclick="hapusRow(${x.row})" class="text-red-400 hover:scale-125 transition-transform">🗑️</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function toggleGrafik() {
+            const sec = document.getElementById('section-grafik');
+            sec.classList.toggle('hidden');
+            if(!sec.classList.contains('hidden')) updateCharts(RAW_PIKET);
         }
 
         function updateCharts(data) {
-            // Logika Sederhana Harian (7 hari terakhir)
-            const harian = {}, bulanan = {};
+            const h = {}, b = {};
             data.forEach(item => {
-                const d = item.tanggal.split(' ')[0]; // Ambil Tanggal
-                const m = d.split('/')[1] + '/' + d.split('/')[2]; // Ambil Bln/Thn
-                harian[d] = (harian[d] || 0) + 1;
-                bulanan[m] = (bulanan[m] || 0) + 1;
+                const d = item.tanggal.split(' ')[0], m = d.split('/')[1] + '/' + d.split('/')[2];
+                h[d] = (h[d] || 0) + 1; b[m] = (b[m] || 0) + 1;
             });
-
-            const labelsH = Object.keys(harian).slice(-7);
-            const dataH = labelsH.map(l => harian[l]);
-            const labelsB = Object.keys(bulanan);
-            const dataB = labelsB.map(l => bulanan[l]);
-
-            if(chartH) chartH.destroy();
-            if(chartB) chartB.destroy();
-
-            const cfg = (l, d, color) => ({
-                type: 'line',
-                data: { labels: l, datasets: [{ data: d, borderColor: color, tension: 0.4, fill: true, backgroundColor: color + '22' }] },
-                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
-            });
-
-            chartH = new Chart(document.getElementById('chartHarian'), cfg(labelsH, dataH, '#22d3ee'));
-            chartB = new Chart(document.getElementById('chartBulanan'), cfg(labelsB, dataB, '#f43f5e'));
+            const cfg = (ctx, l, d, c) => new Chart(ctx, { type: 'line', data: { labels: l, datasets: [{ data: d, borderColor: c, fill: true, tension: 0.4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            if(chartH) chartH.destroy(); if(chartB) chartB.destroy();
+            chartH = cfg(document.getElementById('chartHarian'), Object.keys(h).slice(-7), Object.values(h).slice(-7), '#22d3ee');
+            chartB = cfg(document.getElementById('chartBulanan'), Object.keys(b), Object.values(b), '#f43f5e');
         }
 
         async function hapusRow(r) {
-            const res = await Swal.fire({ title: 'HAPUS DATA?', text: 'Hapus baris ini?', icon: 'warning', showCancelButton: true, customClass: { popup: 'swal2-popup-custom' } });
-            if (res.isConfirmed) { await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "delete", row: r }) }); loadPiket(); }
+            if ((await Swal.fire({ title: 'Hapus data ini?', showCancelButton: true, customClass: { popup: 'swal2-popup-custom' } })).isConfirmed) {
+                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "delete", row: r }) }); loadPiket();
+            }
         }
 
         async function hapusSemuaPiket() {
-            const { value: word } = await Swal.fire({
-                title: 'HAPUS SEMUA?', html: 'Ketik <b class="text-red-500">HAPUS</b>', input: 'text', showCancelButton: true,
-                customClass: { popup: 'swal2-popup-custom', input: 'swal2-input-center' },
-            });
+            const { value: word } = await Swal.fire({ title: 'Ketik HAPUS untuk konfirmasi', input: 'text', showCancelButton: true, customClass: { popup: 'swal2-popup-custom' } });
             if (word === 'HAPUS') { await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "clear_all" }) }); loadPiket(); }
         }
 
         window.onload = loadMaster;
     </script>
 </body>
-
 </html>
-
