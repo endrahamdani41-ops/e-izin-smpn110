@@ -17,12 +17,12 @@
         .filter-btn.active { background: #22d3ee; color: #020617; border-color: #22d3ee; }
         .input-modern { background: rgba(2, 6, 23, 0.5) !important; border: 1px solid #334155 !important; border-radius: 12px !important; padding: 10px !important; width: 100% !important; text-align: center !important; color: white !important; font-size: 0.9rem; }
         .input-kode { background: rgba(2, 6, 23, 0.6) !important; border: 1px solid rgba(34, 211, 238, 0.3) !important; border-radius: 12px !important; color: #22d3ee !important; text-align: center !important; letter-spacing: 0.5em; font-weight: bold; width: 180px !important; margin: 10px auto !important; height: 45px !important; }
-        .chart-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.6)); border: 1px solid rgba(255, 255, 255, 0.05); position: relative; overflow: hidden; }
+        .chart-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.6)); border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
         .table-container { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
         table { width: 100%; border-collapse: collapse; }
-        thead th { padding: 12px; font-size: 0.65rem; color: #22d3ee; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        td { padding: 12px 6px; text-align: center; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #cbd5e1; }
-        .swal2-popup-custom { background: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(20px) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 2rem !important; padding-bottom: 2rem !important; }
+        thead th { padding: 12px; font-size: 0.65rem; color: #22d3ee; background: rgba(30, 41, 59, 0.5); }
+        td { padding: 12px 6px; text-align: center; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .swal2-popup-custom { background: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(20px) !important; border-radius: 2rem !important; }
     </style>
 </head>
 <body class="p-4 pb-20">
@@ -49,51 +49,46 @@
                     <input id="nis" readonly class="input-modern opacity-50" placeholder="NIS">
                     <select id="alasan" class="input-modern">
                         <option>sakit</option>
-                        <option>urusan keluarga</option>
+                        <option>izin</option>
                     </select>
                 </div>
                 <input id="nama_wali" required placeholder="NAMA ORANG TUA / WALI" oninput="this.value=this.value.toUpperCase()" class="input-modern">
                 <textarea id="keterangan" rows="2" placeholder="detail alasan..." oninput="this.value=this.value.toLowerCase()" class="input-modern"></textarea>
-                <button type="submit" class="w-full bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-900 font-extrabold py-4 rounded-2xl active:scale-95 transition-all">KIRIM SURAT IZIN & WA</button>
+                <button type="submit" class="w-full bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-900 font-extrabold py-4 rounded-2xl active:scale-95 transition-all">KIRIM DATA & PDF</button>
             </form>
         </section>
 
         <section id="wali" class="tab-content hidden glass p-6">
-            <h2 id="judul_wali" class="font-bold text-cyan-400 text-sm uppercase tracking-widest text-center mb-12">Data Izin Kelas</h2>
+            <h2 id="judul_wali" class="font-bold text-cyan-400 text-sm uppercase tracking-widest text-center mb-8">Data Izin</h2>
             <div class="table-container overflow-x-auto">
                 <table>
-                    <thead><tr><th>No</th><th>Tanggal</th><th>Nama Siswa</th><th>Alasan</th></tr></thead>
+                    <thead><tr><th>No</th><th>Tanggal</th><th>Nama Siswa</th><th>Alasan</th><th>File</th></tr></thead>
                     <tbody id="wali_data"></tbody>
                 </table>
             </div>
         </section>
 
         <section id="piket" class="tab-content hidden glass p-6">
-            <div class="flex flex-col mb-6 gap-6">
-                <div class="flex justify-between items-center mb-10">
-                    <h2 class="font-bold text-cyan-400 text-sm uppercase tracking-widest">Monitoring Piket</h2>
-                    <div class="flex gap-2">
-                        <button onclick="loadPiket()" class="p-2 bg-slate-800 rounded-xl border border-slate-700 hover:bg-slate-700">🔄</button>
-                        <button onclick="toggleGrafik()" class="p-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/50 rounded-xl">📊</button>
-                        <button onclick="hapusSemuaPiket()" class="p-2 bg-red-500/10 text-red-500 border border-red-500/50 rounded-xl">🗑️</button>
-                    </div>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-bold text-cyan-400 text-sm uppercase tracking-widest">Monitoring Piket</h2>
+                <div class="flex gap-2">
+                    <button onclick="loadPiket()" class="p-2 bg-slate-800 rounded-xl border border-slate-700">🔄</button>
+                    <button onclick="toggleGrafik()" class="p-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/50 rounded-xl">📊</button>
                 </div>
-                <div id="section-grafik" class="hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                        <div class="chart-card p-6 rounded-3xl h-[250px]"><canvas id="chartHarian"></canvas></div>
-                        <div class="chart-card p-6 rounded-3xl h-[250px]"><canvas id="chartBulanan"></canvas></div>
-                    </div>
-                </div>
-                <div class="flex justify-center gap-2 mb-4">
-                    <button class="filter-btn active" onclick="filterPiket('ALL', this)">ALL</button>
-                    <button class="filter-btn" onclick="filterPiket('7', this)">KLS 7</button>
-                    <button class="filter-btn" onclick="filterPiket('8', this)">KLS 8</button>
-                    <button class="filter-btn" onclick="filterPiket('9', this)">KLS 9</button>
-                </div>
+            </div>
+            <div id="section-grafik" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="chart-card p-6 rounded-3xl h-[200px]"><canvas id="chartHarian"></canvas></div>
+                <div class="chart-card p-6 rounded-3xl h-[200px]"><canvas id="chartBulanan"></canvas></div>
+            </div>
+            <div class="flex justify-center gap-2 mb-6">
+                <button class="filter-btn active" onclick="filterPiket('ALL', this)">ALL</button>
+                <button class="filter-btn" onclick="filterPiket('7', this)">KLS 7</button>
+                <button class="filter-btn" onclick="filterPiket('8', this)">KLS 8</button>
+                <button class="filter-btn" onclick="filterPiket('9', this)">KLS 9</button>
             </div>
             <div class="table-container overflow-x-auto">
                 <table>
-                    <thead><tr><th>No</th><th>Waktu Lengkap</th><th>Kls</th><th>Nama</th><th>Alasan</th><th class="text-center">Aksi</th></tr></thead>
+                    <thead><tr><th>No</th><th>Waktu</th><th>Kls</th><th>Nama</th><th>Alasan</th><th>Aksi</th></tr></thead>
                     <tbody id="piket_data"></tbody>
                 </table>
             </div>
@@ -101,19 +96,29 @@
     </main>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3z6H93gZe0--8J5Z2FOjGR_PoBQuX2zirWZ_VfCAiYTH9BwZiOzz4cZ5seR71J6p9gQ/exec"; 
-        const DAFTAR_AKSES = { "7A":"7 A","7B":"7 B","7C":"7 C","7D":"7 D","7E":"7 E","7F":"7 F","8A":"8 A","8B":"8 B","8C":"8 C","8D":"8 D","8E":"8 E","8F":"8 F","9A":"9 A","9B":"9 B","9C":"9 C","9D":"9 D","9E":"9 E","9F":"9 F","110":"ALL" };
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiWfxttU_6sL6hSKu2VyvFiM77KVRWOCUZ8slo98a4cxASgdygX4StfebrqknUArLImQ/exec";
+ 
+		const DAFTAR_AKSES = { "7A":"7 A","7B":"7 B","7C":"7 C","7D":"7 D","7E":"7 E","7F":"7 F","8A":"8 A","8B":"8 B","8C":"8 C","8D":"8 D","8E":"8 E","8F":"8 F","9A":"9 A","9B":"9 B","9C":"9 C","9D":"9 D","9E":"9 E","9F":"9 F","110":"ALL" };
         
-        // --- TAMBAHKAN NOMOR WA WALI KELAS DI SINI (Gunakan format 62...) ---
         const WA_WALI = {
-            "7 A": "6281234567890",
-            "7 B": "6281234567891",
-            "7 C": "6281234567892",
-            "7 D": "6281234567893",
-            "7 E": "6281234567894",
-            "7 F": "6281234567895",
+            "7 A": "628",
+            "7 B": "628",
+			"7 C": "628",
+            "7 D": "628",
+            "7 E": "628",
+            "7 F": "628",			
+            "8 A": "628",
+            "8 B": "628",
+			"8 C": "628",
+            "8 D": "628",
+            "8 E": "628",
             "8 F": "628567856766",
-            // Tambahkan terus sampai kelas terakhir...
+            "9 A": "628",
+            "9 B": "628",
+			"9 C": "628",
+            "9 D": "628",
+            "9 E": "628",
+            "9 F": "628",			
         };
 
         let MASTER = [], RAW_PIKET = [], KELAS_AKTIF = "", chartH, chartB;
@@ -126,16 +131,12 @@
         }
 
         async function verifyAccess(id, btn) {
-            const { value: password } = await Swal.fire({
-                title: 'PIN AKSES', input: 'password',
-                customClass: { popup: 'swal2-popup-custom', input: 'input-kode' },
-                confirmButtonText: 'MASUK', showCancelButton: true
-            });
-            if (DAFTAR_AKSES[password]) {
-                KELAS_AKTIF = DAFTAR_AKSES[password];
+            const { value: pin } = await Swal.fire({ title: 'PIN AKSES', input: 'password', customClass: { popup: 'swal2-popup-custom', input: 'input-kode' } });
+            if (DAFTAR_AKSES[pin]) {
+                KELAS_AKTIF = DAFTAR_AKSES[pin];
                 showTab(id, btn);
                 id === 'wali' ? loadWali() : loadPiket();
-            } else if (password) { Swal.fire({ icon: 'error', title: 'PIN SALAH', customClass: { popup: 'swal2-popup-custom' } }); }
+            } else if (pin) { Swal.fire('PIN SALAH', '', 'error'); }
         }
 
         async function loadMaster() {
@@ -146,139 +147,104 @@
                 const ks = document.getElementById('kelas_select');
                 const kelasSet = [...new Set(MASTER.map(s => s.kelas))].sort();
                 ks.innerHTML = '<option value="">-- pilih kelas --</option>' + kelasSet.map(k => `<option value="${k}">${k}</option>`).join('');
-            } catch(e) { console.error("DB Error"); }
+            } catch(e) { console.error("Error DB"); }
         }
 
         function filterNama() {
             const k = document.getElementById('kelas_select').value;
             const ns = document.getElementById('nama_murid');
             let filtered = MASTER.filter(s => s.kelas === k).sort((a,b) => a.nama.localeCompare(b.nama));
-            ns.innerHTML = '<option value="">-- pilih nama --</option>' + filtered.map((s, i) => `<option value="${i}">${s.nama}</option>`).join('');
+            ns.innerHTML = '<option value="">-- pilih nama --</option>' + filtered.map(s => `<option value="${s.nis}">${s.nama}</option>`).join('');
         }
 
         function isiDataSiswa() {
-            const i = document.getElementById('nama_murid').value, k = document.getElementById('kelas_select').value;
-            let cf = MASTER.filter(s => s.kelas === k).sort((a,b) => a.nama.localeCompare(b.nama));
-            document.getElementById('nis').value = i !== "" ? cf[i].nis : "";
+            document.getElementById('nis').value = document.getElementById('nama_murid').value;
         }
 
         document.getElementById('izinForm').onsubmit = async (e) => {
             e.preventDefault();
-            const idx = document.getElementById('nama_murid').value, k = document.getElementById('kelas_select').value;
-            let cf = MASTER.filter(s => s.kelas === k).sort((a,b) => a.nama.localeCompare(b.nama));
-            const s = cf[idx];
+            const nis = document.getElementById('nama_murid').value;
+            const s = MASTER.find(x => x.nis === nis);
+            if(!s) return;
+
+            Swal.fire({ title: 'Mengunggah Data...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), customClass: { popup: 'swal2-popup-custom' } });
+
+            // GENERATE PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const tgl = new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
             
-            Swal.fire({ title: 'MEMPROSES...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), customClass: { popup: 'swal2-popup-custom' } });
+            doc.setFontSize(16).setFont("helvetica","bold").text("SURAT IZIN TIDAK MASUK SEKOLAH", 105, 25, { align: "center" });
+            doc.setFontSize(11).setFont("helvetica","normal").text(`Kepada Yth, \nBapak/Ibu Wali Kelas ${s.kelas}\nSMPN 110 Jakarta\n\nSaya yang bertanda tangan di bawah ini, Orang Tua/Wali dari:\n\nNama  :  ${s.nama}\nNIS     :  ${s.nis}\nKelas  :  ${s.kelas}\n\nMenerangkan bahwa anak Kami tidak dapat masuk sekolah karena ${document.getElementById('alasan').value}.\nDemikian surat izin ini Kami sampaikan, atas perhatiannya Kami ucapkan terima kasih.\n\n\n\nJakarta, ${tgl}\nHormat Saya,\n\n\n\nOrang Tua/Wali`, 20, 50);
             
-            const data = { 
-                kelas: s.kelas, 
-                nis: s.nis, 
-                nama_murid: s.nama, 
-                nama_wali: document.getElementById('nama_wali').value, 
-                alasan: document.getElementById('alasan').value, 
-                keterangan: document.getElementById('keterangan').value 
+            const pdfBase64 = doc.output('datauristring').split(',')[1];
+
+            const payload = {
+                mode: "tambah_izin",
+                kelas: s.kelas, nis: s.nis, nama_murid: s.nama,
+                alasan: document.getElementById('alasan').value,
+                nama_wali: document.getElementById('nama_wali').value,
+                keterangan: document.getElementById('keterangan').value,
+                pdfBase64: pdfBase64
             };
 
             try {
-                // 1. Kirim ke Database (Google Sheets)
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) });
-                
-                // 2. Generate PDF
-                generatePDF(data);
-                
-                // 3. Kirim WhatsApp
-                kirimWhatsApp(data);
-
-                Swal.fire({ icon: 'success', title: 'BERHASIL DIKIRIM', text: 'PDF sedang diunduh dan WhatsApp akan terbuka.', customClass: { popup: 'swal2-popup-custom' } });
+                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                doc.save(`Izin_${s.nama}.pdf`);
+                kirimWA(payload);
+                Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Tersimpan di database sekolah.' });
                 document.getElementById('izinForm').reset();
-            } catch(e) { 
-                Swal.fire({ icon: 'error', title: 'GAGAL', customClass: { popup: 'swal2-popup-custom' } }); 
-            }
+            } catch(err) { Swal.fire('Gagal Kirim', '', 'error'); }
         };
 
-        function kirimWhatsApp(d) {
-            const nomorWali = WA_WALI[d.kelas] || ""; // Ambil nomor berdasarkan kelas
-            const tgl = new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
-            
-            if (nomorWali) {
-                const pesan = `*SURAT IZIN DIGITAL SMPN 110 JAKARTA*%0A%0AYth. Bapak/Ibu Wali Kelas ${d.kelas},%0A%0ASaya orang tua dari:%0A- Nama: ${d.nama_murid}%0A- NIS: ${d.nis}%0A- Kelas: ${d.kelas}%0A%0AMemberitahukan bahwa anak kami tersebut tidak dapat sekolah pada ${tgl} dikarenakan *${d.alasan.toUpperCase()}* ${d.keterangan ? '('+d.keterangan+')' : ''}.%0A%0ATerima kasih.%0A(Dikirim otomatis via E-Izin)`;
-                
-                // Buka WhatsApp di tab baru
-                window.open(`https://wa.me/${nomorWali}?text=${pesan}`, '_blank');
-            } else {
-                console.log("Nomor WA Wali Kelas belum diset untuk kelas ini.");
+        function kirimWA(d) {
+            const num = WA_WALI[d.kelas];
+            if(num) {
+                const txt = `*E-IZIN SMPN 110*%0ANama: ${d.nama_murid}%0AKelas: ${d.kelas}%0AAlasan: ${d.alasan}`;
+                window.open(`https://wa.me/${num}?text=${txt}`, '_blank');
             }
-        }
-
-        function generatePDF(d) {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            const tgl = new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
-            doc.setFontSize(16).setFont("helvetica","bold").text("SURAT IZIN TIDAK MASUK SEKOLAH", 105, 25, { align: "center" });
-            doc.setFontSize(11).setFont("helvetica","normal").text(`Kepada Yth,\nBapak/Ibu Guru Wali Kelas ${d.kelas}\nSMPN 110 Jakarta\n\n\nSaya yang bertanda tangan di bawah ini, Orang Tua/Wali dari:`, 20, 40);
-            let y = 70; [["Nama Siswa", d.nama_murid], ["NIS", d.nis], ["Kelas", d.kelas]].forEach(f => { doc.text(f[0], 25, y); doc.text(": " + f[1], 50, y); y += 6; });
-            const msg = doc.splitTextToSize(`Memberitahukan bahwa anak kami tersebut tidak dapat mengikuti kegiatan belajar pada tanggal ${tgl} dikarenakan ${d.alasan} ${d.keterangan ? '('+d.keterangan+')' : ''}.`, 170);
-            doc.text(msg, 20, y + 6);
-            doc.text(`Jakarta, ${tgl}\nHormat Kami,\n\n\n\n\n( ${d.nama_wali} )`, 130, y + 30);
-            doc.save(`Izin_${d.nama_murid}.pdf`);
         }
 
         async function loadWali() {
-            document.getElementById('judul_wali').innerText = KELAS_AKTIF === "ALL" ? "DATA IZIN SEMUA KELAS" : `DATA IZIN KELAS ${KELAS_AKTIF}`;
-            const r = await fetch(`${SCRIPT_URL}?mode=izin&kelas=${KELAS_AKTIF}`); 
-            let data = await r.json();
-            document.getElementById('wali_data').innerHTML = data.sort((a,b) => a.nama.localeCompare(b.nama)).map((x, i) => `<tr><td>${i+1}</td><td>${x.tanggal}</td><td class="font-bold text-white">${x.nama}</td><td class="italic text-cyan-400">${x.alasan}</td></tr>`).join('');
+            const r = await fetch(`${SCRIPT_URL}?mode=izin&kelas=${KELAS_AKTIF}`);
+            const data = await r.json();
+            document.getElementById('wali_data').innerHTML = data.map((x, i) => `<tr><td>${i+1}</td><td>${x.tanggal}</td><td>${x.nama}</td><td>${x.alasan}</td><td><a href="${x.pdfUrl}" target="_blank">📄</a></td></tr>`).join('');
         }
 
         async function loadPiket() {
-            const r = await fetch(`${SCRIPT_URL}?mode=piket`); 
-            RAW_PIKET = await r.json(); 
-            if(!document.getElementById('section-grafik').classList.contains('hidden')) updateCharts(RAW_PIKET);
+            const r = await fetch(`${SCRIPT_URL}?mode=piket`);
+            RAW_PIKET = await r.json();
             filterPiket('ALL', document.querySelector('.filter-btn.active'));
         }
 
-        function filterPiket(tingkat, btn) {
+        function filterPiket(t, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            let filtered = (tingkat === 'ALL') ? RAW_PIKET : RAW_PIKET.filter(i => i.kelas.startsWith(tingkat));
-            document.getElementById('piket_data').innerHTML = filtered.sort((a,b) => a.kelas.localeCompare(b.kelas)).map((x, i) => `
-                <tr>
-                    <td>${i+1}</td>
-                    <td class="text-[10px] leading-tight">${x.tanggal}</td>
-                    <td class="text-cyan-400 font-bold">${x.kelas}</td>
-                    <td>${x.nama}</td>
-                    <td>${x.alasan}</td>
-                    <td class="flex justify-center items-center">
-                        <button onclick="hapusRow(${x.row})" class="text-red-400 hover:scale-125 transition-transform">🗑️</button>
-                    </td>
-                </tr>`).join('');
+            let f = (t === 'ALL') ? RAW_PIKET : RAW_PIKET.filter(i => i.kelas.startsWith(t));
+            document.getElementById('piket_data').innerHTML = f.map((x, i) => `<tr><td>${i+1}</td><td>${x.tanggal}</td><td>${x.kelas}</td><td>${x.nama}</td><td>${x.alasan}</td><td><a href="${x.pdfUrl}" target="_blank">📄</a> <button onclick="hapusRow(${x.row})">🗑️</button></td></tr>`).join('');
         }
 
-        function toggleGrafik() {
-            const sec = document.getElementById('section-grafik');
-            sec.classList.toggle('hidden');
-            if(!sec.classList.contains('hidden')) updateCharts(RAW_PIKET);
+        async function hapusRow(r) {
+            if (confirm('Hapus data?')) {
+                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "delete", row: r }) });
+                loadPiket();
+            }
+        }
+
+        function toggleGrafik() { 
+            document.getElementById('section-grafik').classList.toggle('hidden'); 
+            if(!document.getElementById('section-grafik').classList.contains('hidden')) updateCharts(RAW_PIKET);
         }
 
         function updateCharts(data) {
             const h = {}, b = {};
             data.forEach(item => {
-                const d = item.tanggal.split(' ')[0], m = d.split('/')[1] + '/' + d.split('/')[2];
+                const d = item.tanggal.split(' ')[0], m = d.split('/')[1];
                 h[d] = (h[d] || 0) + 1; b[m] = (b[m] || 0) + 1;
             });
-            const cfg = (ctx, l, d, c) => new Chart(ctx, { type: 'line', data: { labels: l, datasets: [{ data: d, borderColor: c, fill: true, tension: 0.4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            const cfg = (ctx, l, d, c) => new Chart(ctx, { type: 'line', data: { labels: l, datasets: [{ data: d, borderColor: c, tension: 0.4 }] }, options: { maintainAspectRatio: false } });
             if(chartH) chartH.destroy(); if(chartB) chartB.destroy();
-            chartH = cfg(document.getElementById('chartHarian'), Object.keys(h).slice(-7), Object.values(h).slice(-7), '#22d3ee');
+            chartH = cfg(document.getElementById('chartHarian'), Object.keys(h), Object.values(h), '#22d3ee');
             chartB = cfg(document.getElementById('chartBulanan'), Object.keys(b), Object.values(b), '#f43f5e');
-        }
-
-        async function hapusRow(r) {
-            if ((await Swal.fire({ title: 'Hapus data ini?', showCancelButton: true, customClass: { popup: 'swal2-popup-custom' } })).isConfirmed) {
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "delete", row: r }) }); loadPiket();
-            }
-        }
-
-        async function hapusSemuaPiket() {
-            const { value: word } = await Swal.fire({ title: 'Ketik HAPUS untuk konfirmasi', input: 'text', showCancelButton: true, customClass: { popup: 'swal2-popup-custom' } });
-            if (word === 'HAPUS') { await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "clear_all" }) }); loadPiket(); }
         }
 
         window.onload = loadMaster;
