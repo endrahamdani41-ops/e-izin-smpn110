@@ -52,7 +52,7 @@
                         <option>izin</option>
                     </select>
                 </div>
-                <input id="nama_wali" required placeholder="NAMA ORANG TUA / WALI" oninput="this.value=this.value.toUpperCase()" class="input-modern">
+                <input id="nama_wali" required placeholder="nama orang tua/wali" oninput="this.value=this.value.toUpperCase()" class="input-modern">
                 <textarea id="keterangan" rows="2" placeholder="detail alasan..." oninput="this.value=this.value.toLowerCase()" class="input-modern"></textarea>
                 <button type="submit" class="w-full bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-900 font-extrabold py-4 rounded-2xl active:scale-95 transition-all">KIRIM DATA & PDF</button>
             </form>
@@ -96,7 +96,7 @@
     </main>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiWfxttU_6sL6hSKu2VyvFiM77KVRWOCUZ8slo98a4cxASgdygX4StfebrqknUArLImQ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwNynndvjRnT6brfs6nCyJ_fqFuzyH1cmAJTQEsYfeff5Dbu-TmqIhl6YcYSadS5Tc9w/exec";
  
 		const DAFTAR_AKSES = { "7A":"7 A","7B":"7 B","7C":"7 C","7D":"7 D","7E":"7 E","7F":"7 F","8A":"8 A","8B":"8 B","8C":"8 C","8D":"8 D","8E":"8 E","8F":"8 F","9A":"9 A","9B":"9 B","9C":"9 C","9D":"9 D","9E":"9 E","9F":"9 F","110":"ALL" };
         
@@ -200,7 +200,7 @@
         function kirimWA(d) {
             const num = WA_WALI[d.kelas];
             if(num) {
-                const txt = `*E-IZIN SMPN 110*%0ANama: ${d.nama_murid}%0AKelas: ${d.kelas}%0AAlasan: ${d.alasan}`;
+                const txt = `*E-IZIN SMPN 110*%0A%0AYth. Bapak/Ibu Wali Kelas ${d.kelas},%0A%0ASaya Orang Tua/Wali dari:%0A%0A- Nama : ${d.nama_murid}%0A- Kelas : ${d.kelas}%0A%0AMemberitahukan bahwa anak kami tidak dapat masuk sekolah hari ini dikarenakan ${d.alasan},%0A%0ATerima kasih.%0A%0A*(Dikirim otomatis via E-Izin)*`;
                 window.open(`https://wa.me/${num}?text=${txt}`, '_blank');
             }
         }
