@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>E-IZIN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+body{
+ background:radial-gradient(circle at top,#0f172a,#020617);
+ color:#e5e7eb;
+ font-family:system-ui;
+}
+.glass{
+ background:rgba(30,41,59,.75);
+ backdrop-filter:blur(14px);
+ border-radius:20px;
+ border:1px solid rgba(255,255,255,.1);
+}
+.input{
+ background:#020617;
+ border:1px solid #334155;
+ border-radius:12px;
+ padding:10px;
+ width:100%;
+ text-align:center;
+ color:white;
+}
+</style>
+</head>
+
+<body class="p-4">
+
+<!-- LOGIN -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center">
+ <div class="glass p-8 w-full max-w-sm text-center">
+  <h1 class="text-xl font-bold mb-6 text-cyan-400">LOGIN E-IZIN</h1>
+  <input id="password" class="input mb-4" placeholder="Masukkan NIS">
+  <button onclick="login()" class="w-full py-3 bg-cyan-400 text-slate-900 font-bold rounded-xl">
+   MASUK
+  </button>
+ </div>
+</div>
+
+<!-- FORM SISWA -->
+<div id="menuSiswa" class="hidden max-w-md mx-auto mt-8">
+ <div class="glass p-6">
+  <h2 class="text-center font-bold text-cyan-400 mb-4">FORM IZIN</h2>
+
+  <form onsubmit="kirimIzin(event)" class="space-y-3">
+   <input id="nis" class="input" readonly>
+   <input id="nama" class="input" readonly>
+   <input id="kelas" class="input" readonly>
+
+   <select id="jenis" class="input">
+    <option>Sakit</option>
+    <option>Izin</option>
+   </select>
+
+   <input id="ortu" class="input" placeholder="Nama Orang Tua">
+   <textarea id="ket" class="input" rows="2" placeholder="Keterangan"></textarea>
+
+   <button class="w-full py-3 bg-emerald-400 text-slate-900 font-bold rounded-xl">
+    KIRIM IZIN
+   </button>
+  </form>
+ </div>
+</div>
+
+<script>
+/* ========= KONFIG ========= */
+const API_URL = "https://script.google.com/macros/s/AKfycbyyDN8br3pH1r0fWqGUy28Xxwpor39Cxfg8a6nW_U9GxaREiehwOoBdT8YFvf12cjuE/exec";
+
+let DATA_SISWA = [];
+let role = "siswa";
+
+/* ========= LOAD SISWA ========= */
+async function loadDataSiswa(){
+ try{
+  const res = await fetch(API_URL);
+  DATA_SISWA = await res.json();
+  console.log("DATA SISWA:", DATA_SISWA);
+ }catch{
+  Swal.fire("Error","Gagal memuat data siswa","error");
+ }
+}
+
+/* ========= LOGIN ========= */
+function login(){
+ if(DATA_SISWA.length === 0){
+  Swal.fire("Tunggu","Data siswa belum termuat","info");
+  return;
+ }
+
+ const pass = password.value.trim();
+ const siswa = DATA_SISWA.find(s => s.nis === pass);
+
+ if(!siswa){
+  Swal.fire("Login gagal","NIS tidak terdaftar","error");
+  return;
+ }
+
+ loginScreen.style.display="none";
+ menuSiswa.classList.remove("hidden");
+
+ nis.value = siswa.nis;
+ nama.value = siswa.nama;
+ kelas.value = siswa.kelas;
+}
+
+/* ========= KIRIM IZIN ========= */
+function kirimIzin(e){
+ e.preventDefault();
+ const now = new Date();
+
+ const payload = {
+  tanggalISO: now.toISOString().slice(0,10),
+  tanggal: now.toLocaleDateString("id-ID"),
+  kelas: kelas.value,
+  nama: nama.value,
+  nis: nis.value,
+  jenis: jenis.value,
+  ortu: ortu.value,
+  ket: ket.value,
+  role: role
+ };
+
+ fetch(API_URL,{
+  method:"POST",
+  body: JSON.stringify(payload)
+ })
+ .then(()=>Swal.fire("Berhasil","Izin terkirim","success"))
+ .then(()=>e.target.reset())
+ .catch(()=>Swal.fire("Error","Gagal kirim izin","error"));
+}
+
+/* ========= INIT ========= */
+loadDataSiswa();
+</script>
+
+</body>
+</html>
