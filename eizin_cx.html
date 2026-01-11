@@ -9,49 +9,89 @@
 <script src="https://unpkg.com/feather-icons"></script>
 
 <style>
+/* ===== RESET ===== */
 *{box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
+
+/* ===== BODY ===== */
 body{
-  margin:0;min-height:100vh;display:flex;
-  align-items:center;justify-content:center;
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   background:linear-gradient(180deg,#0ea5e9,#0b4f6c)
 }
+
+/* ===== CARD ===== */
 .card{
-  width:420px;background:linear-gradient(180deg,#0f2f4a,#0b2438);
-  border-radius:18px;padding:26px;
+  width:100%;
+  max-width:420px;
+  background:linear-gradient(180deg,#0f2f4a,#0b2438);
+  border-radius:18px;
+  padding:22px;
   box-shadow:0 25px 60px rgba(0,0,0,.45);
   color:#e5f7ff
 }
 .hidden{display:none}
 
+/* ===== LOGO LOGIN ===== */
+.logo-login{
+  text-align:center;
+  margin-bottom:6px;
+  max-height:70px;
+  overflow:hidden;
+}
+.logo-login img{
+  width:clamp(45px, 15vw, 65px);
+  height:auto;
+  display:block;
+  margin:0 auto;
+}
+
+/* ===== HEADER ===== */
 .header{
-  display:flex;align-items:center;
+  display:flex;
+  align-items:center;
   justify-content:space-between;
   margin-bottom:12px
 }
 .header-right{display:flex;gap:12px}
 .icon-action{
-  cursor:pointer;color:#22d3ee;
-  width:22px;height:22px;
+  cursor:pointer;
+  color:#22d3ee;
+  width:22px;
+  height:22px;
 }
 .icon-action:hover{color:#34d399}
 
+/* ===== FORM ===== */
 .input{
-  width:100%;padding:14px;
-  border-radius:14px;border:none;
-  outline:none;background:#020617;
-  color:#e5e7eb;margin-bottom:12px;
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  outline:none;
+  background:#020617;
+  color:#e5e7eb;
+  margin-bottom:12px;
   text-align:center
 }
 .icon-btn{
-  width:100%;padding:14px;
-  border-radius:14px;border:none;
-  cursor:pointer;font-weight:600;
-  display:flex;align-items:center;
-  justify-content:center;gap:8px;
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
   background:linear-gradient(90deg,#22d3ee,#34d399);
   color:#022c22
 }
 
+/* ===== TABLE ===== */
 .table-wrapper{
   max-height:260px;
   overflow:auto;
@@ -72,8 +112,10 @@ th,td{
   white-space:nowrap
 }
 th{
-  position:sticky;top:0;
-  background:#0b3a5a;color:#38f2ff
+  position:sticky;
+  top:0;
+  background:#0b3a5a;
+  color:#38f2ff
 }
 th.tanggal,td.tanggal,
 th.nama,td.nama{
@@ -82,6 +124,38 @@ th.nama,td.nama{
 }
 tbody tr:nth-child(even){background:#020d1f}
 tbody tr:hover{background:#0b4f6c}
+
+/* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+
+/* 📱 HP */
+@media (max-width:480px){
+  .card{
+    max-width:95%;
+    padding:18px;
+  }
+  h3{font-size:16px}
+  th,td{font-size:11px;padding:6px}
+}
+
+/* 📱 TABLET */
+@media (min-width:481px) and (max-width:768px){
+  .card{
+    max-width:520px;
+    padding:22px;
+  }
+  h3{font-size:18px}
+}
+
+/* 💻 LAPTOP / DESKTOP */
+@media (min-width:769px){
+  .card{
+    max-width:600px;
+    padding:28px;
+  }
+  h3{font-size:20px}
+}
 </style>
 </head>
 
@@ -89,9 +163,17 @@ tbody tr:hover{background:#0b4f6c}
 
 <!-- LOGIN -->
 <div id="loginBox" class="card">
-  <h3 style="text-align:center">E-IZIN SEKOLAH</h3>
+  <div class="logo-login">
+    <img src="https://chatgpt.com/backend-api/estuary/public_content/enc/eyJpZCI6Im1fNjk2MzllNWZhNTZjODE5MWJkZGFlM2FjYmNiYjJkZGY6ZmlsZV8wMDAwMDAwMDQ3OWM3MWZkOWRhNWViYmRkMzlmZTgwMSIsInRzIjoiMjA0NjQiLCJwIjoicHlpIiwiY2lkIjoiMSIsInNpZyI6IjIxNGE4ODVkMGI5ODg5OTMzMjIxMThiZjRjZTcwY2JhZDAwMzcwYjk1ZjRmOTI2MjM2ZDEzZjY1ZDNmMTRiZjQiLCJ2IjoiMCIsImdpem1vX2lkIjpudWxsLCJjcyI6bnVsbCwiY3AiOm51bGwsIm1hIjpudWxsfQ==" alt="Logo Sekolah">
+  </div>
+
+  <h3 style="text-align:center;margin:6px 0 14px">
+    E-IZIN SEKOLAH
+  </h3>
+
   <input id="user" class="input" placeholder="USERNAME / NIS">
   <input id="pass" type="password" class="input" placeholder="PASSWORD">
+
   <button class="icon-btn" onclick="login()">
     <i data-feather="log-in"></i> MASUK
   </button>
@@ -157,41 +239,30 @@ const url="https://script.google.com/macros/s/AKfycbyh4rIApWwjXlD0aYFSVrJwua8SZ0
 
 let showAllPiket=false;
 
-/* ===== LOGIN ROLE ===== */
 function login(){
   if(!user.value||!pass.value){
     Swal.fire("Lengkapi login"); return;
   }
-
   fetch(url,{
     method:"POST",
-    body:JSON.stringify({
-      action:"login",
-      user:user.value,
-      pass:pass.value
-    })
+    body:JSON.stringify({action:"login",user:user.value,pass:pass.value})
   })
   .then(r=>r.json())
   .then(res=>{
-    if(res.status!=="ok"){
-      Swal.fire("Login gagal"); return;
-    }
-
+    if(res.status!=="ok"){Swal.fire("Login gagal");return;}
     loginBox.classList.add("hidden");
 
     if(res.role==="WALI"){
       waliBox.classList.remove("hidden");
       judulWali.innerText="Laporan Kelas "+res.kelas;
       loadWali(res.kelas);
-    }
-    else if(res.role==="PIKET"){
+    }else if(res.role==="PIKET"){
       piketBox.classList.remove("hidden");
       loadPiket();
     }
   });
 }
 
-/* ===== PIKET ===== */
 function togglePiket(){
   showAllPiket=!showAllPiket;
   loadPiket();
@@ -205,13 +276,10 @@ function loadPiket(){
     tabelPiket.innerHTML="";
     let no=1;
 
-    const filtered = showAllPiket
-      ? data
-      : data.filter(d=>d.tanggal===today);
-
-    judulPiket.innerText = showAllPiket
-      ? "Data Izin & Sakit Seluruh Hari"
-      : "Data Izin & Sakit Hari Ini";
+    const filtered=showAllPiket?data:data.filter(d=>d.tanggal===today);
+    judulPiket.innerText=showAllPiket
+      ?"Data Izin & Sakit Seluruh Hari"
+      :"Data Izin & Sakit Hari Ini";
 
     filtered.forEach(d=>{
       tabelPiket.innerHTML+=`
@@ -224,23 +292,16 @@ function loadPiket(){
         <td>${d.jenis}</td>
       </tr>`;
     });
-
-    if(no===1){
-      tabelPiket.innerHTML=
-        `<tr><td colspan="6">Tidak ada data</td></tr>`;
-    }
   });
 }
 
-/* ===== WALI ===== */
 function loadWali(kelas){
   fetch(url+"?mode=izin")
   .then(r=>r.json())
   .then(data=>{
     tabelWali.innerHTML="";
     let no=1;
-    data.filter(d=>d.kelas===kelas)
-    .forEach(d=>{
+    data.filter(d=>d.kelas===kelas).forEach(d=>{
       tabelWali.innerHTML+=`
       <tr>
         <td>${no++}</td>
@@ -252,10 +313,7 @@ function loadWali(kelas){
   });
 }
 
-/* ===== LOGOUT ===== */
-function logout(){
-  location.reload();
-}
+function logout(){location.reload();}
 </script>
 
 </body>
