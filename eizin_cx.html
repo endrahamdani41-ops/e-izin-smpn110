@@ -2,143 +2,270 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>E-IZIN</title>
+<title>E-IZIN SEKOLAH</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/feather-icons"></script>
 
 <style>
+*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
 body{
- background:radial-gradient(circle at top,#0f172a,#020617);
- color:#e5e7eb;
- font-family:system-ui;
+  margin:0;min-height:100vh;display:flex;
+  align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#0ea5e9,#0b4f6c)
 }
-.glass{
- background:rgba(30,41,59,.75);
- backdrop-filter:blur(14px);
- border-radius:20px;
- border:1px solid rgba(255,255,255,.1);
+.hidden{display:none}
+
+/* CARD */
+.card{
+  width:420px;max-width:95vw;
+  background:linear-gradient(180deg,#0f2f4a,#0b2438);
+  border-radius:18px;padding:26px;
+  box-shadow:0 25px 60px rgba(0,0,0,.45);
+  color:#e5f7ff;
+  text-align:center
 }
+
+/* LOGO */
+.logo{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+
+}
+
+
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.header-right{display:flex;gap:12px}
+.icon-action{cursor:pointer;color:#22d3ee;width:22px;height:22px}
+.icon-action:hover{color:#34d399}
+
+/* JUDUL */
+.title{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:16px;
+  color:#38f2ff;
+  letter-spacing:1px
+}
+
+/* INPUT */
 .input{
- background:#020617;
- border:1px solid #334155;
- border-radius:12px;
- padding:10px;
- width:100%;
- text-align:center;
- color:white;
+  width:100%;padding:14px;border-radius:14px;
+  border:none;background:#020617;color:#e5e7eb;
+  margin-bottom:12px;text-align:center
 }
+.icon-btn{
+  width:100%;padding:14px;border-radius:14px;
+  border:none;cursor:pointer;font-weight:600;
+  background:linear-gradient(90deg,#22d3ee,#34d399);
+  color:#022c22
+}
+
+/* TABLE */
+.table-wrapper{
+  max-height:260px;
+  overflow-y:auto;
+  border-radius:12px;
+  border:2px solid #38f2ff
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#020617;
+  font-size:13px;
+  table-layout:auto;
+  border:2px solid #38f2ff
+}
+th,td{
+  border:1px solid #38f2ff;
+  padding:8px;
+  text-align:center;
+  white-space:nowrap
+}
+th{
+  position:sticky;top:0;
+  background:#0b3a5a;
+  color:#38f2ff;
+  z-index:1
+}
+tbody tr:nth-child(even){background:#020d1f}
+tbody tr:hover{background:#0b4f6c}
+
+/* Kolom */
+th:nth-child(2),td:nth-child(2){min-width:110px;font-size:12px}
+th:nth-child(4),td:nth-child(4){
+  min-width:200px;text-align:left;padding-left:10px
+}
+th:nth-child(5),td:nth-child(5){min-width:65px;font-size:12px}
+
+/* SweetAlert */
+.swal2-popup{
+  background:linear-gradient(180deg,#0f2f4a,#0b2438)!important;
+  border-radius:18px!important;
+  color:#e5f7ff!important
+}
+.swal2-confirm{
+  background:linear-gradient(90deg,#22d3ee,#34d399)!important;
+  color:#022c22!important;
+  border-radius:14px!important
+}
+
+
+
 </style>
 </head>
 
-<body class="p-4">
+<body>
 
 <!-- LOGIN -->
-<div id="loginScreen" class="min-h-screen flex items-center justify-center">
- <div class="glass p-8 w-full max-w-sm text-center">
-  <h1 class="text-xl font-bold mb-6 text-cyan-400">LOGIN E-IZIN</h1>
-  <input id="password" class="input mb-4" placeholder="Masukkan NIS">
-  <button onclick="login()" class="w-full py-3 bg-cyan-400 text-slate-900 font-bold rounded-xl">
-   MASUK
-  </button>
- </div>
+<div id="loginBox" class="card">
+
+  <!-- LOGO SEKOLAH -->
+  
+  <img
+  src="https://chatgpt.com/backend-api/estuary/public_content/enc/eyJpZCI6Im1fNjk2MzllNWZhNTZjODE5MWJkZGFlM2FjYmNiYjJkZGY6ZmlsZV8wMDAwMDAwMDQ3OWM3MWZkOWRhNWViYmRkMzlmZTgwMSIsInRzIjoiMjA0NjQiLCJwIjoicHlpIiwiY2lkIjoiMSIsInNpZyI6IjIxNGE4ODVkMGI5ODg5OTMzMjIxMThiZjRjZTcwY2JhZDAwMzcwYjk1ZjRmOTI2MjM2ZDEzZjY1ZDNmMTRiZjQiLCJ2IjoiMCIsImdpem1vX2lkIjpudWxsLCJjcyI6bnVsbCwiY3AiOm51bGwsIm1hIjpudWxsfQ=="
+  class="logo"
+  alt="Logo SMPN 110 Jakarta">
+
+  <div class="title">E-IZIN SEKOLAH</div>
+
+  <input id="user" class="input" placeholder="USERNAME / NIS">
+  <input id="pass" type="password" class="input" placeholder="PASSWORD">
+  <button class="icon-btn" onclick="login()">MASUK</button>
 </div>
 
-<!-- FORM SISWA -->
-<div id="menuSiswa" class="hidden max-w-md mx-auto mt-8">
- <div class="glass p-6">
-  <h2 class="text-center font-bold text-cyan-400 mb-4">FORM IZIN</h2>
-
-  <form onsubmit="kirimIzin(event)" class="space-y-3">
-   <input id="nis" class="input" readonly>
-   <input id="nama" class="input" readonly>
-   <input id="kelas" class="input" readonly>
-
-   <select id="jenis" class="input">
-    <option>Sakit</option>
+<!-- SISWA -->
+<div id="siswaBox" class="card hidden">
+  <div class="header">
+    <h3>Form Izin</h3>
+    <i data-feather="log-out" class="icon-action" onclick="logout()"></i>
+  </div>
+  <input id="sNama" class="input" disabled>
+  <input id="sKelas" class="input" disabled>
+  <select id="jenis" class="input">
     <option>Izin</option>
-   </select>
+    <option>Sakit</option>
+  </select>
+  <input id="ortu" class="input" placeholder="Nama Orang Tua"
+    onblur="this.value=capitalizeWords(this.value)">
+  <input id="ket" class="input" placeholder="Keterangan">
+  <button class="icon-btn" onclick="kirimIzin()">KIRIM IZIN</button>
+</div>
 
-   <input id="ortu" class="input" placeholder="Nama Orang Tua">
-   <textarea id="ket" class="input" rows="2" placeholder="Keterangan"></textarea>
+<!-- PIKET -->
+<div id="piketBox" class="card hidden">
 
-   <button class="w-full py-3 bg-emerald-400 text-slate-900 font-bold rounded-xl">
-    KIRIM IZIN
-   </button>
-  </form>
- </div>
+  <div class="menu-title">MENU PIKET</div>
+  <div class="sub-title" id="judulPiket">Data Izin & Sakit Hari Ini</div>
+
+  <div class="header">
+    <div></div>
+    <div class="header-right">
+      <i id="iconToggle" data-feather="calendar"
+         class="icon-action"
+         onclick="togglePiketMode()"></i>
+      <i data-feather="log-out"
+         class="icon-action"
+         onclick="logout()"></i>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Tanggal & Jam</th>
+          <th>NIS</th>
+          <th>Nama</th>
+          <th>Kelas</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tabelPiket"></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
-/* ========= KONFIG ========= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyyDN8br3pH1r0fWqGUy28Xxwpor39Cxfg8a6nW_U9GxaREiehwOoBdT8YFvf12cjuE/exec";
+feather.replace();
 
-let DATA_SISWA = [];
-let role = "siswa";
+/* ===== SCRIPT LAMA TETAP ===== */
+const url="https://script.google.com/macros/s/AKfycbyh4rIApWwjXlD0aYFSVrJwua8SZ09X35hu308Qs6FWwg6zevQP8t9xLMgHrQX2nmiv/exec";
+let role="",nis="",nama="",kelas="",piketAll=false;
 
-/* ========= LOAD SISWA ========= */
-async function loadDataSiswa(){
- try{
-  const res = await fetch(API_URL);
-  DATA_SISWA = await res.json();
-  console.log("DATA SISWA:", DATA_SISWA);
- }catch{
-  Swal.fire("Error","Gagal memuat data siswa","error");
- }
+function capitalizeWords(t){
+  return t.toLowerCase().split(" ").filter(Boolean)
+    .map(w=>w[0].toUpperCase()+w.slice(1)).join(" ");
 }
-
-/* ========= LOGIN ========= */
+function loading(on=true){
+  on
+    ? Swal.fire({title:"Memproses...",showConfirmButton:false,allowOutsideClick:false,didOpen:()=>Swal.showLoading()})
+    : Swal.close();
+}
 function login(){
- if(DATA_SISWA.length === 0){
-  Swal.fire("Tunggu","Data siswa belum termuat","info");
-  return;
- }
-
- const pass = password.value.trim();
- const siswa = DATA_SISWA.find(s => s.nis === pass);
-
- if(!siswa){
-  Swal.fire("Login gagal","NIS tidak terdaftar","error");
-  return;
- }
-
- loginScreen.style.display="none";
- menuSiswa.classList.remove("hidden");
-
- nis.value = siswa.nis;
- nama.value = siswa.nama;
- kelas.value = siswa.kelas;
+  if(!user.value||!pass.value){Swal.fire("Lengkapi login");return;}
+  loading(true);
+  fetch(url,{method:"POST",body:JSON.stringify({action:"login",user:user.value,pass:pass.value})})
+  .then(r=>r.json())
+  .then(res=>{
+    loading(false);
+    if(res.status!=="ok"){Swal.fire("Login gagal");return;}
+    role=res.role;nis=res.nis;nama=res.nama;kelas=res.kelas;
+    loginBox.classList.add("hidden");
+    if(role==="SISWA"){siswaBox.classList.remove("hidden");sNama.value=nama;sKelas.value=kelas;}
+    if(role==="PIKET"){piketBox.classList.remove("hidden");loadPiket();}
+  });
 }
-
-/* ========= KIRIM IZIN ========= */
-function kirimIzin(e){
- e.preventDefault();
- const now = new Date();
-
- const payload = {
-  tanggalISO: now.toISOString().slice(0,10),
-  tanggal: now.toLocaleDateString("id-ID"),
-  kelas: kelas.value,
-  nama: nama.value,
-  nis: nis.value,
-  jenis: jenis.value,
-  ortu: ortu.value,
-  ket: ket.value,
-  role: role
- };
-
- fetch(API_URL,{
-  method:"POST",
-  body: JSON.stringify(payload)
- })
- .then(()=>Swal.fire("Berhasil","Izin terkirim","success"))
- .then(()=>e.target.reset())
- .catch(()=>Swal.fire("Error","Gagal kirim izin","error"));
+function kirimIzin(){
+  if(!ortu.value||!ket.value){Swal.fire("Lengkapi data");return;}
+  ortu.value=capitalizeWords(ortu.value);
+  loading(true);
+  fetch(url,{method:"POST",body:JSON.stringify({
+    action:"izin",nis,nama,kelas,
+    jenis:jenis.value,ortu:ortu.value,ket:ket.value
+  })})
+  .then(r=>r.json())
+  .then(res=>{
+    loading(false);
+    if(res.status==="duplicate"){Swal.fire("Izin sudah dikirim hari ini");return;}
+    Swal.fire("Izin berhasil dikirim");
+    ortu.value="";ket.value="";
+  });
 }
-
-/* ========= INIT ========= */
-loadDataSiswa();
+function togglePiketMode(){piketAll=!piketAll;loadPiket();}
+function loadPiket(){
+  fetch(url+"?mode=izin")
+  .then(r=>r.json())
+  .then(data=>{
+    const today=new Date().toISOString().slice(0,10);
+    tabelPiket.innerHTML="";
+    let no=1;
+    const list=piketAll?data:data.filter(d=>d.tanggal===today);
+    list.forEach(d=>{
+      tabelPiket.innerHTML+=`
+      <tr>
+        <td>${no++}</td>
+        <td>${d.tanggal} ${d.jam||""}</td>
+        <td>${d.nis}</td>
+        <td>${d.nama}</td>
+        <td>${d.kelas}</td>
+        <td>${d.jenis}</td>
+      </tr>`;
+    });
+    if(no===1){
+      tabelPiket.innerHTML=`<tr><td colspan="6">Tidak ada data</td></tr>`;
+    }
+    judulPiket.innerText=piketAll
+      ?"Data Izin & Sakit (Semua Hari)"
+      :"Data Izin & Sakit Hari Ini";
+    iconToggle.setAttribute("data-feather",piketAll?"list":"calendar");
+    feather.replace();
+  });
+}
+function logout(){location.reload();}
 </script>
 
 </body>
