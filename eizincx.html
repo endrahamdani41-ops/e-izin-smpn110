@@ -1,253 +1,712 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>E-IZIN | SMPN 110 Jakarta</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>E-IZIN SMPN 110 JAKARTA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <style>
-        body { background: radial-gradient(circle at top right, #0f172a, #020617); color: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2rem; }
-        .tab-btn.active { background: linear-gradient(135deg, #22d3ee, #0ea5e9); color: #020617; box-shadow: 0 8px 20px -4px rgba(34, 211, 238, 0.4); }
-        .filter-btn { padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; transition: 0.3s; background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; }
-        .filter-btn.active { background: #22d3ee; color: #020617; border-color: #22d3ee; }
-        .input-modern { background: rgba(2, 6, 23, 0.5) !important; border: 1px solid #334155 !important; border-radius: 12px !important; padding: 10px !important; width: 100% !important; text-align: center !important; color: white !important; font-size: 0.9rem; }
-        .input-kode { background: rgba(2, 6, 23, 0.6) !important; border: 1px solid rgba(34, 211, 238, 0.3) !important; border-radius: 12px !important; color: #22d3ee !important; text-align: center !important; letter-spacing: 0.5em; font-weight: bold; width: 180px !important; margin: 10px auto !important; height: 45px !important; }
-        .chart-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.6)); border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
-        .table-container { border-radius: 12px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
-        table { width: 100%; border-collapse: collapse; }
-        thead th { padding: 12px; font-size: 0.65rem; color: #22d3ee; background: rgba(30, 41, 59, 0.5); }
-        td { padding: 12px 6px; text-align: center; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .swal2-popup-custom { background: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(20px) !important; border-radius: 2rem !important; }
+        :root {
+            --primary-color: #00C4CC;
+            --bg-dark: #1e1e20;
+            --input-bg: #252526;
+            --border-color: #3e3e42;
+            --danger-color: #ff4d4d;
+            --success-color: #28a745;
+            --wa-color: #25D366;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f0f10 0%, #1a1a1b 100%);
+            margin: 0; padding: 15px; color: #ffffff;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+        }
+        
+        header, .container { width: 100%; max-width: 950px; box-sizing: border-box; }
+
+        header {
+            margin-bottom: 15px; background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px); padding: 10px 20px;
+            border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .nav-icons { display: flex; gap: 10px; }
+        .nav-icons button {
+            background: rgba(255, 255, 255, 0.1); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 10px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .nav-icons button.active-nav { background-color: var(--primary-color); }
+
+        .container {
+            padding: 25px; background-color: var(--bg-dark); 
+            border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid #2d2d30;
+            position: relative;
+        }
+
+        /* LOADING SPINNER */
+        #loadingOverlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 50; border-radius: 20px;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid var(--primary-color); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .section { display: none; }
+        .active { display: block; }
+
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #b3b3b3; font-size: 0.85rem; }
+        input, select {
+            padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);
+            width: 100%; background: var(--input-bg); color: #fff; margin-bottom: 15px;
+            box-sizing: border-box; font-size: 1rem; outline: none;
+        }
+        
+        button.btn-primary {
+            padding: 15px; border: none; border-radius: 10px; width: 100%;
+            background: var(--primary-color); color: white; font-weight: bold; cursor: pointer;
+            transition: 0.2s;
+        }
+        button.btn-primary:active { transform: scale(0.98); }
+
+        /* MODERN MODAL & ANIMATIONS */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-card {
+            background: #252526; padding: 30px; border-radius: 24px; width: 90%; max-width: 380px;
+            border: 1px solid rgba(255,255,255,0.1); 
+            text-align: center; 
+            transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        #mInput { text-align: center; }
+
+        .modal-overlay.open { display: flex; }
+        .modal-overlay.open .modal-card { transform: scale(1); }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
+        .input-error { border: 2px solid var(--danger-color) !important; }
+
+        #errorMsg { color: var(--danger-color); font-size: 0.8rem; margin: -10px 0 15px; display: none; font-weight: bold; }
+
+        .modal-btns { display: flex; gap: 12px; justify-content: center; }
+        .btn-m { flex: 1; padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-m-cancel { background: #3e3e42; color: white; }
+        .btn-m-danger { background: var(--danger-color); color: white; }
+        .btn-m-confirm { background: var(--primary-color); color: white; }
+
+        /* TABLE & ICONS */
+        .table-responsive { overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; }
+        th { 
+            background: #2d2d30; color: var(--primary-color); padding: 14px; text-align: left; 
+            cursor: pointer; user-select: none; font-size: 0.85rem; white-space: nowrap;
+        }
+        th:hover { background: #3e3e42; }
+        th::after { content: ' ↕'; opacity: 0.3; font-size: 0.7rem; }
+        td { padding: 12px; border-bottom: 1px solid #eee; color: #333 !important; font-size: 0.85rem; }
+
+        .btn-mini-icon {
+            width: 40px; height: 40px; border: none; border-radius: 10px;
+            cursor: pointer; color: white; font-size: 1.1rem; 
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .bg-excel { background: var(--success-color); }
+        .bg-danger { background: var(--danger-color); }
+        .bg-primary { background: var(--primary-color); }
+        
+        .btn-del-row {
+            background: #ff4d4d; color: white; border: none; 
+            border-radius: 5px; padding: 5px 10px; cursor: pointer;
+            font-weight: bold; font-size: 1rem; /* Biar silangnya tebal */
+        }
+        .btn-del-row:hover { background: #cc0000; }
+
+        /* SURAT STYLING */
+        #surat { 
+            background: white; 
+            color: black; 
+            padding: 2.5cm; 
+            border-radius: 5px; 
+            font-family: 'Times New Roman', serif; 
+            font-size: 12pt;
+            line-height: 1.5; 
+        }
+        #surat p { margin-bottom: 1em; }
+        .ttd-wrapper { display: flex; justify-content: flex-end; margin-top: 50px; }
+        .ttd-box { text-align: center; width: 200px; }
+
+        @media print {
+            .modal-overlay, header, .nav-icons, .btn-mini-icon, .bg-danger, .btn-m, .btn-del-row { display: none !important; }
+            body { background: white; color: black; padding: 0; margin: 0; display: block; }
+            .container { background: white; box-shadow: none; border: none; max-width: 100%; padding: 0; margin: 0; }
+            #surat { padding: 2.5cm; width: 100%; box-sizing: border-box; } 
+        }
+		
+/* --- TAMPILAN KHUSUS HP (MOBILE) --- */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px; /* Kurangi padding wadah utama */
+            }
+            
+            #surat {
+                padding: 20px !important; /* Margin surat dikecilkan dari 2.5cm jadi 20px */
+                font-size: 11pt; /* Font sedikit disesuaikan */
+            }
+
+            /* Agar tabel Nama/Kelas tidak terlalu mepet */
+            #surat table td {
+                padding-bottom: 5px;
+            }
+
+            /* Judul Header E-IZIN */
+            header {
+                padding: 10px;
+                flex-direction: column; /* Tombol navigasi turun ke bawah judul */
+                gap: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.1rem !important;
+                text-align: center;
+            }
+
+            /* Tombol Navigasi di HP */
+            .nav-icons button {
+                width: 45px; height: 45px; /* Tombol diperbesar biar gampang dipencet */
+            }
+            
+            /* Pop-up Modal agar tidak terlalu lebar di HP */
+            .modal-card {
+                width: 85%;
+                padding: 20px;
+            }
+        }		
+		
+		
+		
+		
+		
+		
     </style>
 </head>
-<body class="p-4 pb-20">
+<body>
 
-    <header class="max-w-4xl mx-auto mb-8 mt-6 text-center">
-        <div class="glass p-6">
-            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">SMPN 110 JAKARTA</h1>
-            <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.4em] font-bold">E-Izin Digital System</p>
-        </div>
-    </header>
-
-    <nav class="flex justify-center gap-3 mb-8">
-        <button class="tab-btn active px-6 py-3 rounded-2xl text-sm font-semibold transition-all" onclick="showTab('izin', this)">📝 Form</button>
-        <button class="tab-btn px-6 py-3 rounded-2xl text-sm font-semibold transition-all" onclick="verifyAccess('wali', this)">👩‍🏫 Wali</button>
-        <button class="tab-btn px-6 py-3 rounded-2xl text-sm font-semibold transition-all" onclick="verifyAccess('piket', this)">🕘 Piket</button>
-    </nav>
-
-    <main class="max-w-4xl mx-auto">
-        <section id="izin" class="tab-content glass max-w-lg mx-auto p-8">
-            <form id="izinForm" class="space-y-5">
-                <select id="kelas_select" required onchange="filterNama()" class="input-modern"></select>
-                <select id="nama_murid" required onchange="isiDataSiswa()" class="input-modern"><option value="">-- pilih nama --</option></select>
-                <div class="grid grid-cols-2 gap-4">
-                    <input id="nis" readonly class="input-modern opacity-50" placeholder="NIS">
-                    <select id="alasan" class="input-modern">
-                        <option>sakit</option>
-                        <option>izin</option>
-                    </select>
-                </div>
-                <input id="nama_wali" required placeholder="nama orang tua/wali" oninput="this.value=this.value.toUpperCase()" class="input-modern">
-                <textarea id="keterangan" rows="2" placeholder="detail alasan..." oninput="this.value=this.value.toLowerCase()" class="input-modern"></textarea>
-                <button type="submit" class="w-full bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-900 font-extrabold py-4 rounded-2xl active:scale-95 transition-all">KIRIM DATA & PDF</button>
-            </form>
-        </section>
-
-        <section id="wali" class="tab-content hidden glass p-6">
-            <h2 id="judul_wali" class="font-bold text-cyan-400 text-sm uppercase tracking-widest text-center mb-8">Data Izin</h2>
-            <div class="table-container overflow-x-auto">
-                <table>
-                    <thead><tr><th>No</th><th>Tanggal</th><th>Nama Siswa</th><th>Alasan</th><th>File</th></tr></thead>
-                    <tbody id="wali_data"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="piket" class="tab-content hidden glass p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="font-bold text-cyan-400 text-sm uppercase tracking-widest">Monitoring Piket</h2>
-                <div class="flex gap-2">
-                    <button onclick="loadPiket()" class="p-2 bg-slate-800 rounded-xl border border-slate-700">🔄</button>
-                    <button onclick="toggleGrafik()" class="p-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/50 rounded-xl">📊</button>
-                </div>
-            </div>
-            <div id="section-grafik" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="chart-card p-6 rounded-3xl h-[200px]"><canvas id="chartHarian"></canvas></div>
-                <div class="chart-card p-6 rounded-3xl h-[200px]"><canvas id="chartBulanan"></canvas></div>
-            </div>
-            <div class="flex justify-center gap-2 mb-6">
-                <button class="filter-btn active" onclick="filterPiket('ALL', this)">ALL</button>
-                <button class="filter-btn" onclick="filterPiket('7', this)">KLS 7</button>
-                <button class="filter-btn" onclick="filterPiket('8', this)">KLS 8</button>
-                <button class="filter-btn" onclick="filterPiket('9', this)">KLS 9</button>
-            </div>
-            <div class="table-container overflow-x-auto">
-                <table>
-                    <thead><tr><th>No</th><th>Waktu</th><th>Kls</th><th>Nama</th><th>Alasan</th><th>Aksi</th></tr></thead>
-                    <tbody id="piket_data"></tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwNynndvjRnT6brfs6nCyJ_fqFuzyH1cmAJTQEsYfeff5Dbu-TmqIhl6YcYSadS5Tc9w/exec";
- 
-		const DAFTAR_AKSES = { "7A":"7 A","7B":"7 B","7C":"7 C","7D":"7 D","7E":"7 E","7F":"7 F","8A":"8 A","8B":"8 B","8C":"8 C","8D":"8 D","8E":"8 E","8F":"8 F","9A":"9 A","9B":"9 B","9C":"9 C","9D":"9 D","9E":"9 E","9F":"9 F","110":"ALL" };
+<div id="modalContainer" class="modal-overlay">
+    <div class="modal-card">
+        <span id="mIcon" style="font-size: 3rem; margin-bottom: 15px; display: block;">🔒</span>
         
-        const WA_WALI = {
-            "7 A": "628",
-            "7 B": "628",
-			"7 C": "628",
-            "7 D": "628",
-            "7 E": "628",
-            "7 F": "628",			
-            "8 A": "628",
-            "8 B": "628",
-			"8 C": "628",
-            "8 D": "628",
-            "8 E": "628",
-            "8 F": "628567856766",
-            "9 A": "628",
-            "9 B": "628",
-			"9 C": "628",
-            "9 D": "628",
-            "9 E": "628",
-            "9 F": "628",			
-        };
+        <h3 id="mTitle" style="margin: 0 0 10px;">Judul Modal</h3>
+        <p id="mMsg" style="color: #b3b3b3; font-size: 0.95rem; margin-bottom: 20px;"></p>
+        
+        <div id="mInputWrapper">
+            <input type="password" id="mInput" placeholder="Masukkan Password..." style="margin-bottom: 15px;">
+            <div id="errorMsg">⚠️ Password salah, coba lagi!</div>
+        </div>
 
-        let MASTER = [], RAW_PIKET = [], KELAS_AKTIF = "", chartH, chartB;
+        <div class="modal-btns">
+            <button class="btn-m btn-m-cancel" id="mCancelBtn" onclick="closeM()">Batal</button>
+            <button class="btn-m btn-m-confirm" id="mPrimaryBtn">Lanjutkan</button>
+        </div>
+    </div>
+</div>
 
-        function showTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        }
+<header>
+    <h1 style="font-size: 0.9rem; margin:0;">E-IZIN SMPN 110 JAKARTA</h1>
+    <div class="nav-icons">
+        <button onclick="navKe('menuIsi', this)" class="active-nav">📝</button>
+        <button onclick="mintaAkses('menuWali', this)">👨‍🏫</button>
+        <button onclick="mintaAkses('menuPiket', this)">📋</button>
+    </div>
+</header>
 
-        async function verifyAccess(id, btn) {
-            const { value: pin } = await Swal.fire({ title: 'PIN AKSES', input: 'password', customClass: { popup: 'swal2-popup-custom', input: 'input-kode' } });
-            if (DAFTAR_AKSES[pin]) {
-                KELAS_AKTIF = DAFTAR_AKSES[pin];
-                showTab(id, btn);
-                id === 'wali' ? loadWali() : loadPiket();
-            } else if (pin) { Swal.fire('PIN SALAH', '', 'error'); }
-        }
+<div class="container">
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div style="font-weight:bold;">Memproses Data...</div>
+    </div>
 
-        async function loadMaster() {
-            try {
-                const r = await fetch(`${SCRIPT_URL}?mode=master`);
-                const d = await r.json();
-                MASTER = Object.entries(d).map(([nis, v]) => ({ nis, nama: v.nama, kelas: v.kelas }));
-                const ks = document.getElementById('kelas_select');
-                const kelasSet = [...new Set(MASTER.map(s => s.kelas))].sort();
-                ks.innerHTML = '<option value="">-- pilih kelas --</option>' + kelasSet.map(k => `<option value="${k}">${k}</option>`).join('');
-            } catch(e) { console.error("Error DB"); }
-        }
-
-        function filterNama() {
-            const k = document.getElementById('kelas_select').value;
-            const ns = document.getElementById('nama_murid');
-            let filtered = MASTER.filter(s => s.kelas === k).sort((a,b) => a.nama.localeCompare(b.nama));
-            ns.innerHTML = '<option value="">-- pilih nama --</option>' + filtered.map(s => `<option value="${s.nis}">${s.nama}</option>`).join('');
-        }
-
-        function isiDataSiswa() {
-            document.getElementById('nis').value = document.getElementById('nama_murid').value;
-        }
-
-        document.getElementById('izinForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const nis = document.getElementById('nama_murid').value;
-            const s = MASTER.find(x => x.nis === nis);
-            if(!s) return;
-
-            Swal.fire({ title: 'Mengunggah Data...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), customClass: { popup: 'swal2-popup-custom' } });
-
-            // GENERATE PDF
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const tgl = new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
+    <div id="menuIsi" class="section active">
+        <div id="inputFormWrapper">
+            <label>Pilih Kelas:</label>
+            <select id="kelas" onchange="updateDaftarSiswa()">
+                <option value="">-- Pilih Kelas --</option>
+                <optgroup label="KELAS 7">
+                    <option value="7 A">7 A</option><option value="7 B">7 B</option><option value="7 C">7 C</option>
+                    <option value="7 D">7 D</option><option value="7 E">7 E</option><option value="7 F">7 F</option>
+                </optgroup>
+                <optgroup label="KELAS 8">
+                    <option value="8 A">8 A</option><option value="8 B">8 B</option><option value="8 C">8 C</option>
+                    <option value="8 D">8 D</option><option value="8 E">8 E</option><option value="8 F">8 F</option>
+                </optgroup>
+                <optgroup label="KELAS 9">
+                    <option value="9 A">9 A</option><option value="9 B">9 B</option><option value="9 C">9 C</option>
+                    <option value="9 D">9 D</option><option value="9 E">9 E</option><option value="9 F">9 F</option>
+                </optgroup>
+            </select>
             
-            doc.setFontSize(16).setFont("helvetica","bold").text("SURAT IZIN TIDAK MASUK SEKOLAH", 105, 25, { align: "center" });
-            doc.setFontSize(11).setFont("helvetica","normal").text(`Kepada Yth, \nBapak/Ibu Wali Kelas ${s.kelas}\nSMPN 110 Jakarta\n\nSaya yang bertanda tangan di bawah ini, Orang Tua/Wali dari:\n\nNama  :  ${s.nama}\nNIS     :  ${s.nis}\nKelas  :  ${s.kelas}\n\nMenerangkan bahwa anak Kami tidak dapat masuk sekolah karena ${document.getElementById('alasan').value}.\nDemikian surat izin ini Kami sampaikan, atas perhatiannya Kami ucapkan terima kasih.\n\n\n\nJakarta, ${tgl}\nHormat Saya,\n\n\n\nOrang Tua/Wali`, 20, 50);
+            <label>Nama Murid:</label>
+            <div id="containerNamaSiswa">
+                <input type="text" id="namaSiswa" placeholder="Pilih Kelas Dahulu" disabled style="background-color: #3e3e42; cursor: not-allowed; color: #888;" />
+            </div>
             
-            const pdfBase64 = doc.output('datauristring').split(',')[1];
+            <label>Nama Orang Tua:</label>
+            <input type="text" id="namaOrtu" style="text-transform: uppercase;" placeholder="Nama Lengkap Orang Tua / Wali" />
+            <label>Alasan Izin:</label>
+            <select id="alasan">
+                <option value="Sakit">Sakit</option>
+                <option value="Izin">Izin (Urusan Keluarga)</option>
+            </select>
+            <button class="btn-primary" onclick="buatSurat()">Kirim & Buat Surat</button>
+        </div>
+		
+        <div id="outputSection" style="display:none;">
+            <div id="surat"></div>
+            <div style="display:flex; justify-content:center; gap:20px; margin-top:25px;">
+                <button onclick="resetForm()" class="btn-mini-icon bg-danger" style="width:55px; height:55px;">⬅️</button>
+                <button onclick="kirimWhatsApp()" class="btn-mini-icon" style="background:var(--wa-color); width:55px; height:55px;">💬</button>
+                <button onclick="window.print()" class="btn-mini-icon" style="background:var(--primary-color); width:55px; height:55px;">🖨️</button>
+            </div>
+        </div>
+    </div>
 
-            const payload = {
-                mode: "tambah_izin",
-                kelas: s.kelas, nis: s.nis, nama_murid: s.nama,
-                alasan: document.getElementById('alasan').value,
-                nama_wali: document.getElementById('nama_wali').value,
-                keterangan: document.getElementById('keterangan').value,
-                pdfBase64: pdfBase64
-            };
+    <div id="menuWali" class="section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;">Rekapitulasi Wali Kelas</h3>
+            <button onclick="fetchDataOnline()" class="btn-mini-icon bg-success" style="width:30px; height:30px; font-size:0.8rem;">🔄</button>
+        </div>
+        <div class="table-responsive">
+            <table id="tableWali">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('tableWali', 0)">Kelas</th>
+                        <th onclick="sortTable('tableWali', 1)">Nama Murid</th>
+                        <th onclick="sortTable('tableWali', 2)">Tanggal Izin</th>
+                        <th onclick="sortTable('tableWali', 3)">Ket</th>
+                    </tr>
+                </thead>
+                <tbody id="listWali"><tr><td colspan="4" style="text-align:center;">Memuat data...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
 
-            try {
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-                doc.save(`Izin_${s.nama}.pdf`);
-                kirimWA(payload);
-                Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Tersimpan di database sekolah.' });
-                document.getElementById('izinForm').reset();
-            } catch(err) { Swal.fire('Gagal Kirim', '', 'error'); }
-        };
+    <div id="menuPiket" class="section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;">Database Piket</h3>
+            <div style="display:flex; gap:8px;">
+                <button onclick="fetchDataOnline()" class="btn-mini-icon bg-primary" title="Refresh">🔄</button>
+                <button onclick="exportCSV()" class="btn-mini-icon bg-excel" title="Download Excel">📊</button>
+                <button onclick="confirmHapusSemua()" class="btn-mini-icon bg-danger" title="Hapus Semua Data">🗑️</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="tablePiket">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('tablePiket', 0)">Kelas</th>
+                        <th onclick="sortTable('tablePiket', 1)">Nama Murid</th>
+                        <th onclick="sortTable('tablePiket', 2)">Tanggal Izin</th>
+                        <th>Nama Ortu / Wali</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="listPiket"><tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-        function kirimWA(d) {
-            const num = WA_WALI[d.kelas];
-            if(num) {
-                const txt = `*E-IZIN SMPN 110*%0A%0AYth. Bapak/Ibu Wali Kelas ${d.kelas},%0A%0ASaya Orang Tua/Wali dari:%0A%0A- Nama : ${d.nama_murid}%0A- Kelas : ${d.kelas}%0A%0AMemberitahukan bahwa anak kami tidak dapat masuk sekolah hari ini dikarenakan ${d.alasan},%0A%0ATerima kasih.%0A%0A*(Dikirim otomatis via E-Izin)*`;
-                window.open(`https://wa.me/${num}?text=${txt}`, '_blank');
+<script>
+    // -----------------------------------------------------------
+    // KONFIGURASI PENTING
+    // -----------------------------------------------------------
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyAF280LkXHoW2KwNmtZ7gLNv1YdGYL_q3WBcM-P8VojLygekLupXtr-77vJ8VSQXGi/exec"; 
+    // -----------------------------------------------------------
+
+    const PASS_WALI_ENC = "d2FsaTExMA==", PASS_PIKET_ENC = "cGlrZXQxMTA=";
+    
+    let targetMenu = null, targetBtn = null;
+    let currentData = null;
+    let onlineDataCache = []; 
+    let modalActionCallback = null;
+
+    const dataSiswa = { 
+        "7 A": ["Pilih Nama Murid", "ABDUL FATAH NASUTION", "ABDURRAHMAN ALFARIZI", "ADDA KAAYUAN AULIA CAKRA NIRMALA", "AHMAD FACHRI FIRMANSYAH", "AINNUR FADZILLAH", "AISHAVIRA SALSABILA", "ARDHYASTHA PRASETYA", "AZKA IBRAHIM", "CARISSA ALYA FERICA", "CHARISSA AGLESSIA PUTRI", "DIMAS PUTRA SETIAWAN", "EMIRA KHAIRUNISA", "FITRI YAUMI", "GAGAH ADHI PRAKOSO", "JANETHA PUTRI ADELLIA", "KAHLA GHAISA SHIBA", "KIMIKO AZURA YUSELL", "LOLITA AURORA HADI", "MAHIRA HANDAYANI", "MUHAMAD RIZKI", "MUHAMMAD ALIM RAAFI", "MUHAMMAD ERLANGGA SYAQIB", "MUHAMMAD FADHIL ARSYAD", "MUHAMMAD FAREEZ PRATAMA", "MUHAMMAD NIZAM", "NALENDRA ZAKI MUBARAK", "NAYSYILLA INNAYAH", "PRICELLIA FAUZIAH", "RANDHIKA REZKY WAHYUDI", "SABIAN FATAYA ADAM NUGRAHA", "SATRIA CAHYA ANGGARA", "TANIA PUTRI CHRISTVIE", "TRI YUSUF JAMAL LUDIN", "USAMAH", "ZAHFA SYACHQILIA"],
+        "7 B": ["Pilih Nama Murid", "ATHAYA KHANSA BATUBARA", "AZRI SANI ATHALLAH", "BIMA RAMADASKA NURZAFRAN", "FAKHIRAH SALWA NABILA HAKIM", "HANYYA MIRFA FADLI", "HUMAIRAH AULIA RAMADHANI HILMI", "IRFAN PRASETYA", "JIBRAN NARARYA PUTRA", "KANZANIA ZIEVARA AKHMAD", "KAYLA MANTIKA HERMANSYAH", "KHALIFAH RAMADHANY", "MICHAEL RAHMAN MANOPPO", "MIKAYLA AL RASYID FEBRIANA", "MUHAMAD LATIF ALBANY PASARIBU", "MUHAMAD RIZKY ALFADILLAH", "MUHAMMAD AZZAM RAZIQ", "MUHAMMAD DAFFA ALFARIZKI", "MUHAMMAD SYAILENDRA IBRAHIM", "NADIA ALANNA IRAWAN", "NAPSAH DJUNAIDI", "NOVA ZARA PRAMUDITA", "NOVAL AHMAD DHANI", "RAHMANIA AZZAHRA", "REVALINA ALMAIZA FADILLAH", "RIDHO ABIYU KAFI", "RIFKI NURIL HUDA", "RIFQI AZZAM SAPUTRA", "RIZKY NURSYAWALI", "SALSA APRILIA PUTRI", "SYAFA HALIZA PUTRI", "SYAFIA NAYLA ZAHRA", "VIKRYZAKY ARIZA", "YAKE FAIN SETO", "ZAKY ALFARIDZI AHMAD", "ZAVIRA MESYA GRANADA", "ZIVARA KANAYA LETISHA"],
+        "7 C": ["Pilih Nama Murid", "AHMAD DAMEER", "AINA NAJWA RAMADHANI", "ALIFAH NADA ISLAH", "ANANDA SYIFA FADILLAH", "ASYIFA HALWA ALI", "BOB WELLSON DUMATUBUN", "CINTA SALSABILA", "DEMETRIO SPARTACUS FALCAO", "ELSA NOVIANA", "FATHIR ZAIN MUSADEC", "GHISELLA NUR APRILLIA", "HAFSHOH USWATUN HASANAH", "HAIKAL FAJAR PRATAMA", "IBNU SABIL", "KANAYA PUTRI SYABILLA", "KEANNO DEAN NEYMAR", "KENZO PERWIRA", "KHANSA HUMAIRA", "MAULANA MALIK IBRAHIM", "MAYKO KOENT MOSES BASKORO", "MUHAMMAD ALIF ZIAD", "MUHAMMAD ARIF RAHMAN", "MUHAMMAD AZKA ALFATHAN", "MUHAMMAD DHUKE NAZMI", "MUHAMMAD FAIDZ AIRLANGGA", "MUHAMMAD FATAR RAHMAN", "MUHAMMAD HAIKAL RAMADHAN", "NAURAH HASNA SALSABILA", "RAFA RIZKI MAULANA", "RAFIF PANGGIH PANGESTU", "RAYSKA NURAISYAH PUTRI", "RUSMIN NURYADIN", "SABIL RIZQ ARRAHMAN", "SHALSA BILLAH KAYLA IBRAHIM", "ZAZKIA RAMADANI SUTRISNO", "ZHAFRAN RIZIQ ARGANI"],
+        "7 D": ["Pilih Nama Murid", "AHMAD FARIS", "ALIVYAN AISY PUTRA", "ANDREAS DARYA CHRISTOPER", "ARDIANSYAH RAMADHAN", "ASTI NADYA KAMILAH", "ATHIRA SABRINA", "AZZAM DZULHANAN MUZHAFAR", "BAMBANG HARY BOWO", "CAHAYA KARUNIA", "DESTRY PRAMUNINGRUM", "DEVINA PRAMESHA", "INARA AYUDIA MAHESTRI", "JASMINE CITRA JULIANDITA", "KENZIE ADESYA MALIKA", "KEVYN ADITYA KAMIL", "KHALID FAYYADH RAMADHAN", "KHARIN QURATU AINI", "KHOIRUN NISA ASYSYIFA", "LUTHFI SAKHI ZAIDAN HAKIM", "LYUDMILA METIA", "MOHAMAD RIZQI ALIFI", "MOHAMMAD AL-FARIZI", "MUHAMMAD ARMAND ALBANI", "MUHAMMAD ATHIR ARRAFI", "MUHAMMAD FABIAN NURFADILLAH", "MUHAMMAD FAISAL ADITYA", "MUHAMMAD TRIO ARDIANSYAH", "MUHAMMAD VISURGA", "NASYA SAZWINA PUTRI", "RAFARDHAN AQILA SAKHI", "RAVA AIZAM", "RAYZH IRSYAD RAMADHAN", "SHAZMI RACHEL NOVALIZA", "SYAFIQA ADZKIYA MAHREEN", "SYAFIRA ATHALLAH DYU", "ZAHRA PUTRI SALSABILA"],
+        "7 E": ["Pilih Nama Murid", "AHMAD RAFIQI", "ALEA NATASHA RIZKY", "ALIF APRILIO", "ANDARA NAYARAPUTRI DJABAR", "ARBHIAN NATHAN FAREZI", "AWALIA RAMADHAN", "BILAL YOJIE GUNAWAN", "BIMA PRASETYO", "DAFFA AZKA ATHARRAYHAN", "DELLA SAKINAH AZZAHRA", "FIRA KHOLIFAH", "HAWARI ALTAF RIZKY", "INDY FITRIANSYAH", "JAFAR NIZAM ALFATIR", "JONATHAN DOKSEN SIAGIAN", "JULIA RACHMADANI", "KAYLA MEIDYNA", "KENZI AKHTAR ALMALIKI", "KENZOE JOSUWA PRATAMA", "MICHELLE NATHANIA MARCHIANO", "MIKHAYLA RAMAHDANI ARYANTI", "MUCH ZIDNI ILMAN", "MUHAMAD RIFKI", "MUHAMMAD ARSYAD", "MUHAMMAD BIMMA ALFARRO", "MUHAMMAD TSAQIF MAULANA", "MUTIARA OLIVIA BORU SINAGA", "NAUVIAN RUBY NUGRAHA", "PRADIPTA BINTANG KANEISHIA", "RAFAN ADHIRA ABQARY", "RAYSA DELIA", "SAFAROUSH CELESTA ASHALINA", "SAHRANIA INSAN MAZSAID", "SITI ANGGRAYNI", "SYALWA INDIRA WALDY", "VANIA ANINDHITA LARASATI"],
+        "7 F": ["Pilih Nama Murid", "ACHMAD KURNIAWAN", "ADINDA ZAFIRA HIJRIYAH", "AHMAD HABIL", "ASHRAFFA MAHER SYAWAL ARIYONO", "AULIA PUTRI CANTIKA", "BAIHAQI NIZAM", "DZAKIRA FAHIMA", "FAKHRIE ZHAFRAN KHAIRIE", "FATHIR ALTAN SYAH", "FITRI AULIA SURYA", "IHSAN MAULANA", "JASMINE ANINDYA RAMADHAN", "JESICA DWI LESTARI", "JULIAN RAMADHAN", "KEYZA AZKA ZAHIRAH", "KINAR AULIA SOULIHATI", "MUHAMAD ARKAN IBRAHIM", "MUHAMAD PANCA ABRASYAH", "MUHAMMAD FATHURROHIM ZAMIL", "MUHAMMAD ILHAM AFRIANSYAH", "MUHAMMAD IMAM MUSTHAFA", "MUHAMMAD NUH DZAKIYY ABIDIN", "NADHIF RAIHAN PRASETYO", "NADIYAH FAKHIRA SHIBA", "NAFIL RAMADHAN", "NAYLA ANASTASYA", "NOVI ZHAFIRAH PRAMUDITA", "NUR AULLYA RAMADHANI", "NURUL RAHMAH ZULFAN", "SYARIFAH HANAFIAH ALATAS", "SYIFA LAILLIYAH SYAFIRA", "TALITHA DHIYA SYARAFANA", "TEGAR NURMA WANTO", "WINDA SRI HANDAYANI", "ZAHRO MAULIDA"],
+        "8 A": ["Pilih Nama Murid", "ABEL GHANI ABRAR", "ABIGAIL ADELIA DIMITRI HUTASOIT", "ADINDA NUR AZIZAH", "ANDINA SYAHIRA", "ARKANA ADNIELL PRATAMA", "ARLIKA PUTRI EFFENDI", "ARROFAIZ AHMAD NUZULUL MARDIKA", "AZAM NUR RAMADHAN", "CALYA HAFIDZAH DJUNAIDI", "CESAR PUTRA KINARYA", "ELANG OKTA PRATAMA", "EZIZA ELYA EZZATY", "FADHIL ASRI", "HAURA SYIAH KASIFAH SYARIF", "HERI FAHRI MAULANA", "JIHAN MAULIDA PUTRI", "KAFIN AHMAD NURYADIN", "KHADIFA SALSABILA", "MEIZKA ADINDA PUSPITA HATI", "MUHAMMAD FACHRI SAPUTRO", "MUHAMMAD GALLIH AVRYAN", "MUHAMMAD HIDAYATULLAH", "MUHAMMAD RAMADHAN", "MUHAMMAD RIZKY ADITYA", "NADIYA NURAIDAH", "NURUL RAFIKA AULIA HASANAH", "PETRIS AUREALY DABET", "SASMA ANANDITA NAYA", "SHAFA NADHILAH ZEIN", "SHAKEELAH NAFEEZA ROSA", "SOLAHUDDIN NASUTION", "SYALWA MULYA SARI", "UZUMAKI YUSRA AZZAMI", "VIRGI AZKA PUTRA EVLI", "ZAHRITA NURHAIDAH", "ZEA ZENOBYA RACHMA"],
+        "8 B": ["Pilih Nama Murid", "AIRA ANISTIYA", "ANDINI THYMYTHA PUTRI", "ARENSKY PUTRA SANDEGA", "ARKA BHIRAWANGGA ZOE", "AULIA RIZY RUMADANI", "CECILLIA ANGELICA HUTASOIT", "CHERYL AMALIA JASHINDA", "DAFFI NUR FIRJATULLAH", "FIXO YOSSI FAIQ AL HAKIM", "HILMI SYAFA ANISA PUTRI", "ISMI YULIANTI", "KIRANA ANJANNY", "KIRANA PUTRI LODI", "LINTANG PRAMUDYA NAFEEZA", "MAIZA AILA SYAHRIAL", "MOHAMMAD ARFANSYAH", "MORINO SETIAWAN", "MUHAMMAD AINNUR RAZAK", "MUHAMMAD MARVEL PRATAMA VANCOUVER", "MUHAMMAD RAFFA RAMADHAN", "NADJLA AURELIASYAH", "NAKEISHA ARDELIA", "NASTASYA LAKHISYA", "NASYWAH HAYA THALIHAH", "NIZAM SEPTIAN RIZKY", "OWEN ALFARISI", "QYARA ALZENA NEZAVISLY", "RADITHIA RAMADHAN", "RAISA RAIHANA", "RHEVAL RADITIA ANDREANSYAH", "SAFA KHADIJAH MOOSA", "SATRIO BAYU AJI", "SEKAR ARUM ALIFA", "SITI DHAWIYAH A'ZAHRA", "TENGKU RAHLIL MUSTAQIIN", "WILDAN ANAS PRANATA"],
+        "8 C": ["Pilih Nama Murid", "ABU BAKAR", "AMELIA PRILANI", "AMIRA OCTAVIANI", "AQILAH NUR ALHANI", "ARNETA DYFA PUTRI", "ASSYFA ADELIA EVIANTY", "AVRILIA DWI KHASANAH", "BYAN SARAH NABILA", "CARISSA ELVINA SUKANDAR", "DANISHA NUR UMAIRAH SYAHMINA", "DANISWARA IQSHAN LEE", "DAVITHO ARBY SAHPUTRO", "FATHIR AFSARUL FUAD", "FINONA ANDERESTA MAHESWARY", "FIRAS FAIQ USMAN", "GHAIDA SABRINA RAHMAN", "GUSTY RAMADHAN", "IRSYAD ABDUL QADAR", "JOSAPHAT CRISTIANO DWINIELRI HUTAURUK", "KEANU RIFANDI", "KELVINO RAIHAN SETYOHADI", "KYLA SAGITA", "LAURA SALMA AGNESA", "MUHAMAD EKA RAMADHAN", "MUHAMAD HAZIQ", "MUHAMMAD ALIF KAUTSAR IBHAMA", "MUHAMMAD NIHAYAH ZAIN", "MUHAMMAD SULTAN KHALISH SETIANTO", "MUHAMMAD ZAINUL FIKRI", "NABILA PUTRI AULIA", "RADITYA AFFAN BURHANUDIN", "RAISA NADA NUR AULIA", "SAKHA ADHYASTHA RAMADHAN", "SYIFA MAIMUNAH MOOSA", "WILDAN KABIR AQIEL", "WULAN DARMAWANTY"],
+        "8 D": ["Pilih Nama Murid", "ABDUL HADI", "ADIB FAWWAZ ERSAKTA", "AHMAD NAUFAL RIDHO", "AISYAH ZAHRA MAULYDA", "ANJAR SAPUTRA", "AZA SHAKILA AMELIA", "BRIAN AR-RAFI", "BUNGA ALMA AMEERA", "DAFFA NUR HIBATULLAH", "DIANA TRI OKTAVIANI", "ERIKA APRILIA", "FAJAR PRATAMA", "GEOVANI LIONEL KENZIE", "HABIBIE AL FAIZAR ROHMAN", "IANUAR NUGROHO TRIWICAKSONO", "JULIANA PUTRI", "KAYYISAH AQILAH GUSTAMI", "KHAIRUNISA HABIBAH", "MUHAMMAD ABDU NURBARI", "MUHAMMAD KHADAFI", "MUHAMMAR RIZKY RAMADHAN", "NADIA KAMILAH", "NADIN SALSABILA", "RAFA MUHAMMAD ZEIN", "RAMA ARIANDES", "RAYYAN KAHIL FALAH", "RIZKY FADHILLAH YUSUF", "SABRINA AMANDA PUTRI", "SALFAH FITRIANSYAH", "SALSABILLA OKTAVIANI", "SASHIRA FITRIANI RAHAYU", "SILMI ZAHRATUNNISA", "SITI TALITA HASNA", "SYIFA NABILAH ZEIN", "THALITA FITRINADYA INDRAWAN", "ZAKY ARDIANSYAH"],
+        "8 E": ["Pilih Nama Murid", "ABYAN PUTRA YUDAKSANA", "AIMAR RIZKI YUDHISTIRA", "ALIFIAH NADIYAH RAMADHANI", "ALLEA SIFARAMADINA", "ANNISA SEPTIANI", "AZZIKRA ADITYA SYAHPUTRA", "BRYAN APRILLIO SAPUTRA", "CHAIRUL NIZAM", "DON JULIO DOKSEN SIAGIAN", "FAIZ BUDI MAULANA", "HAFZA FAIZAL TAMIR RAFFA", "HARTAWAN TRI WICAKSONO", "INMA ANAYA HARDJANTO", "INTAN NURAINI", "JELITA DWI HARYAWAN", "JOSHUA DEFFANKA", "KAMILA OKTAVIANI", "KHANZA APRILIA", "MAHISYA RINDU HARI RIZKIA", "MUHAMAD PUTRA RAMADAN", "MUHAMMAD HILMI RAMADHAN", "MUHAMMAD RAFKA APRILLIO", "MUHAMMAD RIZKY FEBRIMKA", "MUKHAMAD RIZKY FABIANO", "NADIA RISKA AMANDA", "NAZWA REFALI SONATA", "NICOLE HALWA AZZAHRA LUBAY", "PUPUT ADI PUTRA", "RAFIF SABIAN", "RAHMA ZAKIA NOVALISA", "SAVANA ALYA", "SURFINA MARDIYANA", "SYAFIRA OKTAFIANI", "SYIFA RAMADHANI", "WAHYU EKA PRASETYO", "WINDI ALVIANTI"],
+        "8 F": ["Pilih Nama Murid", "AHMAD MAULANA", "ALBIBIT DESWAN RUSIANTO", "ALPHAN FADILLAH", "ALYA ALFARIDA", "AUDRY AZKA ZAFIRAH", "AYRA ADINDA PUTRI", "BUNGA SHAFARANTI", "CAHYA EKA SAPUTRI", "DARREN YUSUF ANDRIAN", "ELISHA CHRISTA", "FASHILA HUSNA", "GHALI ALTHOF", "GILANG MANGKU YUDHA", "HABIL KUSWOYO PUTRA", "HAFIDZUL AZMI FUADI NOVALDIANSYAH", "JONATHAN WIRATAMA", "JOVANZA ARYA WINATA", "KHANZA AULIA SHAFA", "KIMORA ATIERA SALITA", "MUHAMAD DENDI FRATAMA", "MUHAMMAD BAIKI JOHANSAH", "MUHAMMAD FATAN FABIAN PUTRA PRIYANTO", "MUHAMMAD KENZIE ABDUL BASIET", "MUHAMMAD WILDZAN M MAULANA", "NADIA TSAMARA", "NUR SALSABILA HASIBUAN", "PUTRI AMELIA KHOIRUNNISA", "QUEENA ALAAMA FISAABI", "RATU AGISKHA SYAHARA", "SAMANTHA NAFA RASHEESA", "SYAQILLA KHAIRUNNISA", "SYIFA HERIANA PUTRI", "YASMIN ZHAFIRA RAMADHANI", "YUSUF SALMAN ABBAD", "ZAHRAN FAYYADH RAMADHAN", "ZAHWA ALIYA NAJYA"],
+        "9 A": ["Pilih Nama Murid", "ABDUL HAKIM", "ALI JABBAR FIRDAUS", "ALIF NUR RAHMAT", "ANINDYA DZAKIYAH RAFIFAH", "ARI GILANG ROMADHON", "ATHAYA AZMI PRAYATA", "AZALEA MEISYAHIRA", "BELLICIA LIVIANA NAFEEZA", "DAVE LIANO CHANIA", "DAVINA SYAHIRA MAHARANI", "DEFA SEKAR ARUM", "DICNA VIOLA RAMADHANI", "FATIMAH AZZAHRA", "IDRAKI PUTRA ARIANTO", "KAMILA AININDYA PUTRI", "KAMILA NURHADIYATI", "KAYLA DIANDRA NAJMATUNISSA", "KENZO LAURENZI TONVI", "M. FIZLY ARAHMAN", "MUHAMMAD ATSILKA ALGHANI DONALD", "MUHAMMAD FADLI DHARMAWANSYAH", "MUHAMMAD JAZULI AZIZY", "MUHAMMAD RAFA ADITYA", "NAYCILLA AISYAH PURNOMO", "QANNZA FAIRUZA AZKIA", "RALFA NATHAN AL PARIZI", "RATU GABBY APRILIA", "RAVQY PUTRA SUGIYANTO", "RIDWAN OKTOFABIAN", "RISKIYAH MAHARANI PUTRI", "SYAHLA ANINDYA CAROLLINE", "SYALUNA NURI QOLBI", "TEGAR MAULANA", "TENGKU PASHA AL-VIAN", "TRI RAHAYU RAHMAWATI", "ZAIDAN RIZKIANTO"],
+        "9 B": ["Pilih Nama Murid", "AGUS RAMADHAN", "ALDI PUTRA DJIPTO", "ALIFAH NUR'AINI", "ALMIRA HASANATUL HAYYAH", "ALVIN ADITYA SAPUTRA", "AXEL ZHAFRAN", "AZIZUL HAFIDZ", "AZRIL ADITYA SAPUTRA", "CARISSA LAREIN", "CHAIRUNNISA SAFITRI", "CLARA LASMAULI MUTIARA TINAMBUNAN", "DAVINA PUTRI UTARI", "DINDA ZAKKIYAH PRAKASTIWI", "FAIRUZ AZRIEL FACHLEVI", "FIRYA IZZATI", "GHIFARY ANIBAYSYAH LEVI", "GRIMEZA AZIZAH ALDYAMIRU", "ILHAM DWI NUR LATIF", "KHANSAA DHILA", "MALIKA SYAHIRA AGFA", "MARVIN SA'DAN WIEKY WIBOWO", "MEISSA QURRATUL AINI", "MUHAMMAD AYYUBI SAFARAZ", "MUHAMMAD JAUHAR AL-KAHFI", "MUHIMAH ASMAN", "OCKTAVIA RIYADI PUTRI", "RADITYA RAGA HERLAMBANG", "RAFFA ADHITYA", "RAFFIANSYAH LUBIS", "RATHU ZALVARAYNA ALVINA", "REZA ANANDA PUTRA", "SAFA ANNISA", "YASMIN NURZAHRA", "ZAKI SATRIA ROSADI", "ZHAFIRAH AQILAH RANIYAH", "ZHEVANA PUTRI DENIAR"],
+        "9 C": ["Pilih Nama Murid", "ALDRY GHOFARDAN", "ALEXANDER AGUNG", "ALVIN MOHAMMAD KHASAFANY", "ALVIN RAMA PRAYOGA ADISUCIPTA", "ANINDIA NAHDATUL AKMAL", "BINTANG ANDROMEDA", "CALLYSTA PERDANA CAHYA ANUGRAH", "DESWITA PUTRI RACHMADIANI", "DIANA PERMATA PUTRI", "DIANA SRI RAHAYU", "FIANDRA ANINDYA HENRYANI", "GHIFARI PRATAMA", "GHUSTI FITRAH MARDIANSYAH", "GUSTI AYU NIGIE SHABRINA PUTRI", "IQLIMA AURELIA EL RASYID", "IRZHA FIRMANTO", "KEISYHA CAHAYA PUTRI PRATAMA", "KENNY HILMI ALMANNAN", "KEYLA NATASYA ARDIKA", "LENTIK OLIVIA", "LINTANG WAHYU ANGGORO", "LIONEL EVAN RAFSANJANI", "MARITZA ARETHA RAJNI BASKORO", "MICCHAILA ZIVARA LUBAY", "MUHAMAD PANJI AKRAM SYAH", "MUHAMMAD SOFIAN", "MUJAMMIL AKBAR", "NABILA NURKHALIFAH", "NAJAT IHSAN HABIBAH", "NESSA NADRA", "NIZAM HADZAMI MAZSAID", "NUR QOLBI QAULAN KARIMA", "REIFA HAMID AL AZIZ", "ZEEVANYA DEVEGA CHANDRA"],
+        "9 D": ["Pilih Nama Murid", "AGIS PRADITA", "ANNISA KHAIRANI", "AZURA CHILLA", "DZAIDAN MANSIZ", "FATHAN PUTRA KURNIA HAKIM", "FATHIR ALI", "HAFIZAH KHAYYIRAH LUBNA", "HANIF JULIAN YUSUF", "HARLAN PADLIANSYAH", "JASMINE ADARA METAVANI", "KIRANNA RIZKYA ANANDA", "LATIVA HELMI", "MAHESSA AYU KIRANI", "MARISA AZZAHRA", "MICHAEL FARUKH NASYHAN", "MUHAMMAD FAIRUZ AL WAHIB", "MUHAMMAD FAKHRI", "MUHAMMAD FAUZAN IBRAHIM", "MUHAMMAD GAHTAN", "MUHAMMAD HAFIDZ", "MUHAMMAD JAGA NUR ARDIYAALLAH", "MUHAMMAD RAFI AZHAR", "NAJMI FILLAYLI", "NAYLA RAHMATUL AZZA", "PUTRI CALLYSTA SALSABILLA", "PUTRI LAILA", "RAFA AL-FAIZ", "RAFA BAEHAQI", "RAFA FAUZAN KAMIL", "RAFAEL JULIANTO", "RASYA NURALI HADI", "REISYAH TRI RAFUDIN", "RESHA ELVITA", "SACHI PUTRI STEFANY", "SASKIA NAMIRA ZAHRA", "VIRLY AINUN NURRAHMA"],
+        "9 E": ["Pilih Nama Murid", "ABDUL MUHAMMAD RAMADHANI", "ABDUL RAZZAQ AL HAMID", "AHMAD FAHRI MUSDAR CANIAGO", "AIRIN SHAFIRA ARIFIN", "ALFAJRI NUR RAMADHAN", "ALIEF SYAHPUTRA", "AQUILA NUR VIDI", "ATHA NAOMIRA CARISSA", "CHICO ALVARO PHUNG", "DECHA AYU NOVIOLA DASRIL", "DELICIA RIFDAH ANDITY", "ELFATH MUHAMMAD RABBANI", "FAHRI WINATA", "HAFIZAH ALFIANI", "HAFIZH FATHIN AVERO", "HAIQAL HAMZAH", "KAFFAH ZULYANTO", "MARISYA DWI ANGGRAINI", "MUHAMAD IRZAM ADIANSYAH", "MUHAMMAD PUTRA WIJAYA", "MUHAMMAD RAFA IRAWAN", "PUTRI ANNORA CASTELIN", "PUTY RIZKYNA HERMALIA", "RADEN ALFIYAH KHANSA", "RISKHA SAMILATI", "SAHLA MAULIDA SAFFANAH", "SALSABILA ALSAFA", "SEMY ARDI WIRANATA", "SHAFEEQAH", "SHERLY DWI THIRTA PUTRI", "SHIRA FITRI NURAINI INDRIANTO", "VIRGY ANINDYA REDHA", "WINDA ANISA PUTRI", "YUDHISTIRA PRAYOGA", "ZAKY WILDAN KHUSAENI"],
+        "9 F": ["Pilih Nama Murid", "ALIF DARY ARDHANA", "ALKA NEARRA TAWASALNA", "AMANDA SEPTIA", "ANGGITA KHAIRUNNISA", "ANNISA GHASSANI", "ANUGRAH ANINDYA ROSIDIN", "ARAUFA TIARA", "AULIA SAFIRA RAMADHANI", "BILQIS NURUL QOLBI AL HAKIM", "DEVI ANGGRAENI", "DIMAS FAHRI", "DZHUHRI KHAIRULAZAM", "EL JABBAR GIBRAN WIBOWO", "FARIS ANWAR SOFIAN", "FAYA RISTANIASIH", "INTAN ALTHAFUNNISA", "KAFA ARVI MUAZAROH", "KEYLA FAIRUZ MAZIDAH", "LIVIANA MARSHA", "MIKHAELLA NUR KAMILAH", "MUHAMMAD AKHMAL RAMADHAN", "MUHAMMAD AZKHA SURYA RAMADHAN", "MUHAMMAD DAFFA AFIPUTRA", "MUHAMMAD NUR IHSAN", "MUHAMMAD SYAROF RIZQULLOH", "MUTIARA AZAHRA", "NADIN VINA VIRMANDA", "PANDYA RESWARA PUTRA IRAWAN", "PUTRI PUJIASTUTI", "RIZKY AKBAR RAFA PUTRA", "RYUKI RIFQI HARTANTO", "SHAFA NOVIYANTI", "SHEZA DESTIARA HANDOKO", "VICKA WARDAH FEBRIANA", "WAHYU MARTINO", "YOGA PRAMESTA HAIKAL PUTRA"]
+    };
+
+    // UTILS
+    function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+    // --- MODAL HANDLER DINAMIS ---
+    function openM(cfg) {
+        document.getElementById('mIcon').innerText = cfg.icon || 'ℹ️';
+        document.getElementById('mTitle').innerText = cfg.title;
+        document.getElementById('mMsg').innerText = cfg.msg || '';
+        
+        const wrapper = document.getElementById('mInputWrapper');
+        const cancelBtn = document.getElementById('mCancelBtn');
+
+        // Logic tampilan input & tombol batal
+        if (cfg.type === 'confirm') {
+            wrapper.style.display = 'none'; 
+            cancelBtn.style.display = 'block';
+        } else if (cfg.type === 'alert') {
+            wrapper.style.display = 'none'; 
+            cancelBtn.style.display = 'none'; // Sembunyikan tombol batal untuk alert biasa
+        } else {
+            wrapper.style.display = 'block'; 
+            cancelBtn.style.display = 'block';
+        }
+
+        document.getElementById('errorMsg').style.display = 'none';
+        
+        const btn = document.getElementById('mPrimaryBtn');
+        btn.innerText = cfg.btnText || 'Lanjutkan';
+        
+        btn.className = 'btn-m ' + (cfg.btnClass || 'btn-m-confirm');
+        
+        modalActionCallback = cfg.onConfirm;
+        btn.onclick = executeCallback; 
+
+        document.getElementById('modalContainer').classList.add('open');
+    }
+
+    function executeCallback() {
+        if (modalActionCallback) {
+            modalActionCallback(); 
+        }
+    }
+
+    function closeM() { 
+        document.getElementById('modalContainer').classList.remove('open');
+        document.getElementById('mInput').classList.remove('input-error');
+        document.getElementById('mInput').value = ""; 
+    }
+
+    function cekPassword() {
+        const inp = document.getElementById('mInput');
+        const card = document.querySelector('.modal-card');
+        const err = document.getElementById('errorMsg');
+        
+        const inputEnc = btoa(inp.value);
+
+        if ((targetMenu === 'menuWali' && inputEnc === PASS_WALI_ENC) || (targetMenu === 'menuPiket' && inputEnc === PASS_PIKET_ENC)) {
+            closeM(); navKe(targetMenu, targetBtn);
+        } else {
+            card.classList.add('shake');
+            inp.classList.add('input-error');
+            err.style.display = 'block';
+            setTimeout(() => { card.classList.remove('shake'); }, 400);
+            inp.value = "";
+        }
+    }
+
+    function mintaAkses(id, btn) {
+        targetMenu = id; targetBtn = btn;
+        let judul = "Akses Petugas";
+        if (id === 'menuPiket') judul = "Akses Guru Piket";
+        else if (id === 'menuWali') judul = "Akses Wali Kelas";
+        
+        openM({ 
+            icon: '🔒', 
+            title: judul, 
+            msg: '', 
+            type: 'password', 
+            btnText: 'Masuk', 
+            btnClass: 'btn-m-confirm',
+            onConfirm: cekPassword 
+        });
+    }
+
+    function confirmHapusSatu(idTimestamp) {
+        openM({
+            icon: '🗑️',
+            title: 'Hapus Data?',
+            msg: 'Apakah Anda yakin ingin menghapus data siswa ini? Tindakan tidak bisa dibatalkan.',
+            type: 'confirm', 
+            btnText: 'Hapus',
+            btnClass: 'btn-m-danger', 
+            onConfirm: () => {
+                closeM(); 
+                hapusSatuData(idTimestamp); 
             }
-        }
+        });
+    }
 
-        async function loadWali() {
-            const r = await fetch(`${SCRIPT_URL}?mode=izin&kelas=${KELAS_AKTIF}`);
-            const data = await r.json();
-            document.getElementById('wali_data').innerHTML = data.map((x, i) => `<tr><td>${i+1}</td><td>${x.tanggal}</td><td>${x.nama}</td><td>${x.alasan}</td><td><a href="${x.pdfUrl}" target="_blank">📄</a></td></tr>`).join('');
-        }
-
-        async function loadPiket() {
-            const r = await fetch(`${SCRIPT_URL}?mode=piket`);
-            RAW_PIKET = await r.json();
-            filterPiket('ALL', document.querySelector('.filter-btn.active'));
-        }
-
-        function filterPiket(t, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            let f = (t === 'ALL') ? RAW_PIKET : RAW_PIKET.filter(i => i.kelas.startsWith(t));
-            document.getElementById('piket_data').innerHTML = f.map((x, i) => `<tr><td>${i+1}</td><td>${x.tanggal}</td><td>${x.kelas}</td><td>${x.nama}</td><td>${x.alasan}</td><td><a href="${x.pdfUrl}" target="_blank">📄</a> <button onclick="hapusRow(${x.row})">🗑️</button></td></tr>`).join('');
-        }
-
-        async function hapusRow(r) {
-            if (confirm('Hapus data?')) {
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ mode: "delete", row: r }) });
-                loadPiket();
+    function confirmHapusSemua() {
+        openM({
+            icon: '⚠️',
+            title: 'Hapus SEMUA Data?',
+            msg: 'PERINGATAN: Seluruh data absensi akan dihapus permanen. Apakah Anda yakin?',
+            type: 'confirm',
+            btnText: 'Hapus Semua',
+            btnClass: 'btn-m-danger',
+            onConfirm: () => {
+                closeM();
+                hapusSemuaData();
             }
-        }
+        });
+    }
 
-        function toggleGrafik() { 
-            document.getElementById('section-grafik').classList.toggle('hidden'); 
-            if(!document.getElementById('section-grafik').classList.contains('hidden')) updateCharts(RAW_PIKET);
-        }
-
-        function updateCharts(data) {
-            const h = {}, b = {};
-            data.forEach(item => {
-                const d = item.tanggal.split(' ')[0], m = d.split('/')[1];
-                h[d] = (h[d] || 0) + 1; b[m] = (b[m] || 0) + 1;
+    function fetchDataOnline() {
+        if(!SCRIPT_URL.includes("http")) { alert("URL Script belum dipasang!"); return; }
+        showLoading();
+        fetch(SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                onlineDataCache = data;
+                renderWali();
+                renderPiket();
+                hideLoading();
+            })
+            .catch(err => {
+                hideLoading();
+                alert("Gagal mengambil data: " + err);
             });
-            const cfg = (ctx, l, d, c) => new Chart(ctx, { type: 'line', data: { labels: l, datasets: [{ data: d, borderColor: c, tension: 0.4 }] }, options: { maintainAspectRatio: false } });
-            if(chartH) chartH.destroy(); if(chartB) chartB.destroy();
-            chartH = cfg(document.getElementById('chartHarian'), Object.keys(h), Object.values(h), '#22d3ee');
-            chartB = cfg(document.getElementById('chartBulanan'), Object.keys(b), Object.values(b), '#f43f5e');
+    }
+
+    function renderWali() {
+        const tbody = document.getElementById('listWali');
+        if(onlineDataCache.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Belum ada data</td></tr>';
+            return;
+        }
+        tbody.innerHTML = onlineDataCache.slice().reverse().map(d => `<tr><td>${d.kelas}</td><td>${d.nama}</td><td>${d.tglFull}</td><td>${d.alasan}</td></tr>`).join('');
+    }
+
+    function renderPiket() {
+        const tbody = document.getElementById('listPiket');
+        if(onlineDataCache.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Belum ada data</td></tr>';
+            return;
+        }
+        // DI SINI PERUBAHANNYA: Ikon 🗑️ diganti jadi ✖
+        tbody.innerHTML = onlineDataCache.slice().reverse().map(d => `
+            <tr>
+                <td>${d.kelas}</td>
+                <td>${d.nama}</td>
+                <td>${d.tglFull}</td>
+                <td>${d.ortu}</td>
+                <td style="text-align:center;">
+                    <button onclick="confirmHapusSatu('${d.timestamp}')" class="btn-del-row">✖</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function hapusSatuData(idTimestamp) {
+        showLoading();
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "hapus", id: idTimestamp })
+        })
+        .then(res => res.json())
+        .then(response => {
+            if(response.result === 'success') {
+                fetchDataOnline(); 
+            } else {
+                hideLoading();
+                alert("Gagal menghapus data.");
+            }
+        })
+        .catch(err => {
+            hideLoading();
+            alert("Error: " + err);
+        });
+    }
+
+    function hapusSemuaData() {
+        showLoading();
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "hapusSemua" })
+        })
+        .then(res => res.json())
+        .then(response => {
+            if(response.result === 'success') {
+                fetchDataOnline();
+            } else {
+                hideLoading();
+                alert("Gagal menghapus semua data.");
+            }
+        })
+        .catch(err => {
+            hideLoading();
+            alert("Error: " + err);
+        });
+    }
+
+    function updateDaftarSiswa() {
+        const k = document.getElementById('kelas').value;
+        const c = document.getElementById('containerNamaSiswa');
+        if(dataSiswa[k]) {
+            c.innerHTML = `<select id="namaSiswa"><option value="">-- Pilih Nama --</option>${dataSiswa[k].map(n => `<option value="${n}">${n}</option>`).join('')}</select>`;
+        } else { c.innerHTML = `<input type="text" id="namaSiswa" placeholder="Pilih Kelas Dahulu" disabled style="background-color: #3e3e42; cursor: not-allowed; color: #888;" />`; }
+    }
+
+    function navKe(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-icons button').forEach(b => b.classList.remove('active-nav'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active-nav');
+        if(id === 'menuWali' || id === 'menuPiket') {
+            fetchDataOnline();
+        }
+    }
+
+    function buatSurat() {
+        if(!SCRIPT_URL.includes("http")) { 
+            openM({ icon: '⚠️', title: 'Error Sistem', msg: 'URL Script belum dipasang! Hubungi Admin.', type: 'alert', btnText: 'OK', onConfirm: () => closeM() });
+            return; 
         }
 
-        window.onload = loadMaster;
-    </script>
+        const nS = document.getElementById('namaSiswa').value;
+        const k = document.getElementById('kelas').value;
+        const nO = document.getElementById('namaOrtu').value;
+        const a = document.getElementById('alasan').value;
+        
+        if(!nS || !k || !nO) { 
+            openM({
+                icon: '⚠️',
+                title: 'Data Belum Lengkap',
+                msg: 'Mohon lengkapi semua kolom formulir sebelum melanjutkan.',
+                type: 'alert',
+                btnText: 'Mengerti',
+                onConfirm: () => closeM()
+            });
+            return; 
+        }
+        
+        const now = new Date();
+        const tglStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        const item = { tglFull: tglStr, nama: nS, kelas: k, ortu: nO.toUpperCase(), alasan: a };
+        currentData = item;
+
+        showLoading();
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(item)
+        })
+        .then(res => res.json())
+        .then(response => {
+            hideLoading();
+            if(response.result === 'success') {
+                tampilkanSurat(item);
+			} else {
+                // Tampilkan pesan error asli dari Google Script
+                alert("Gagal Server: " + (response.message || response.error || "Kesalahan tidak diketahui"));
+            }
+        })
+        .catch(err => {
+            hideLoading();
+            alert("Terjadi kesalahan koneksi. Pastikan internet lancar.");
+            console.error(err);
+        });
+    }
+
+    function tampilkanSurat(item) {
+        document.getElementById('inputFormWrapper').style.display = 'none';
+        document.getElementById('outputSection').style.display = 'block';
+        document.getElementById('surat').innerHTML = `
+            <div style="text-align: right; margin-bottom: 25px;">Jakarta, ${item.tglFull}</div>
+            <div style="margin-bottom: 20px;">Hal: <b>Permohonan Izin Tidak Masuk Sekolah</b></div>
+            <div style="margin-bottom: 25px;">Yth. Bapak/Ibu Wali Kelas ${item.kelas}<br>SMPN 110 Jakarta<br>di Tempat</div>
+            <p>Dengan hormat,</p>
+            <p>Saya yang bertanda tangan di bawah ini adalah orang tua/wali murid dari:</p>
+            <table style="width:100%; margin-bottom:15px; border:none;">
+                <tr>
+                    <td style="width:100px; padding:0px; border:none;">Nama Murid</td>
+                    <td style="width:10px; border:none;">:</td>
+                    <td style="border:none; padding:0px;"><b>${item.nama}</b></td>
+                </tr>
+                <tr>
+                    <td style="padding:0px; border:none;">Kelas</td>
+                    <td style="border:none;">:</td>
+                    <td style="border:none; padding:0px;">${item.kelas}</td>
+                </tr>
+            </table>
+            <p>Melalui surat ini kami memberitahukan bahwa anak tersebut di atas ${item.alasan === "Sakit" ? "sedang sakit" : "berhalangan hadir dikarenakan adanya urusan keluarga"}.</p>
+            <p>Demikian surat ini kami sampaikan. Atas perhatian Bapak/Ibu, kami ucapkan terima kasih.</p>
+            <div class="ttd-wrapper">
+                <div class="ttd-box">
+                    Hormat kami,<br><br><br><br>
+                    ( <b>${item.ortu}</b> )
+                </div>
+            </div>`;
+    }
+
+    function sortTable(tId, n) {
+        const table = document.getElementById(tId);
+        let rows, sw, i, x, y, sh, dir, count = 0;
+        sw = true; dir = "asc";
+        while (sw) {
+            sw = false; rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                sh = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir == "asc") { if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) { sh = true; break; }
+                } else { if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) { sh = true; break; } }
+            }
+            if (sh) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); sw = true; count ++;
+            } else { if (count == 0 && dir == "asc") { dir = "desc"; sw = true; } }
+        }
+    }
+
+    function kirimWhatsApp() {
+        const msg = `Assalamu'alaikum, saya orang tua dari ${currentData.nama} (${currentData.kelas}). Menginfokan bahwa anak kami hari ini ${currentData.alasan}.`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+    
+    function resetForm() { 
+        document.getElementById('inputFormWrapper').style.display = 'block'; 
+        document.getElementById('outputSection').style.display = 'none'; 
+        document.getElementById('kelas').value = "";
+        document.getElementById('namaOrtu').value = "";
+        document.getElementById('containerNamaSiswa').innerHTML = `<input type="text" id="namaSiswa" placeholder="Pilih Kelas Dahulu" disabled style="background-color: #3e3e42; cursor: not-allowed; color: #888;" />`;
+    }
+
+    function exportCSV() {
+        if(onlineDataCache.length === 0) { alert("Data kosong atau belum dimuat!"); return; }
+        let csv = "Kelas,Nama,Tanggal,Alasan,Wali\n" + onlineDataCache.map(d => `${d.kelas},${d.nama},${d.tglFull},${d.alasan},${d.ortu}`).join("\n");
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Laporan_Izin_Online.csv'; a.click();
+    }
+</script>
 </body>
 </html>
