@@ -3,178 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-IZIN 110</title>
+  <title>E-IZIN 110 | NEON LOGIN</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Poppins', sans-serif; background: #030712; color: white; min-height: 100vh; margin: 0; overflow-x: hidden; }
-    
-    /* ANIMASI BINTANG */
     #starCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-
-    /* GLOW LOGIN BOX */
-    .login-glow { position: relative; z-index: 10; }
-    .login-glow::before {
-      content: ""; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px;
-      background: linear-gradient(45deg, #6366f1, #a855f7, #6366f1);
-      z-index: -1; border-radius: 3.1rem; filter: blur(15px); opacity: 0.4;
-      animation: shiftGlow 4s linear infinite;
-    }
-    @keyframes shiftGlow { 0%, 100% { opacity: 0.4; filter: blur(15px); } 50% { opacity: 0.7; filter: blur(20px); } }
-
     .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-
-    /* KOTAK REKAP SOLID (TIDAK TRANSPARAN) */
-    .solid-card { 
-      background: #0f172a; /* Warna Biru Gelap Pekat */
-      border: 1px solid #1e293b; 
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    
+    /* EFEK GARIS MENYALA PADA KOTAK LOGIN */
+    .neon-box {
+      border: 2px solid #6366f1;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.5), 
+                  0 0 20px rgba(99, 102, 241, 0.3), 
+                  inset 0 0 15px rgba(99, 102, 241, 0.2);
+      animation: neonPulse 2s infinite alternate;
     }
 
-    /* TOMBOL 3D PUSHABLE */
+    @keyframes neonPulse {
+      from { 
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2); 
+        border-color: rgba(99, 102, 241, 0.6);
+      }
+      to { 
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 40px rgba(99, 102, 241, 0.4); 
+        border-color: rgba(99, 102, 241, 1);
+      }
+    }
+
+    .solid-bg { background: #0f172a !important; border: 2px solid #334155; }
+    
     .btn-3d-pushable { position: relative; background: #3730a3; border-radius: 1rem; border: none; padding: 0; cursor: pointer; width: 100%; }
-    .btn-3d-front {
-      display: block; position: relative; padding: 1rem; border-radius: 1rem; font-size: 1.1rem;
-      color: white; background: #6366f1; transform: translateY(-6px); transition: transform 34ms;
-    }
+    .btn-3d-front { display: block; position: relative; padding: 1rem; border-radius: 1rem; font-size: 1.1rem; color: white; background: #6366f1; transform: translateY(-6px); transition: transform 34ms; }
     .btn-3d-pushable:active .btn-3d-front { transform: translateY(-2px); }
-
     .hidden-section { display: none !important; }
-    .input-upper { text-transform: uppercase; }
+    
+    input, select, textarea { 
+      background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; 
+      border-radius: 0.8rem; padding: 10px; width: 100%; text-align: center; 
+    }
+    input::placeholder, textarea::placeholder { text-align: center; }
 
-    /* TABEL ANTI-TURUN */
     .table-container { overflow-x: auto; width: 100%; border-radius: 1rem; }
     table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.4); border: 1px solid #334155; }
     th, td { padding: 12px 15px; border: 1px solid #334155; font-size: 12px; text-align: center; }
-    th { background: rgba(99, 102, 241, 0.3); color: white; white-space: nowrap; }
-    .col-nama { text-align: left !important; white-space: nowrap !important; font-weight: 700; min-width: 220px; }
-    
-    input, select, textarea { 
-        background: #1e293b !important; border: 1px solid #334155 !important; 
-        color: white !important; border-radius: 0.8rem !important; text-align: center; width: 100%;
-    }
+    th { background: #1e1b4b; color: white; }
+    .col-nama { text-align: center !important; min-width: 220px; font-weight: 600; }
   </style>
 </head>
-<body class="p-4 flex flex-col items-center justify-center">
+<body class="p-4 flex flex-col items-center">
 
   <canvas id="starCanvas"></canvas>
 
-  <div id="loginPage" class="w-full max-w-md my-auto pt-10">
-    <div class="login-glow">
-      <div class="glass p-10 rounded-[3rem] text-center shadow-2xl">
-        <div class="flex justify-center mb-4">
-          <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" alt="Logo Sekolah" class="h-24 w-auto drop-shadow-lg">
-        </div>
-        <h1 class="text-3xl font-black uppercase italic tracking-tighter mb-1">E - I Z I N</h1>
-        <h2 class="text-sm font-bold tracking-widest text-indigo-400 mb-6">SMPN 110 JAKARTA</h2>
-        <input type="text" id="loginInput" placeholder="NIS / USERNAME" class="p-4 mb-6 font-bold input-upper outline-none" autocomplete="off">
-        <button onclick="handleLogin()" class="btn-3d-pushable">
-          <span class="btn-3d-front font-black uppercase tracking-wider">Masuk</span>
-        </button>
+  <div id="loginPage" class="w-full max-w-md my-auto pt-20">
+    <div class="glass neon-box p-10 rounded-[3rem] text-center">
+      <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" class="h-24 mx-auto mb-4">
+      <h1 class="text-3xl font-black italic mb-6 text-indigo-400">E-IZIN 110</h1>
+      <input type="text" id="loginInput" placeholder="NIS / USERNAME" class="font-bold uppercase outline-none">
+      <div class="mt-6">
+        <button onclick="handleLogin()" class="btn-3d-pushable"><span class="btn-3d-front font-black uppercase">Masuk</span></button>
       </div>
     </div>
   </div>
 
-  <div id="siswaDashboard" class="hidden-section w-full max-w-lg space-y-6 pt-6">
-    <div class="glass p-6 rounded-[2rem] flex flex-col items-center text-center border-t-8 border-indigo-500 shadow-xl">
-      <h2 id="siswaName" class="text-xl font-bold uppercase">...</h2>
-      <p id="siswaKelasLabel" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mt-1"></p>
-      <button onclick="location.reload()" class="mt-4 p-3 bg-rose-500/20 text-rose-500 rounded-2xl border border-rose-500/20 shadow-lg"><i data-lucide="power"></i></button>
-    </div>
-    
-    <div class="glass p-8 rounded-[2.5rem] space-y-5 shadow-2xl">
-      <input type="text" id="namaOrtu" placeholder="NAMA ORANG TUA" class="p-4 font-bold uppercase">
-      <select id="alasanIzin" class="p-4 font-bold">
-        <option value="Sakit">Sakit</option>
-        <option value="Izin Keperluan">Izin Keperluan</option>
-      </select>
-      <textarea id="ketIzin" class="p-4 h-24 text-center" placeholder="Detail alasan..."></textarea>
-      <button onclick="konfirmasiKirim()" class="btn-3d-pushable">
-          <span class="btn-3d-front font-black uppercase tracking-wider">Kirim Laporan</span>
-      </button>
+  <div id="siswaDashboard" class="hidden-section w-full max-w-lg space-y-6">
+    <div class="glass p-8 rounded-[3rem] text-center border-t-[10px] border-indigo-600 shadow-xl">
+      <h2 class="text-2xl font-black italic uppercase" id="siswaName">NAMA SISWA</h2>
+      <p id="siswaKelas" class="text-indigo-400 font-bold mb-6"></p>
+      
+      <div id="formKontenSiswa" class="text-left space-y-4">
+        <div><label class="text-[10px] font-bold block text-center uppercase mb-1">Alasan Izin</label>
+          <select id="alasanIzin"><option value="Sakit">Sakit</option><option value="Izin">Izin</option></select>
+        </div>
+        <div><label class="text-[10px] font-bold block text-center uppercase mb-1">Nama Orang Tua</label>
+          <input type="text" id="namaOrtu" placeholder="Nama Lengkap Orang Tua">
+        </div>
+        <div><label class="text-[10px] font-bold block text-center uppercase mb-1">Keterangan</label>
+          <textarea id="ketIzin" placeholder="Jelaskan detail alasan di sini..." class="h-24"></textarea>
+        </div>
+        <button onclick="konfirmasiKirim()" class="btn-3d-pushable"><span class="btn-3d-front font-black uppercase">Kirim Laporan</span></button>
+        <button onclick="location.reload()" class="w-full text-rose-500 font-bold text-sm mt-4">LOGOUT</button>
+      </div>
     </div>
   </div>
 
   <div id="waliDashboard" class="hidden-section w-full max-w-6xl space-y-6">
-    <div class="glass p-8 rounded-[3rem] flex flex-col items-center justify-center text-center border-t-[10px] border-indigo-600 shadow-xl">
-      <h2 class="text-4xl font-black italic uppercase tracking-tighter">
-        <span id="titleRole">KELAS</span> <span id="labelKelas" class="text-indigo-500"></span>
-      </h2>
-      <p id="waliName" class="text-[11px] text-indigo-300 font-bold uppercase tracking-widest mt-2"></p>
-      <div id="saveStatus" class="text-emerald-500 font-bold text-[10px] uppercase mt-3 px-3 py-1 bg-emerald-500/10 rounded-full">
-        ● Status: Siaga
-      </div>
-      <div class="flex gap-4 mt-8">
-        <button onclick="toggleViewWali('hariIni')" class="p-5 bg-indigo-500/20 text-indigo-400 rounded-2xl border border-indigo-500/20 shadow-lg hover:bg-indigo-500/30 transition-all">
-          <i data-lucide="calendar-check"></i>
-        </button>
-        <button onclick="toggleViewWali('rekap')" class="p-5 bg-amber-500/20 text-amber-400 rounded-2xl border border-amber-400/20 shadow-lg hover:bg-amber-500/30 transition-all">
-          <i data-lucide="database"></i>
-        </button>
-        <button onclick="location.reload()" class="p-5 bg-rose-500/20 text-rose-500 rounded-2xl border border-rose-500/20 shadow-lg hover:bg-rose-500/30 transition-all">
-          <i data-lucide="power"></i>
-        </button>
+    <div class="glass p-8 rounded-[3rem] flex flex-col items-center text-center border-t-[10px] border-indigo-600">
+      <h2 class="text-4xl font-black italic uppercase"><span id="titleRole">KELAS</span> <span id="labelKelas" class="text-indigo-500"></span></h2>
+      <p id="waliName" class="text-[11px] text-indigo-300 font-bold mt-2 uppercase"></p>
+      
+      <div class="flex flex-wrap justify-center gap-4 mt-8">
+        <button onclick="switchTable()" title="Tukar Tabel" class="p-5 bg-indigo-500/20 text-indigo-400 rounded-2xl border border-indigo-500/20 hover:scale-110 transition-transform"><i data-lucide="arrow-left-right"></i></button>
+        <button id="btnGrafik" onclick="toggleViewWali('grafik')" title="Grafik" class="hidden-section p-5 bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/20 hover:scale-110 transition-transform"><i data-lucide="bar-chart-3"></i></button>
+        <button onclick="location.reload()" title="Logout" class="p-5 bg-rose-500/20 text-rose-500 rounded-2xl border border-rose-500/20 hover:scale-110 transition-transform"><i data-lucide="power"></i></button>
       </div>
     </div>
+
+    <div id="sectionGrafik" class="hidden-section"><div class="glass p-8 rounded-[3rem]" style="height: 450px;"><canvas id="chartIzin"></canvas></div></div>
 
     <div id="sectionHariIni" class="glass p-6 rounded-[2.5rem] border-t-4 border-indigo-400">
-      <div class="text-indigo-400 font-bold uppercase text-xs italic mb-4">Laporan Masuk Hari Ini</div>
-      <div class="table-container">
-        <table>
-            <thead><tr><th>No</th><th>NIS</th><th class="col-nama">Nama Siswa</th><th>Kelas</th><th>Status</th><th>Keterangan</th></tr></thead>
-            <tbody id="hariIniBodyWali"></tbody>
-        </table>
-      </div>
+      <h3 class="text-sm font-bold text-indigo-400 mb-4 uppercase italic text-center">Laporan Hari Ini</h3>
+      <div class="table-container"><table><thead><tr><th>No</th><th>NIS</th><th class="col-nama">Nama</th><th>Kelas</th><th>Status</th><th>Keterangan</th></tr></thead><tbody id="hariIniBodyWali"></tbody></table></div>
     </div>
 
-    <div id="sectionRekap" class="hidden-section solid-card p-6 rounded-[2.5rem] border-t-4 border-amber-500">
+    <div id="sectionRekap" class="hidden-section solid-bg p-8 rounded-[3rem]">
       <div class="flex justify-between items-center mb-6">
-        <div class="text-amber-400 font-bold uppercase text-xs italic">Data Rekap Kumulatif</div>
-        <button onclick="cetakRekapPDF()" class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-bold border border-emerald-500/30 flex gap-2"><i data-lucide="printer" class="w-4 h-4"></i> PDF</button>
+        <h3 class="text-lg font-black text-amber-400 uppercase italic">Rekap Kumulatif</h3>
+        <button onclick="cetakRekapPDF()" class="p-2 bg-emerald-600 text-white rounded-lg text-xs font-bold px-4 flex gap-2"><i data-lucide="printer" class="w-4 h-4"></i> CETAK PDF F4</button>
       </div>
-      <div class="table-container">
-        <table id="tableRekapUtama">
-            <thead><tr><th>No</th><th>NIS</th><th class="col-nama">Nama Siswa</th><th>Kelas</th><th>S</th><th>I</th><th class="text-rose-400">A</th><th>Total</th></tr></thead>
-            <tbody id="rekapBody"></tbody>
-        </table>
-      </div>
+      <div class="table-container"><table id="tableRekapUtama"><thead><tr><th>No</th><th>NIS</th><th class="col-nama">Nama Siswa</th><th>Kelas</th><th>S</th><th>I</th><th>A</th><th>Total</th></tr></thead><tbody id="rekapBody"></tbody></table></div>
     </div>
   </div>
 
   <script>
-    // --- ANIMASI BINTANG ---
-    const canvas = document.getElementById('starCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, stars;
-    function initStars() {
-      width = window.innerWidth; height = window.innerHeight;
-      canvas.width = width; canvas.height = height; stars = [];
-      for (let i = 0; i < 150; i++) stars.push({ x: Math.random() * width, y: Math.random() * height, size: Math.random() * 1.5 + 0.5, speed: Math.random() * 0.8 + 0.2, opacity: Math.random() });
-    }
-    function drawStars() {
-      ctx.clearRect(0, 0, width, height);
-      for (let s of stars) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
-        s.y += s.speed; if (s.y > height) { s.y = -5; s.x = Math.random() * width; }
-      }
-      requestAnimationFrame(drawStars);
-    }
-    window.addEventListener('resize', initStars); initStars(); drawStars();
-
-    // --- LOGIKA UTAMA ---
     const API_URL = "https://script.google.com/macros/s/AKfycbxB7YdqjkW9l9HQ6qbI2ow7-JOroGVsXs1ExdW7uJmBXvjTKRNjOVh4nxvuIPSEzMRlxA/exec"; 
-
+ 
     let userAktif = null;
     let dataHariIniGlobal = [];
-    let saveTimeout = null;
-
-    lucide.createIcons();
+    let currentTableView = 'hariIni';
+    let myChart = null;
 
     async function handleLogin() {
       const input = document.getElementById('loginInput').value.trim().toUpperCase();
@@ -185,83 +139,131 @@
         if (data.status === "success") {
           userAktif = data.user;
           document.getElementById('loginPage').classList.add('hidden-section');
-          if (userAktif.role.toLowerCase() === 'siswa') {
-            document.getElementById('siswaDashboard').classList.remove('hidden-section');
-            document.getElementById('siswaName').innerText = userAktif.nama;
-            document.getElementById('siswaKelasLabel').innerText = "NIS: " + userAktif.nis + " | KELAS: " + userAktif.kelas;
+          if (userAktif.role === "siswa") {
+              document.getElementById('siswaDashboard').classList.remove('hidden-section');
+              document.getElementById('siswaName').innerText = userAktif.nama;
+              document.getElementById('siswaKelas').innerText = "KELAS " + userAktif.kelas;
+              const today = new Date().toDateString();
+              if (localStorage.getItem(`izin_${userAktif.nis}_${today}`)) {
+                document.getElementById('formKontenSiswa').innerHTML = `<div class='p-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center'><i data-lucide='check-circle' class='mx-auto mb-2 text-emerald-500'></i><p class='text-sm font-bold text-emerald-400 uppercase'>Laporan Sudah Terkirim Hari Ini.</p></div><button onclick='location.reload()' class='w-full text-rose-500 font-bold text-sm mt-6'>LOGOUT</button>`;
+              }
           } else {
-            document.getElementById('waliDashboard').classList.remove('hidden-section');
-            document.getElementById('labelKelas').innerText = userAktif.kelas;
-            document.getElementById('titleRole').innerText = userAktif.kelas === "7, 8, 9" ? "PIKET" : "KELAS";
-            document.getElementById('waliName').innerText = "USER: " + userAktif.nama;
-            loadDataWali();
+              document.getElementById('waliDashboard').classList.remove('hidden-section');
+              document.getElementById('labelKelas').innerText = userAktif.kelas;
+              document.getElementById('waliName').innerText = userAktif.nama;
+              if(userAktif.kelas === "110" || userAktif.kelas === "7, 8, 9") {
+                  document.getElementById('titleRole').innerText = "PIKET";
+                  document.getElementById('btnGrafik').classList.remove('hidden-section');
+              }
+              loadData();
           }
           lucide.createIcons();
-        } else { Swal.fire('Gagal', 'User tidak ditemukan', 'error'); }
-      } catch (e) { Swal.fire('Error', 'Server sibuk, coba lagi', 'error'); }
+        } else { Swal.fire('Error', 'User tidak ditemukan', 'error'); }
+      } catch (e) { Swal.fire('Error', 'Gagal Koneksi', 'error'); }
     }
 
-    async function loadDataWali() {
+    async function loadData() {
       const [resH, resR] = await Promise.all([
         fetch(`${API_URL}?action=getIzinHariIni&kelas=${encodeURIComponent(userAktif.kelas)}`),
         fetch(`${API_URL}?action=getAdminData&kelas=${encodeURIComponent(userAktif.kelas)}`)
       ]);
       dataHariIniGlobal = await resH.json();
-      renderTabelHariIni(dataHariIniGlobal);
-      renderTabelRekap(await resR.json());
+      renderHariIni(dataHariIniGlobal);
+      renderRekap(await resR.json());
     }
 
-    function renderTabelHariIni(data) {
-      document.getElementById('hariIniBodyWali').innerHTML = data.map((s, i) => `
-        <tr><td>${i+1}</td><td>${s.nis}</td><td class="col-nama">${s.nama}</td><td class="text-amber-400 font-bold">${s.kelas_siswa}</td><td>${s.status}</td><td class="text-[10px] italic text-slate-400">${s.keterangan}</td></tr>
-      `).join('');
+    function renderHariIni(data) {
+      document.getElementById('hariIniBodyWali').innerHTML = data.map((s, i) => `<tr><td>${i+1}</td><td>${s.nis}</td><td class='font-bold'>${s.nama}</td><td>${s.kelas_siswa}</td><td>${s.status}</td><td>${s.keterangan}</td></tr>`).join('');
     }
 
-    function renderTabelRekap(data) {
-      document.getElementById('rekapBody').innerHTML = data.map((s, i) => `
-        <tr data-nis="${s.nis}"><td>${i+1}</td><td>${s.nis}</td><td class="col-nama">${s.nama}</td><td class="text-amber-400 font-bold">${s.kelas_siswa}</td>
-        <td><input type="number" class="w-12 val-s" value="${s.rekap?.S || 0}" oninput="autoSave(this)"></td>
-        <td><input type="number" class="w-12 val-i" value="${s.rekap?.I || 0}" oninput="autoSave(this)"></td>
-        <td><input type="number" class="w-12 val-a text-rose-400" value="${s.rekap?.A || 0}" oninput="autoSave(this)"></td>
-        <td class="row-total font-black text-indigo-400">${(parseInt(s.rekap?.S)||0)+(parseInt(s.rekap?.I)||0)+(parseInt(s.rekap?.A)||0)}</td></tr>
-      `).join('');
+    function renderRekap(data) {
+      document.getElementById('rekapBody').innerHTML = data.map((s, i) => {
+        const t = (parseInt(s.rekap?.S)||0) + (parseInt(s.rekap?.I)||0) + (parseInt(s.rekap?.A)||0);
+        return `<tr><td>${i+1}</td><td>${s.nis}</td><td class='font-bold'>${s.nama}</td><td>${s.kelas_siswa}</td><td>${s.rekap?.S||0}</td><td>${s.rekap?.I||0}</td><td>${s.rekap?.A||0}</td><td class='text-indigo-400 font-bold'>${t}</td></tr>`;
+      }).join('');
     }
 
-    function autoSave(input) {
-      const tr = input.closest('tr');
-      tr.querySelector('.row-total').innerText = (parseInt(tr.querySelector('.val-s').value)||0) + (parseInt(tr.querySelector('.val-i').value)||0) + (parseInt(tr.querySelector('.val-a').value)||0);
-      document.getElementById('saveStatus').innerText = "● Menyimpan...";
-      clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(async () => {
-        const rows = Array.from(document.querySelectorAll('#rekapBody tr')).map(r => ({
-          nis: r.dataset.nis, s: r.querySelector('.val-s').value, i: r.querySelector('.val-i').value, a: r.querySelector('.val-a').value
-        }));
-        await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateBulkAbsen', data: rows }) });
-        document.getElementById('saveStatus').innerText = "● Data Tersimpan";
-      }, 1500);
+    function switchTable() {
+      currentTableView = currentTableView === 'hariIni' ? 'rekap' : 'hariIni';
+      toggleViewWali(currentTableView);
     }
 
     function toggleViewWali(view) {
       document.getElementById('sectionHariIni').classList.toggle('hidden-section', view !== 'hariIni');
       document.getElementById('sectionRekap').classList.toggle('hidden-section', view !== 'rekap');
+      document.getElementById('sectionGrafik').classList.toggle('hidden-section', view !== 'grafik');
+      if(view === 'grafik') setTimeout(updateChart, 100);
+    }
+
+    function updateChart() {
+      const k7 = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith('7')).length;
+      const k8 = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith('8')).length;
+      const k9 = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith('9')).length;
+      const ctx = document.getElementById('chartIzin').getContext('2d');
+      if (myChart) myChart.destroy();
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['KELAS 7', 'KELAS 8', 'KELAS 9'],
+          datasets: [{
+            data: [k7, k8, k9],
+            backgroundColor: ['#6366f1', '#f59e0b', '#10b981'],
+            borderRadius: 15
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
     }
 
     async function konfirmasiKirim() {
       const ortu = document.getElementById('namaOrtu').value.trim();
       const ket = document.getElementById('ketIzin').value.trim();
       if(!ortu || !ket) return Swal.fire('Lengkapi Data', '', 'warning');
-      const p = new URLSearchParams({ action: 'submitIzin', nis: userAktif.nis, nama_siswa: userAktif.nama, kelas: userAktif.kelas, alasan: document.getElementById('alasanIzin').value, keterangan: ket, nama_ortu: ortu });
-      await fetch(`${API_URL}?${p.toString()}`);
-      Swal.fire('Berhasil!', 'Laporan terkirim', 'success').then(() => location.reload());
+      Swal.fire({ title: 'Kirim Izin?', icon: 'question', showCancelButton: true }).then(async (res) => {
+        if(res.isConfirmed) {
+          const p = new URLSearchParams({ action: 'submitIzin', nis: userAktif.nis, nama_siswa: userAktif.nama, kelas: userAktif.kelas, alasan: document.getElementById('alasanIzin').value, keterangan: ket, nama_ortu: ortu });
+          await fetch(`${API_URL}?${p.toString()}`);
+          localStorage.setItem(`izin_${userAktif.nis}_${new Date().toDateString()}`, "true");
+          Swal.fire('Berhasil', '', 'success').then(() => location.reload());
+        }
+      });
     }
 
     function cetakRekapPDF() {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'mm', 'a4');
-      doc.text(`REKAPITULASI ABSENSI ${userAktif.kelas}`, 105, 15, { align: 'center' });
-      doc.autoTable({ html: '#tableRekapUtama', startY: 22, theme: 'grid' });
-      doc.save(`Rekap_Absensi.pdf`);
+      const doc = new jsPDF('p', 'mm', [215.9, 330.2]); 
+      const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      doc.setFontSize(14).setFont(undefined, 'bold').text("REKAPITULASI KEHADIRAN SISWA", 107.9, 15, { align: 'center' });
+      doc.autoTable({ 
+        html: '#tableRekapUtama', startY: 28, theme: 'grid',
+        styles: { fontSize: 8.5, halign: 'center' },
+        headStyles: { fillColor: [30, 27, 75], halign: 'center' },
+        didDrawPage: (data) => {
+          const finalY = data.cursor.y + 15;
+          doc.text(`Jakarta, ${tgl}`, 145, finalY);
+          doc.text("Wali Kelas,", 145, finalY + 6);
+          doc.setFont(undefined, 'bold').text(userAktif.nama, 145, finalY + 22);
+          doc.setFont(undefined, 'normal').text("__________________________", 145, finalY + 23);
+        }
+      });
+      doc.save(`Rekap_${userAktif.kelas}.pdf`);
     }
+
+    const sCanvas = document.getElementById('starCanvas');
+    const sCtx = sCanvas.getContext('2d');
+    let stars = [];
+    function initStars() {
+      sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
+      stars = []; for (let i = 0; i < 150; i++) stars.push({ x: Math.random() * sCanvas.width, y: Math.random() * sCanvas.height, size: Math.random() * 1.5, speed: Math.random() * 0.5 + 0.2 });
+    }
+    function drawStars() {
+      sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+      sCtx.fillStyle = "white";
+      for (let s of stars) { sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2); sCtx.fill(); s.y += s.speed; if (s.y > sCanvas.height) s.y = -5; }
+      requestAnimationFrame(drawStars);
+    }
+    window.addEventListener('resize', initStars); initStars(); drawStars();
+    lucide.createIcons();
   </script>
 </body>
 </html>
