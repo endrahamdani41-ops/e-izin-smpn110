@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-IZIN 110 | STARLIGHT VERSION</title>
+  <title>E-IZIN 110</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -169,6 +169,7 @@
 
     // --- LOGIKA UTAMA ---
     const API_URL = "https://script.google.com/macros/s/AKfycbxB7YdqjkW9l9HQ6qbI2ow7-JOroGVsXs1ExdW7uJmBXvjTKRNjOVh4nxvuIPSEzMRlxA/exec"; 
+
     let userAktif = null;
     let dataHariIniGlobal = [];
     let saveTimeout = null;
@@ -191,7 +192,7 @@
           } else {
             document.getElementById('waliDashboard').classList.remove('hidden-section');
             document.getElementById('labelKelas').innerText = userAktif.kelas;
-            document.getElementById('titleRole').innerText = userAktif.kelas === "110" ? "PIKET" : "KELAS";
+            document.getElementById('titleRole').innerText = userAktif.kelas === "7, 8, 9" ? "PIKET" : "KELAS";
             document.getElementById('waliName').innerText = "USER: " + userAktif.nama;
             loadDataWali();
           }
