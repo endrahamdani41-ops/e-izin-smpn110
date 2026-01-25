@@ -160,7 +160,7 @@
     function drawStars() {
       ctx.clearRect(0, 0, width, height);
       for (let s of stars) {
-        ctx.fillStyle = rgba(255, 255, 255, ${s.opacity}); ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
         s.y += s.speed; if (s.y > height) { s.y = -5; s.x = Math.random() * width; }
       }
       requestAnimationFrame(drawStars);
@@ -179,7 +179,7 @@
       const input = document.getElementById('loginInput').value.trim().toUpperCase();
       if (!input) return;
       try {
-        const res = await fetch(${API_URL}?action=login&username=${encodeURIComponent(input)});
+        const res = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(input)}`);
         const data = await res.json();
         if (data.status === "success") {
           userAktif = data.user;
@@ -202,8 +202,8 @@
 
     async function loadDataWali() {
       const [resH, resR] = await Promise.all([
-        fetch(${API_URL}?action=getIzinHariIni&kelas=${encodeURIComponent(userAktif.kelas)}),
-        fetch(${API_URL}?action=getAdminData&kelas=${encodeURIComponent(userAktif.kelas)})
+        fetch(`${API_URL}?action=getIzinHariIni&kelas=${encodeURIComponent(userAktif.kelas)}`),
+        fetch(`${API_URL}?action=getAdminData&kelas=${encodeURIComponent(userAktif.kelas)}`)
       ]);
       dataHariIniGlobal = await resH.json();
       renderTabelHariIni(dataHariIniGlobal);
@@ -250,16 +250,16 @@
       const ket = document.getElementById('ketIzin').value.trim();
       if(!ortu || !ket) return Swal.fire('Lengkapi Data', '', 'warning');
       const p = new URLSearchParams({ action: 'submitIzin', nis: userAktif.nis, nama_siswa: userAktif.nama, kelas: userAktif.kelas, alasan: document.getElementById('alasanIzin').value, keterangan: ket, nama_ortu: ortu });
-      await fetch(${API_URL}?${p.toString()});
+      await fetch(`${API_URL}?${p.toString()}`);
       Swal.fire('Berhasil!', 'Laporan terkirim', 'success').then(() => location.reload());
     }
 
     function cetakRekapPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
-      doc.text(REKAPITULASI ABSENSI ${userAktif.kelas}, 105, 15, { align: 'center' });
+      doc.text(`REKAPITULASI ABSENSI ${userAktif.kelas}`, 105, 15, { align: 'center' });
       doc.autoTable({ html: '#tableRekapUtama', startY: 22, theme: 'grid' });
-      doc.save(Rekap_Absensi.pdf);
+      doc.save(`Rekap_Absensi.pdf`);
     }
   </script>
 </body>
