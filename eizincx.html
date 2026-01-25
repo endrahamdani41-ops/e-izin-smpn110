@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-IZIN SMPN 110 | FINAL SYSTEM</title>
+  <title>E-IZIN 110 | PIKET FILTER SYSTEM</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   
@@ -16,290 +16,263 @@
     body { font-family: 'Poppins', sans-serif; background: #060a16; color: white; min-height: 100vh; }
     .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
     .btn-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); transition: 0.3s; }
+    .hidden-section { display: none !important; }
+    .input-upper { text-transform: uppercase; }
+
+    table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); border: 1px solid #334155; }
+    th { background: rgba(99, 102, 241, 0.4); color: white; padding: 10px; border: 1px solid #475569; font-size: 11px; text-transform: uppercase; }
+    td { padding: 8px; border: 1px solid #334155; font-size: 12px; text-align: center; }
     
     input, select, textarea { 
-      background: rgba(255,255,255,0.05) !important; 
-      border: 1px solid rgba(255,255,255,0.2) !important; 
-      border-radius: 0.75rem !important; 
-      color: white !important; 
-      text-align: center; 
+        background: #0f172a !important; border: 1px solid #334155 !important; 
+        color: white !important; border-radius: 0.5rem !important; text-align: center; width: 100%;
     }
-
-    /* Animasi Berkedip Sabar Ya */
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-    .animate-blink { animation: blink 0.8s infinite; }
-
-    .filter-piket { background: #1e293b !important; border: 2px solid #10b981 !important; color: #10b981 !important; font-weight: 800; }
-    select option { background-color: #0f172a !important; color: #ffffff !important; }
-
-    table { width: 100%; border-collapse: collapse; border: 2px solid rgba(255, 255, 255, 0.2); }
-    th { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; font-size: 11px; text-transform: uppercase; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.25); }
-    td { padding: 12px; text-align: center !important; border: 1px solid rgba(255, 255, 255, 0.15); }
-    
-    .hidden-section { display: none; }
-    #saveStatus { font-size: 10px; font-weight: bold; text-transform: uppercase; transition: 0.5s; opacity: 0.6; }
-    .saving { color: #fbbf24 !important; opacity: 1 !important; }
-    .saved { color: #10b981 !important; opacity: 1 !important; }
   </style>
 </head>
 <body class="p-4 flex flex-col items-center">
 
   <div id="loginPage" class="w-full max-w-md my-auto pt-10">
     <div class="glass p-10 rounded-[3rem] text-center border-t-4 border-indigo-500 shadow-2xl">
-      <div class="flex flex-col items-center mb-6">
-        <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" alt="Logo Sekolah" class="w-24 h-24 object-contain mb-4 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-        
-     
+      <div class="flex justify-center mb-4">
+        <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" alt="Logo Sekolah" class="h-24 w-auto drop-shadow-lg">
       </div>
-      <h1 class="text-4xl font-black mb-1 uppercase italic tracking-tighter">E-Izin</h1>
-      <p class="text-indigo-400 text-[10px] tracking-[0.5em] mb-10 font-bold uppercase">SMPN 110 Jakarta</p>
-      <input type="text" id="loginInput" placeholder="MASUKKAN NIS" class="w-full p-5 mb-5 font-bold uppercase">
-      <button onclick="handleLogin()" id="loginBtn" class="w-full p-5 rounded-2xl btn-indigo font-black uppercase text-sm">Masuk Sistem</button>
+      
+      <h1 class="text-3xl font-black uppercase italic tracking-tighter mb-6">E - I Z I N</h1>
+	  <h1>SMPN 110 JAKARTA</h1><br>
+      <input type="text" id="loginInput" placeholder="MASUKKAN NIS / USERNAME" class="p-4 mb-4 font-bold input-upper" autocomplete="off">
+      <button onclick="handleLogin()" id="loginBtn" class="w-full p-4 rounded-2xl btn-indigo font-black uppercase">Masuk</button>
     </div>
   </div>
 
-  <div id="siswaDashboard" class="hidden-section w-full max-w-lg space-y-6 my-auto">
+  <div id="siswaDashboard" class="hidden-section w-full max-w-lg space-y-6 pt-6">
     <div class="glass p-6 rounded-[2rem] flex justify-between items-center border-l-8 border-indigo-500">
-      <div class="text-left"><h2 id="siswaName" class="text-xl font-black uppercase">...</h2><p id="siswaKelasLabel" class="text-[10px] text-indigo-400 font-bold uppercase"></p></div>
-      <button onclick="logout()" class="p-4 bg-rose-500/10 text-rose-500 rounded-xl"><i data-lucide="power"></i></button>
+      <div>
+        <h2 id="siswaName" class="text-lg font-bold uppercase">...</h2>
+        <p id="siswaKelasLabel" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest"></p>
+      </div>
+      <button onclick="location.reload()" class="p-3 bg-rose-500/10 text-rose-500 rounded-xl"><i data-lucide="power"></i></button>
     </div>
-    <div class="glass p-8 rounded-[2.5rem] space-y-5">
-      <input type="text" id="namaOrtu" placeholder="NAMA ORANG TUA" class="w-full p-4">
-      <select id="alasanIzin" class="w-full p-4"><option value="Sakit">Sakit</option><option value="Izin Keperluan">Izin Keperluan</option></select>
-      <textarea id="ketIzin" class="w-full p-4 h-24" placeholder="KETERANGAN..."></textarea>
-      <button onclick="konfirmasiKirim()" id="btnKirim" class="w-full p-5 rounded-2xl btn-indigo font-black uppercase tracking-widest">Kirim Laporan</button>
+    <div id="formIzinSiswa" class="glass p-8 rounded-[2.5rem] space-y-5 shadow-2xl">
+      <input type="text" id="namaOrtu" placeholder="NAMA ORANG TUA" class="p-4 font-bold uppercase">
+      <select id="alasanIzin" class="p-4 font-bold">
+        <option value="Sakit">Sakit</option>
+        <option value="Izin Keperluan">Izin Keperluan</option>
+      </select>
+      <textarea id="ketIzin" class="p-4 h-24 text-center" placeholder="Sebutkan detail alasan di sini..."></textarea>
+      <button onclick="konfirmasiKirim()" class="w-full p-5 rounded-2xl btn-indigo font-black uppercase">Kirim Laporan</button>
     </div>
   </div>
 
-  <div id="waliDashboard" class="hidden-section w-full max-w-5xl space-y-6 mt-6">
-    <div class="glass p-8 rounded-[2.5rem] flex justify-between items-center border-l-[10px] border-indigo-600 shadow-xl">
-      <div class="text-left">
-        <h2 class="text-3xl font-black uppercase">KELAS <span id="labelKelas" class="text-indigo-500"></span></h2>
-        <div class="flex items-center gap-2 mt-2"><p id="waliName" class="text-[10px] text-indigo-300/50 font-bold uppercase"></p><span id="saveStatus">● Siap</span></div>
+  <div id="waliDashboard" class="hidden-section w-full max-w-5xl space-y-6">
+    <div class="glass p-8 rounded-[2rem] flex justify-between items-center border-l-[10px] border-indigo-600 shadow-xl">
+      <div>
+        <h2 class="text-3xl font-black italic uppercase"><span id="titleRole">KELAS</span> <span id="labelKelas" class="text-indigo-500"></span></h2>
+        <p id="waliName" class="text-[10px] text-indigo-300 font-bold uppercase tracking-widest"></p>
+        <div id="saveStatus" class="text-emerald-500 font-bold text-[9px] uppercase mt-1">● Status: Siaga</div>
       </div>
-      <div class="flex gap-3">
-        <button onclick="toggleViewWali()" class="p-4 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20"><i data-lucide="bar-chart-3" id="iconRekap"></i></button>
-        <button onclick="logout()" class="p-4 bg-rose-500/10 text-rose-500 rounded-2xl"><i data-lucide="log-out"></i></button>
-      </div>
-    </div>
-    
-    <div id="sectionHariIni" class="space-y-4">
-      <div class="glass rounded-[2rem] overflow-hidden p-4 overflow-x-auto text-sm text-center">
-        <table id="tableWaliHariIni"><thead><tr><th>No</th><th>Nama Siswa</th><th>Status</th><th>Keterangan</th></tr></thead><tbody id="hariIniBodyWali"></tbody></table>
+      <div class="flex gap-2">
+        <button onclick="toggleViewWali('hariIni')" class="p-4 bg-indigo-500/20 text-indigo-400 rounded-xl"><i data-lucide="calendar-check"></i></button>
+        <button onclick="toggleViewWali('rekap')" class="p-4 bg-amber-500/20 text-amber-400 rounded-xl"><i data-lucide="database"></i></button>
+        <button onclick="location.reload()" class="p-4 bg-rose-500/20 text-rose-500 rounded-xl"><i data-lucide="power"></i></button>
       </div>
     </div>
-    
-    <div id="sectionRekap" class="hidden-section space-y-4">
-      <div class="flex justify-end px-2">
-        <button onclick="cetakRekapPDF()" class="flex items-center gap-2 px-4 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold">
-            <i data-lucide="printer" class="w-4 h-4"></i> CETAK PDF REKAP
-        </button>
-      </div>
-      <div class="glass rounded-[2rem] overflow-hidden p-4 overflow-x-auto text-sm">
-        <table><thead><tr><th>No</th><th>Nama Siswa</th><th>Sakit</th><th>Izin</th><th class="text-rose-400">Alpa</th><th>Total</th></tr></thead><tbody id="rekapBody"></tbody></table>
-      </div>
-    </div>
-  </div>
 
-  <div id="piketDashboard" class="hidden-section w-full max-w-6xl space-y-6 mt-6 pb-20">
-    <div class="glass p-8 rounded-[3rem] flex justify-between items-center border-l-[12px] border-emerald-500 shadow-2xl">
-      <div class="text-left"><h2 class="text-3xl font-black uppercase italic leading-none">Piket 110</h2><p class="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mt-1">Total Laporan: <span id="totalAbsen">0</span></p></div>
-      <div class="flex gap-4">
-        <button onclick="hapusSemuaData()" class="p-4 bg-rose-500/10 text-rose-500 rounded-2xl border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all"><i data-lucide="trash-2"></i></button>
-        <button onclick="logout()" class="p-4 bg-slate-500/10 text-slate-400 rounded-2xl hover:bg-slate-500 hover:text-white transition-all"><i data-lucide="power"></i></button>
+    <div id="sectionHariIni" class="glass p-6 rounded-[2rem] border-t-4 border-indigo-400">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+        <div class="text-indigo-400 font-bold uppercase text-xs italic">Laporan Masuk Hari Ini</div>
+        
+        <div id="piketFilterContainer" class="hidden-section w-full md:w-48">
+          <select id="filterJenjang" onchange="applyFilter()" class="p-2 text-xs font-bold border-indigo-500/30">
+            <option value="all">SEMUA KELAS</option>
+            <option value="7">KELAS 7</option>
+            <option value="8">KELAS 8</option>
+            <option value="9">KELAS 9</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>NIS</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Status</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="hariIniBodyWali"></tbody>
+        </table>
       </div>
     </div>
-    <div class="glass p-6 rounded-[2.5rem] border-t-4 border-indigo-500">
-      <div class="flex justify-between items-center mb-6 px-2">
-        <h3 class="text-xs font-black uppercase italic tracking-widest text-indigo-400">Statistik Jenjang</h3>
-        <select id="filterGrafik" onchange="updateChart()" class="p-2 text-xs bg-slate-800 border-indigo-500 font-bold uppercase"><option value="7">Kelas 7</option><option value="8">Kelas 8</option><option value="9">Kelas 9</option></select>
+
+    <div id="sectionRekap" class="hidden-section glass p-6 rounded-[2rem] border-t-4 border-amber-400">
+      <div class="flex justify-between items-center mb-4">
+        <div class="text-amber-400 font-bold uppercase text-xs italic">Data Rekap Kumulatif</div>
+        <button onclick="cetakRekapPDF()" class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-bold border border-emerald-500/30 flex gap-2"><i data-lucide="printer" class="w-4 h-4"></i></button>
       </div>
-      <div class="h-[250px] w-full"><canvas id="absensiChart"></canvas></div>
-    </div>
-    <div class="grid grid-cols-2 gap-4">
-      <select id="filterWaktu" onchange="runFilterPiket()" class="p-4 filter-piket uppercase text-xs font-black"><option value="harian">Hari Ini</option><option value="mingguan">1 Minggu</option><option value="bulanan">1 Bulan</option><option value="semester">1 Semester</option></select>
-      <select id="filterKelas" onchange="runFilterPiket()" class="p-4 filter-piket uppercase text-xs font-black"><option value="SEMUA">Semua Kelas</option><option value="7">Kelas 7</option><option value="8">Kelas 8</option><option value="9">Kelas 9</option></select>
-    </div>
-    <div class="glass rounded-[2rem] overflow-hidden p-4 overflow-x-auto shadow-2xl text-[11px]">
-      <table><thead><tr><th>No</th><th>Tanggal</th><th>Kls</th><th>Nama</th><th>Status</th><th>Keterangan</th></tr></thead><tbody id="piketBody"></tbody></table>
+      <div class="overflow-x-auto">
+        <table id="tableRekapUtama">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>NIS</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>S</th>
+                <th>I</th>
+                <th class="text-rose-400">A</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="rekapBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxB7YdqjkW9l9HQ6qbI2ow7-JOroGVsXs1ExdW7uJmBXvjTKRNjOVh4nxvuIPSEzMRlxA/exec"; 
+    let userAktif = null;
+    let dataHariIniGlobal = []; // Menyimpan data asli untuk difilter
+    let saveTimeout = null;
+
     lucide.createIcons();
-    const API_URL = "https://script.google.com/macros/s/AKfycbwjpDb7ua6IljDcnQNlOlXVHWG70093Wrza15wKgqKPqv3ah-8V0y_5aPQNfFWX79G8Sg/exec"; // GANTI DENGAN URL GAS ANDA
-    let userAktif = null, allPiketData = [], saveTimeout = null, myChart = null;
-    const alertTheme = { background: '#0f172a', color: '#fff', confirmButtonColor: '#6366f1', cancelButtonColor: '#1e293b' };
 
     async function handleLogin() {
-      const input = document.getElementById('loginInput').value.trim();
+      const input = document.getElementById('loginInput').value.trim().toUpperCase();
       if (!input) return;
-      const btn = document.getElementById('loginBtn');
-      btn.innerText = "SABAR YA !"; 
-      btn.classList.add('animate-blink');
-      btn.disabled = true;
-
       try {
         const res = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(input)}`);
         const data = await res.json();
         if (data.status === "success") {
           userAktif = data.user;
           document.getElementById('loginPage').classList.add('hidden-section');
-          if (userAktif.role === 'piket') { 
-            document.getElementById('piketDashboard').classList.remove('hidden-section'); 
-            await loadPiket(); 
-          } else if (userAktif.role === 'siswa') { 
-            document.getElementById('siswaDashboard').classList.remove('hidden-section'); 
+          if (userAktif.role === 'siswa') {
+            document.getElementById('siswaDashboard').classList.remove('hidden-section');
             document.getElementById('siswaName').innerText = userAktif.nama;
-            document.getElementById('siswaKelasLabel').innerText = "KELAS: " + userAktif.kelas;
-          } else { 
-            document.getElementById('waliDashboard').classList.remove('hidden-section'); 
+            document.getElementById('siswaKelasLabel').innerText = "NIS: " + userAktif.nis + " | KELAS: " + userAktif.kelas;
+          } else {
+            document.getElementById('waliDashboard').classList.remove('hidden-section');
             document.getElementById('labelKelas').innerText = userAktif.kelas;
-            document.getElementById('waliName').innerText = "WALI KELAS: " + userAktif.nama;
-            loadWaliData(); 
+            document.getElementById('titleRole').innerText = userAktif.kelas === "110" ? "PIKET" : "KELAS";
+            document.getElementById('waliName').innerText = "USER: " + userAktif.nama;
+            
+            // Tampilkan dropdown filter jika user adalah Piket
+            if(userAktif.kelas === "7, 8, 9") {
+              document.getElementById('piketFilterContainer').classList.remove('hidden-section');
+            }
+            
+            loadDataWali();
           }
           lucide.createIcons();
-        } else { 
-          Swal.fire({...alertTheme, icon:'error', title:'Login Gagal'}); 
-          btn.innerText = "Masuk Sistem"; btn.classList.remove('animate-blink'); btn.disabled = false;
-        }
-      } catch (e) { 
-        Swal.fire({...alertTheme, icon:'warning', title:'Error Koneksi'}); 
-        btn.innerText = "Masuk Sistem"; btn.classList.remove('animate-blink'); btn.disabled = false;
+        } else { Swal.fire('Gagal', 'User tidak ditemukan', 'error'); }
+      } catch (e) { Swal.fire('Error', 'Gagal terhubung ke server', 'error'); }
+    }
+
+    async function loadDataWali() {
+      const [resH, resR] = await Promise.all([
+        fetch(`${API_URL}?action=getIzinHariIni&kelas=${encodeURIComponent(userAktif.kelas)}`),
+        fetch(`${API_URL}?action=getAdminData&kelas=${encodeURIComponent(userAktif.kelas)}`)
+      ]);
+      dataHariIniGlobal = await resH.json();
+      const dataR = await resR.json();
+
+      renderTabelHariIni(dataHariIniGlobal);
+      renderTabelRekap(dataR);
+    }
+
+    function renderTabelHariIni(data) {
+      document.getElementById('hariIniBodyWali').innerHTML = data.map((s, i) => `
+        <tr>
+          <td>${i+1}</td>
+          <td class="font-mono text-[10px] text-indigo-300">${s.nis}</td>
+          <td class="text-left font-bold uppercase">${s.nama}</td>
+          <td class="font-bold text-amber-400 text-[10px]">${s.kelas_siswa}</td>
+          <td>${s.status}</td>
+          <td class="italic text-[10px]">${s.keterangan}</td>
+        </tr>`).join('');
+    }
+
+    function applyFilter() {
+      const filterValue = document.getElementById('filterJenjang').value;
+      if (filterValue === "all") {
+        renderTabelHariIni(dataHariIniGlobal);
+      } else {
+        // Filter data berdasarkan karakter pertama dari nama kelas (misal: "7A" -> "7")
+        const filtered = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith(filterValue));
+        renderTabelHariIni(filtered);
       }
     }
 
+    function renderTabelRekap(data) {
+      document.getElementById('rekapBody').innerHTML = data.map((s, i) => `
+        <tr data-nis="${s.nis}">
+          <td>${i+1}</td>
+          <td class="font-mono text-[10px] text-slate-400">${s.nis}</td>
+          <td class="text-left font-bold uppercase">${s.nama}</td>
+          <td class="text-amber-400 font-bold text-[10px]">${s.kelas_siswa}</td>
+          <td><input type="number" class="w-10 val-s" value="${s.rekap?.S || 0}" oninput="autoSave(this)"></td>
+          <td><input type="number" class="w-10 val-i" value="${s.rekap?.I || 0}" oninput="autoSave(this)"></td>
+          <td><input type="number" class="w-10 val-a text-rose-400" value="${s.rekap?.A || 0}" oninput="autoSave(this)"></td>
+          <td class="row-total font-black text-indigo-400">${(parseInt(s.rekap?.S)||0)+(parseInt(s.rekap?.I)||0)+(parseInt(s.rekap?.A)||0)}</td>
+        </tr>`).join('');
+    }
+
+    function autoSave(input) {
+      const tr = input.closest('tr');
+      tr.querySelector('.row-total').innerText = (parseInt(tr.querySelector('.val-s').value)||0) + (parseInt(tr.querySelector('.val-i').value)||0) + (parseInt(tr.querySelector('.val-a').value)||0);
+      document.getElementById('saveStatus').innerText = "● Menyimpan...";
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(async () => {
+        const rows = Array.from(document.querySelectorAll('#rekapBody tr')).map(r => ({
+          nis: r.dataset.nis, s: r.querySelector('.val-s').value, i: r.querySelector('.val-i').value, a: r.querySelector('.val-a').value
+        }));
+        await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateBulkAbsen', data: rows }) });
+        document.getElementById('saveStatus').innerText = "● Data Tersimpan";
+      }, 1500);
+    }
+
+    function toggleViewWali(view) {
+      document.getElementById('sectionHariIni').classList.toggle('hidden-section', view !== 'hariIni');
+      document.getElementById('sectionRekap').classList.toggle('hidden-section', view !== 'rekap');
+    }
+
+    function cetakRekapPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const tglSekarang = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+      doc.setFontSize(14);
+      doc.text(`REKAPITULASI ABSENSI ${userAktif.kelas === '110' ? 'SELURUH KELAS' : 'KELAS ' + userAktif.kelas}`, 105, 15, { align: 'center' });
+      doc.autoTable({
+        html: '#tableRekapUtama',
+        startY: 22,
+        theme: 'grid',
+        styles: { fontSize: 7.5, cellPadding: 1.5, halign: 'center', lineColor: [0, 0, 0], lineWidth: 0.2, textColor: [0, 0, 0] },
+        headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+        columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 18 }, 2: { halign: 'left', cellWidth: 'auto' }, 3: { cellWidth: 15 }, 4: { cellWidth: 8 }, 5: { cellWidth: 8 }, 6: { cellWidth: 8 }, 7: { cellWidth: 10 } },
+        didParseCell: (d) => { if(d.section === 'body') { const inp = d.cell.raw.querySelector('input'); if(inp) d.cell.text = inp.value; } }
+      });
+      const finalY = doc.lastAutoTable.finalY + 8;
+      doc.setFontSize(10);
+      doc.text(`Jakarta, ${tglSekarang}`, 140, finalY);
+      doc.text(`${userAktif.role === 'piket' || userAktif.kelas === '110' ? 'Petugas Piket' : 'Wali Kelas ' + userAktif.kelas},`, 140, finalY + 5);
+      doc.setFont("helvetica", "bold");
+      doc.text(userAktif.nama, 140, finalY + 25);
+      doc.line(140, finalY + 26, 185, finalY + 26);
+      doc.save(`Rekap_Absensi.pdf`);
+    }
+
     async function konfirmasiKirim() {
-      const btn = document.getElementById('btnKirim');
-      const namaOrtu = document.getElementById('namaOrtu').value.trim();
+      const ortu = document.getElementById('namaOrtu').value.trim();
       const ket = document.getElementById('ketIzin').value.trim();
-      if(!namaOrtu || !ket) return Swal.fire({...alertTheme, icon:'warning', title:'Data Belum Lengkap'});
-
-      btn.innerText = "SABAR YA !"; btn.classList.add('animate-blink'); btn.disabled = true;
-      try {
-        const p = new URLSearchParams({ action:'submitIzin', nis:userAktif.nis, nama_siswa:userAktif.nama, kelas:userAktif.kelas, alasan:document.getElementById('alasanIzin').value, keterangan:ket, nama_ortu:namaOrtu });
-        const res = await fetch(`${API_URL}?${p.toString()}`);
-        const data = await res.json();
-        if (data.status === "success") {
-          Swal.fire({...alertTheme, icon:'success', title:'Laporan Dikirim'}).then(() => location.reload());
-        } else if (data.status === "limit") {
-          Swal.fire({...alertTheme, icon:'error', title:'Gagal', text:'Anda sudah mengirim izin hari ini'});
-        }
-      } catch (e) { Swal.fire({...alertTheme, icon:'error', title:'Error Sistem'}); }
-      btn.innerText = "Kirim Laporan"; btn.classList.remove('animate-blink'); btn.disabled = false;
+      if(!ortu || !ket) return Swal.fire('Lengkapi Data', '', 'warning');
+      const p = new URLSearchParams({ action: 'submitIzin', nis: userAktif.nis, nama_siswa: userAktif.nama, kelas: userAktif.kelas, alasan: document.getElementById('alasanIzin').value, keterangan: ket, nama_ortu: ortu });
+      await fetch(`${API_URL}?${p.toString()}`);
+      location.reload();
     }
-
-    // FUNGSI PDF REKAP OPTIMASI A4 (BORDER HITAM + TANDA TANGAN)
-    async function cetakRekapPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
-        doc.setFontSize(14); doc.setFont("helvetica", "bold");
-        doc.text("REKAP ABSENSI SISWA", 105, 12, { align: "center" });
-        doc.setFontSize(12); doc.setFont("helvetica", "normal");
-        doc.text(`Kelas: ${userAktif.kelas} | Wali Kelas: ${userAktif.nama}`, 105, 18, { align: "center" });
-        doc.text(`Dicetak: ${new Date().toLocaleString('id-ID')}`, 105, 22, { align: "center" });
-
-        const rows = [];
-        document.querySelectorAll("#rekapBody tr").forEach((tr, i) => {
-            rows.push([i+1, tr.cells[1].innerText.toUpperCase(), tr.querySelector('.val-s').value||0, tr.querySelector('.val-i').value||0, tr.querySelector('.val-a').value||0, tr.querySelector('.row-total').innerText]);
-        });
-
-        doc.autoTable({
-            head: [['NO', 'NAMA SISWA', 'S', 'I', 'A', 'TOTAL']],
-            body: rows,
-            startY: 28,
-            theme: 'grid',
-            styles: { fontSize: 10, cellPadding: 1, lineColor: [0, 0, 0], lineWidth: 0.2, textColor: [0, 0, 0] },
-            headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold', halign: 'center', lineWidth: 0.2, lineColor: [0, 0, 0] },
-            columnStyles: { 0:{halign:'center', cellWidth:8}, 2:{halign:'center', cellWidth:12}, 3:{halign:'center', cellWidth:12}, 4:{halign:'center', cellWidth:12}, 5:{halign:'center', cellWidth:15, fontStyle:'bold'} },
-            didParseCell: function(data) { data.cell.styles.minCellHeight = 4; },
-            didDrawPage: function(data) {
-                const finalY = data.cursor.y + 10;
-                const rightMargin = 145;
-                const tglHariIni = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-                
-                doc.setFontSize(12); doc.setFont("helvetica", "normal");
-                doc.text(`Jakarta, ${tglHariIni}`, rightMargin, finalY);
-                doc.text(`Wali Kelas ${userAktif.kelas}`, rightMargin, finalY + 5);
-                
-                doc.setFont("helvetica", "bold");
-                doc.text(`${userAktif.nama}`, rightMargin, finalY + 20);
-                const textWidth = doc.getTextWidth(`${userAktif.nama}`);
-                doc.line(rightMargin, finalY + 21, rightMargin + textWidth, finalY + 21);
-            }
-        });
-        doc.save(`Rekap_${userAktif.kelas}_A4.pdf`);
-    }
-
-    async function loadWaliData() {
-        const resH = await fetch(`${API_URL}?action=getIzinHariIni&kelas=${encodeURIComponent(userAktif.kelas)}`).then(r => r.json());
-        document.getElementById('hariIniBodyWali').innerHTML = resH.map((s, i) => `<tr><td>${i+1}</td><td class="font-bold text-indigo-400 uppercase text-xs">${s.nama}</td><td><span class="px-2 py-1 bg-amber-500/10 text-amber-500 rounded text-[9px] font-bold">${s.status}</span></td><td class="italic opacity-60 text-[10px]">${s.keterangan}</td></tr>`).join('') || '<tr><td colspan="4">Kosong</td></tr>';
-        const resR = await fetch(`${API_URL}?action=getAdminData&kelas=${encodeURIComponent(userAktif.kelas)}`).then(r => r.json());
-        document.getElementById('rekapBody').innerHTML = resR.map((s, i) => `
-          <tr data-nis="${s.nis}"><td>${i+1}</td><td class="text-left font-bold uppercase text-[10px]">${s.nama}</td>
-          <td><input type="number" class="w-10 p-1 val-s" value="${s.rekap.S}" oninput="autoSaveTrigger(this)"></td>
-          <td><input type="number" class="w-10 p-1 val-i" value="${s.rekap.I}" oninput="autoSaveTrigger(this)"></td>
-          <td><input type="number" class="w-10 p-1 val-a text-rose-400" value="${s.rekap.A}" oninput="autoSaveTrigger(this)"></td>
-          <td class="row-total font-black text-indigo-400 bg-indigo-500/5">${parseInt(s.rekap.S)+parseInt(s.rekap.I)+parseInt(s.rekap.A)}</td></tr>`).join('');
-    }
-
-    function autoSaveTrigger(input) {
-        const tr = input.closest('tr');
-        tr.querySelector('.row-total').innerText = (parseInt(tr.querySelector('.val-s').value)||0) + (parseInt(tr.querySelector('.val-i').value)||0) + (parseInt(tr.querySelector('.val-a').value)||0);
-        document.getElementById('saveStatus').innerText = "● Menyimpan..."; document.getElementById('saveStatus').className = "saving";
-        clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(async () => {
-            const dataUpdate = Array.from(document.querySelectorAll('#rekapBody tr')).map(r => ({ nis: r.dataset.nis, s: r.querySelector('.val-s').value||0, i: r.querySelector('.val-i').value||0, a: r.querySelector('.val-a').value||0 }));
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateBulkAbsen', data: dataUpdate }) });
-            document.getElementById('saveStatus').innerText = "● Tersimpan"; document.getElementById('saveStatus').className = "saved";
-        }, 1000);
-    }
-
-    async function loadPiket() {
-      allPiketData = await fetch(`${API_URL}?action=getAllAbsen`).then(r => r.json());
-      runFilterPiket(); updateChart();
-    }
-
-    function runFilterPiket() {
-      const w = document.getElementById('filterWaktu').value, k = document.getElementById('filterKelas').value, now = new Date();
-      let filtered = allPiketData.filter(s => {
-        const tglData = new Date(s.tanggal), diff = Math.floor((now - tglData) / (1000 * 60 * 60 * 24));
-        let mw = (w==='harian') ? tglData.toDateString() === now.toDateString() : (w==='mingguan') ? diff <= 7 : (w==='bulanan') ? diff <= 30 : diff <= 180;
-        let mk = (k === 'SEMUA') ? true : s.kelas.toString().startsWith(k);
-        return mw && mk;
-      });
-      document.getElementById('totalAbsen').innerText = filtered.length;
-      document.getElementById('piketBody').innerHTML = filtered.map((s, i) => `<tr><td>${i+1}</td><td>${new Date(s.tanggal).toLocaleDateString()}</td><td class="text-indigo-400 font-bold">${s.kelas}</td><td class="uppercase font-bold">${s.nama}</td><td>${s.status}</td><td class="italic opacity-60">${s.keterangan}</td></tr>`).join('');
-    }
-
-    function initChart() {
-      const ctx = document.getElementById('absensiChart').getContext('2d');
-      myChart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: ['SAKIT', 'IZIN', 'ALPA'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#fbbf24', '#6366f1', '#f43f5e'], borderRadius: 10 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
-      });
-    }
-
-    function updateChart() {
-      if (!myChart) initChart();
-      const j = document.getElementById('filterGrafik').value;
-      const f = allPiketData.filter(s => s.kelas.toString().startsWith(j));
-      myChart.data.datasets[0].data = [f.filter(x => x.status.toLowerCase()==='sakit').length, f.filter(x => x.status.toLowerCase().includes('izin')).length, f.filter(x => x.status.toLowerCase()==='alpa').length];
-      myChart.update();
-    }
-
-    function toggleViewWali() {
-      document.getElementById('sectionHariIni').classList.toggle('hidden-section');
-      document.getElementById('sectionRekap').classList.toggle('hidden-section');
-    }
-
-    async function hapusSemuaData() {
-      const { value: pass } = await Swal.fire({ ...alertTheme, title: 'KONFIRMASI ADMIN', input: 'password' });
-      if (pass === "admin110") { await fetch(`${API_URL}?action=deleteAllData`); location.reload(); }
-    }
-
-    function logout() { location.reload(); }
   </script>
 </body>
 </html>
