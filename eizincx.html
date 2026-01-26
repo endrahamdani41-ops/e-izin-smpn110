@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-IZIN 110 | NEON LOGIN</title>
+  <title>E-IZIN 110 | FINAL SECURE</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -14,48 +14,65 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Poppins', sans-serif; background: #030712; color: white; min-height: 100vh; margin: 0; overflow-x: hidden; }
+    body { font-family: 'Poppins', sans-serif; background: #020617; color: white; min-height: 100vh; margin: 0; overflow-x: hidden; }
     #starCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-    .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
     
-    /* EFEK GARIS MENYALA PADA KOTAK LOGIN */
     .neon-box {
       border: 2px solid #6366f1;
-      box-shadow: 0 0 10px rgba(99, 102, 241, 0.5), 
-                  0 0 20px rgba(99, 102, 241, 0.3), 
-                  inset 0 0 15px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
       animation: neonPulse 2s infinite alternate;
     }
-
     @keyframes neonPulse {
-      from { 
-        box-shadow: 0 0 10px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2); 
-        border-color: rgba(99, 102, 241, 0.6);
-      }
-      to { 
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 40px rgba(99, 102, 241, 0.4); 
-        border-color: rgba(99, 102, 241, 1);
-      }
+      from { box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
+      to { box-shadow: 0 0 30px rgba(99, 102, 241, 0.6); }
     }
 
-    .solid-bg { background: #0f172a !important; border: 2px solid #334155; }
-    
-    .btn-3d-pushable { position: relative; background: #3730a3; border-radius: 1rem; border: none; padding: 0; cursor: pointer; width: 100%; }
-    .btn-3d-front { display: block; position: relative; padding: 1rem; border-radius: 1rem; font-size: 1.1rem; color: white; background: #6366f1; transform: translateY(-6px); transition: transform 34ms; }
+    /* Penyesuaian Input agar sama tinggi dengan tombol */
+    .input-login {
+      background: #0f172a !important;
+      border: 1px solid #1e293b !important;
+      color: white !important;
+      border-radius: 1rem;
+      padding: 1rem; /* Disamakan dengan padding tombol */
+      width: 100%;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem; /* Disamakan dengan font-size tombol */
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .input-login:focus { border-color: #6366f1 !important; box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
+
+    .btn-3d-pushable { position: relative; background: #312e81; border-radius: 1rem; border: none; padding: 0; cursor: pointer; width: 100%; }
+    .btn-3d-front { display: block; position: relative; padding: 1rem; border-radius: 1rem; font-size: 1.1rem; color: white; background: #4f46e5; transform: translateY(-6px); transition: transform 34ms; }
     .btn-3d-pushable:active .btn-3d-front { transform: translateY(-2px); }
+    
     .hidden-section { display: none !important; }
     
-    input, select, textarea { 
-      background: #1e293b !important; border: 1px solid #334155 !important; color: white !important; 
-      border-radius: 0.8rem; padding: 10px; width: 100%; text-align: center; 
+    /* Elegant SweetAlert Custom Styling */
+    .custom-swal-popup {
+      background: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(15px) !important;
+      border: 1px solid rgba(99, 102, 241, 0.5) !important;
+      border-radius: 2rem !important;
+      color: white !important;
     }
-    input::placeholder, textarea::placeholder { text-align: center; }
+    .custom-swal-title { color: #818cf8 !important; font-weight: 800 !important; }
+    .custom-swal-content { color: #cbd5e1 !important; }
+    .custom-swal-confirm { background: #4f46e5 !important; border-radius: 1rem !important; padding: 0.8rem 2rem !important; font-weight: 700 !important; }
+    .custom-swal-cancel { background: rgba(244, 63, 94, 0.2) !important; color: #fb7185 !important; border-radius: 1rem !important; }
 
-    .table-container { overflow-x: auto; width: 100%; border-radius: 1rem; }
-    table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.4); border: 1px solid #334155; }
-    th, td { padding: 12px 15px; border: 1px solid #334155; font-size: 12px; text-align: center; }
-    th { background: #1e1b4b; color: white; }
-    .col-nama { text-align: center !important; min-width: 220px; font-weight: 600; }
+    input, select, textarea { 
+      background: #0f172a !important; border: 1px solid #1e293b !important; color: white !important; 
+      border-radius: 1rem; padding: 12px; width: 100%; text-align: center; font-weight: 500; outline: none;
+    }
+    input::placeholder, textarea::placeholder { text-align: center; color: #475569; }
+
+    .table-container { overflow-x: auto; width: 100%; border-radius: 1.5rem; border: 1px solid #1e293b; }
+    table { width: 100%; border-collapse: collapse; background: #0f172a; }
+    th, td { padding: 10px; border: 1px solid #1e293b; font-size: 11px; text-align: center; }
+    th { background: #1e1b4b; color: #818cf8; font-weight: 700; text-transform: uppercase; }
   </style>
 </head>
 <body class="p-4 flex flex-col items-center">
@@ -63,12 +80,12 @@
   <canvas id="starCanvas"></canvas>
 
   <div id="loginPage" class="w-full max-w-md my-auto pt-20">
-    <div class="glass neon-box p-10 rounded-[3rem] text-center">
+    <div class="glass neon-box p-10 rounded-[3rem] text-center shadow-2xl">
       <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" class="h-24 mx-auto mb-4">
       <h1 class="text-3xl font-black italic mb-6 text-indigo-400">E-IZIN 110</h1>
-      <input type="text" id="loginInput" placeholder="NIS / USERNAME" class="font-bold uppercase outline-none">
+      <input type="text" id="loginInput" placeholder="NIS / USERNAME" class="uppercase input-login">
       <div class="mt-6">
-        <button onclick="handleLogin()" class="btn-3d-pushable"><span class="btn-3d-front font-black uppercase">Masuk</span></button>
+        <button onclick="handleLogin()" class="btn-3d-pushable"><span class="btn-3d-front font-black uppercase tracking-widest">Masuk</span></button>
       </div>
     </div>
   </div>
@@ -76,18 +93,12 @@
   <div id="siswaDashboard" class="hidden-section w-full max-w-lg space-y-6">
     <div class="glass p-8 rounded-[3rem] text-center border-t-[10px] border-indigo-600 shadow-xl">
       <h2 class="text-2xl font-black italic uppercase" id="siswaName">NAMA SISWA</h2>
-      <p id="siswaKelas" class="text-indigo-400 font-bold mb-6"></p>
+      <p id="siswaKelas" class="text-indigo-400 font-bold mb-8"></p>
       
-      <div id="formKontenSiswa" class="text-left space-y-4">
-        <div><label class="text-[10px] font-bold block text-center uppercase mb-1">Alasan Izin</label>
-          <select id="alasanIzin"><option value="Sakit">Sakit</option><option value="Izin">Izin</option></select>
-        </div>
-        <div><label class="text-[10px] font-bold block text-center uppercase mb-1">Nama Orang Tua</label>
-          <input type="text" id="namaOrtu" placeholder="Nama Lengkap Orang Tua">
-        </div>
-        <div><label class="text-[10px] font-bold block text-center uppercase mb-1">Keterangan</label>
-          <textarea id="ketIzin" placeholder="Jelaskan detail alasan di sini..." class="h-24"></textarea>
-        </div>
+      <div id="formKontenSiswa" class="space-y-4">
+        <select id="alasanIzin"><option value="Sakit">Sakit</option><option value="Izin">Izin (Keperluan Keluarga)</option></select>
+        <input type="text" id="namaOrtu" placeholder="Nama Orang Tua">
+        <textarea id="ketIzin" placeholder="Jelaskan alasan detail..." class="h-24"></textarea>
         <button onclick="konfirmasiKirim()" class="btn-3d-pushable"><span class="btn-3d-front font-black uppercase">Kirim Laporan</span></button>
         <button onclick="location.reload()" class="w-full text-rose-500 font-bold text-sm mt-4">LOGOUT</button>
       </div>
@@ -96,70 +107,124 @@
 
   <div id="waliDashboard" class="hidden-section w-full max-w-6xl space-y-6">
     <div class="glass p-8 rounded-[3rem] flex flex-col items-center text-center border-t-[10px] border-indigo-600">
-      <h2 class="text-4xl font-black italic uppercase"><span id="titleRole">KELAS</span> <span id="labelKelas" class="text-indigo-500"></span></h2>
-      <p id="waliName" class="text-[11px] text-indigo-300 font-bold mt-2 uppercase"></p>
-      
+      <h2 class="text-3xl font-black italic uppercase"><span id="titleRole">KELAS</span> <span id="labelKelas" class="text-indigo-500"></span></h2>
+      <p id="waliName" class="text-[11px] text-indigo-300 font-bold mt-2 uppercase tracking-widest"></p>
       <div class="flex flex-wrap justify-center gap-4 mt-8">
-        <button onclick="switchTable()" title="Tukar Tabel" class="p-5 bg-indigo-500/20 text-indigo-400 rounded-2xl border border-indigo-500/20 hover:scale-110 transition-transform"><i data-lucide="arrow-left-right"></i></button>
-        <button id="btnGrafik" onclick="toggleViewWali('grafik')" title="Grafik" class="hidden-section p-5 bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/20 hover:scale-110 transition-transform"><i data-lucide="bar-chart-3"></i></button>
-        <button onclick="location.reload()" title="Logout" class="p-5 bg-rose-500/20 text-rose-500 rounded-2xl border border-rose-500/20 hover:scale-110 transition-transform"><i data-lucide="power"></i></button>
+        <button onclick="switchTable()" class="p-5 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20"><i data-lucide="arrow-left-right"></i></button>
+        <button id="btnGrafik" onclick="toggleGrafik()" class="hidden-section p-5 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20"><i data-lucide="pie-chart"></i></button>
+        <button onclick="location.reload()" class="p-5 bg-rose-500/10 text-rose-500 rounded-2xl border border-rose-500/20"><i data-lucide="power"></i></button>
       </div>
     </div>
 
-    <div id="sectionGrafik" class="hidden-section"><div class="glass p-8 rounded-[3rem]" style="height: 450px;"><canvas id="chartIzin"></canvas></div></div>
-
-    <div id="sectionHariIni" class="glass p-6 rounded-[2.5rem] border-t-4 border-indigo-400">
-      <h3 class="text-sm font-bold text-indigo-400 mb-4 uppercase italic text-center">Laporan Hari Ini</h3>
-      <div class="table-container"><table><thead><tr><th>No</th><th>NIS</th><th class="col-nama">Nama</th><th>Kelas</th><th>Status</th><th>Keterangan</th></tr></thead><tbody id="hariIniBodyWali"></tbody></table></div>
+    <div id="sectionGrafik" class="hidden-section">
+      <div class="glass p-8 rounded-[3rem] shadow-2xl relative" style="height: 450px;">
+        <h3 class="text-center font-black text-slate-500 uppercase tracking-widest mb-4 text-xs italic">Statistik Izin Jenjang</h3>
+        <div class="relative h-[300px] w-full">
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span id="totalIzinCenter" class="text-5xl font-black text-indigo-400">0</span>
+            </div>
+            <canvas id="chartIzin"></canvas>
+        </div>
+      </div>
     </div>
 
-    <div id="sectionRekap" class="hidden-section solid-bg p-8 rounded-[3rem]">
-      <div class="flex justify-between items-center mb-6">
+    <div id="sectionRekap" class="hidden-section glass p-8 rounded-[3rem]">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <h3 class="text-lg font-black text-amber-400 uppercase italic">Rekap Kumulatif</h3>
-        <button onclick="cetakRekapPDF()" class="p-2 bg-emerald-600 text-white rounded-lg text-xs font-bold px-4 flex gap-2"><i data-lucide="printer" class="w-4 h-4"></i> CETAK PDF F4</button>
+        <button onclick="cetakRekapPDF()" class="p-3 bg-emerald-600 text-white rounded-xl text-xs font-black px-8 shadow-lg flex items-center gap-2"><i data-lucide="printer" class="w-4 h-4"></i></button>
       </div>
-      <div class="table-container"><table id="tableRekapUtama"><thead><tr><th>No</th><th>NIS</th><th class="col-nama">Nama Siswa</th><th>Kelas</th><th>S</th><th>I</th><th>A</th><th>Total</th></tr></thead><tbody id="rekapBody"></tbody></table></div>
+      <div class="table-container"><table id="tableRekapUtama"><thead><tr><th>No</th><th>NIS</th><th>Nama Siswa</th><th>S</th><th>I</th><th>A</th><th>Total</th></tr></thead><tbody id="rekapBody"></tbody></table></div>
+    </div>
+
+    <div id="sectionHariIni" class="glass p-6 rounded-[2.5rem]">
+      <h3 class="text-sm font-bold text-indigo-400 mb-6 text-center uppercase">Laporan Hari Ini</h3>
+      <div class="table-container"><table><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Status</th><th>Keterangan</th></tr></thead><tbody id="hariIniBodyWali"></tbody></table></div>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxB7YdqjkW9l9HQ6qbI2ow7-JOroGVsXs1ExdW7uJmBXvjTKRNjOVh4nxvuIPSEzMRlxA/exec"; 
- 
+    const API_URL = "https://script.google.com/macros/s/AKfycbx_4nJIKiZPmqZ4FcN-FyaK_yGEa8fYbgv37e2om-BfYIxSggECKGjtyim8EsglR2EffA/exec"; 
     let userAktif = null;
     let dataHariIniGlobal = [];
-    let currentTableView = 'hariIni';
     let myChart = null;
+
+    // Helper Fungsi untuk Alert yang lebih elegan
+    const notify = {
+      showLoading: (msg) => {
+        Swal.fire({
+          title: msg,
+          allowOutsideClick: false,
+          customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title' },
+          didOpen: () => Swal.showLoading()
+        });
+      },
+      success: (title, msg) => {
+        return Swal.fire({
+          icon: 'success',
+          title: title,
+          text: msg,
+          iconColor: '#6366f1',
+          customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', htmlContainer: 'custom-swal-content', confirmButton: 'custom-swal-confirm' }
+        });
+      },
+      error: (title, msg) => {
+        Swal.fire({
+          icon: 'error',
+          title: title,
+          text: msg,
+          iconColor: '#f43f5e',
+          customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', htmlContainer: 'custom-swal-content', confirmButton: 'custom-swal-confirm' }
+        });
+      },
+      confirm: (title, msg) => {
+        return Swal.fire({
+          title: title,
+          text: msg,
+          icon: 'question',
+          iconColor: '#818cf8',
+          showCancelButton: true,
+          confirmButtonText: 'Ya, Kirim!',
+          cancelButtonText: 'Batal',
+          customClass: { 
+            popup: 'custom-swal-popup', title: 'custom-swal-title', 
+            htmlContainer: 'custom-swal-content', confirmButton: 'custom-swal-confirm',
+            cancelButton: 'custom-swal-cancel'
+          }
+        });
+      }
+    };
 
     async function handleLogin() {
       const input = document.getElementById('loginInput').value.trim().toUpperCase();
       if (!input) return;
       try {
+        notify.showLoading('Otentikasi...');
         const res = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(input)}`);
         const data = await res.json();
+        Swal.close();
+
         if (data.status === "success") {
           userAktif = data.user;
           document.getElementById('loginPage').classList.add('hidden-section');
+          
           if (userAktif.role === "siswa") {
               document.getElementById('siswaDashboard').classList.remove('hidden-section');
               document.getElementById('siswaName').innerText = userAktif.nama;
               document.getElementById('siswaKelas').innerText = "KELAS " + userAktif.kelas;
-              const today = new Date().toDateString();
-              if (localStorage.getItem(`izin_${userAktif.nis}_${today}`)) {
-                document.getElementById('formKontenSiswa').innerHTML = `<div class='p-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center'><i data-lucide='check-circle' class='mx-auto mb-2 text-emerald-500'></i><p class='text-sm font-bold text-emerald-400 uppercase'>Laporan Sudah Terkirim Hari Ini.</p></div><button onclick='location.reload()' class='w-full text-rose-500 font-bold text-sm mt-6'>LOGOUT</button>`;
-              }
+              if (localStorage.getItem(`izin_${userAktif.nis}_${new Date().toDateString()}`)) tampilkanSudahIzin();
           } else {
               document.getElementById('waliDashboard').classList.remove('hidden-section');
               document.getElementById('labelKelas').innerText = userAktif.kelas;
               document.getElementById('waliName').innerText = userAktif.nama;
               if(userAktif.kelas === "110" || userAktif.kelas === "7, 8, 9") {
-                  document.getElementById('titleRole').innerText = "PIKET";
                   document.getElementById('btnGrafik').classList.remove('hidden-section');
+                  document.getElementById('sectionGrafik').classList.remove('hidden-section');
               }
               loadData();
           }
           lucide.createIcons();
-        } else { Swal.fire('Error', 'User tidak ditemukan', 'error'); }
-      } catch (e) { Swal.fire('Error', 'Gagal Koneksi', 'error'); }
+        } else { notify.error('Akses Ditolak', 'User Tidak Ditemukan'); }
+      } catch (e) { notify.error('Server Error', 'Gagal Menghubungkan Server'); }
     }
 
     async function loadData() {
@@ -170,98 +235,140 @@
       dataHariIniGlobal = await resH.json();
       renderHariIni(dataHariIniGlobal);
       renderRekap(await resR.json());
+      if(userAktif.kelas === "110" || userAktif.kelas === "7, 8, 9") updateChart();
     }
 
     function renderHariIni(data) {
-      document.getElementById('hariIniBodyWali').innerHTML = data.map((s, i) => `<tr><td>${i+1}</td><td>${s.nis}</td><td class='font-bold'>${s.nama}</td><td>${s.kelas_siswa}</td><td>${s.status}</td><td>${s.keterangan}</td></tr>`).join('');
+      document.getElementById('hariIniBodyWali').innerHTML = data.map((s, i) => `<tr><td>${i+1}</td><td>${s.nis}</td><td class='font-bold'>${s.nama}</td><td>${s.kelas_siswa}</td><td class='text-indigo-400'>${s.status}</td><td>${s.keterangan}</td></tr>`).join('');
     }
 
     function renderRekap(data) {
-      document.getElementById('rekapBody').innerHTML = data.map((s, i) => {
-        const t = (parseInt(s.rekap?.S)||0) + (parseInt(s.rekap?.I)||0) + (parseInt(s.rekap?.A)||0);
-        return `<tr><td>${i+1}</td><td>${s.nis}</td><td class='font-bold'>${s.nama}</td><td>${s.kelas_siswa}</td><td>${s.rekap?.S||0}</td><td>${s.rekap?.I||0}</td><td>${s.rekap?.A||0}</td><td class='text-indigo-400 font-bold'>${t}</td></tr>`;
-      }).join('');
-    }
-
-    function switchTable() {
-      currentTableView = currentTableView === 'hariIni' ? 'rekap' : 'hariIni';
-      toggleViewWali(currentTableView);
-    }
-
-    function toggleViewWali(view) {
-      document.getElementById('sectionHariIni').classList.toggle('hidden-section', view !== 'hariIni');
-      document.getElementById('sectionRekap').classList.toggle('hidden-section', view !== 'rekap');
-      document.getElementById('sectionGrafik').classList.toggle('hidden-section', view !== 'grafik');
-      if(view === 'grafik') setTimeout(updateChart, 100);
+      document.getElementById('rekapBody').innerHTML = data.map((s, i) => `<tr><td>${i+1}</td><td>${s.nis}</td><td class='font-bold'>${s.nama}</td><td>${s.rekap?.S||0}</td><td>${s.rekap?.I||0}</td><td>${s.rekap?.A||0}</td><td class='text-amber-400 font-black'>${(parseInt(s.rekap?.S)||0)+(parseInt(s.rekap?.I)||0)}</td></tr>`).join('');
     }
 
     function updateChart() {
       const k7 = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith('7')).length;
       const k8 = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith('8')).length;
       const k9 = dataHariIniGlobal.filter(s => s.kelas_siswa.toString().startsWith('9')).length;
+      document.getElementById('totalIzinCenter').innerText = k7+k8+k9;
       const ctx = document.getElementById('chartIzin').getContext('2d');
       if (myChart) myChart.destroy();
       myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
           labels: ['KELAS 7', 'KELAS 8', 'KELAS 9'],
-          datasets: [{
-            data: [k7, k8, k9],
-            backgroundColor: ['#6366f1', '#f59e0b', '#10b981'],
-            borderRadius: 15
-          }]
+          datasets: [{ data: [k7, k8, k9], backgroundColor: ['#6366f1', '#f59e0b', '#10b981'], borderColor: '#020617', borderWidth: 5 }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true } } } }
       });
     }
 
     async function konfirmasiKirim() {
       const ortu = document.getElementById('namaOrtu').value.trim();
       const ket = document.getElementById('ketIzin').value.trim();
-      if(!ortu || !ket) return Swal.fire('Lengkapi Data', '', 'warning');
-      Swal.fire({ title: 'Kirim Izin?', icon: 'question', showCancelButton: true }).then(async (res) => {
-        if(res.isConfirmed) {
-          const p = new URLSearchParams({ action: 'submitIzin', nis: userAktif.nis, nama_siswa: userAktif.nama, kelas: userAktif.kelas, alasan: document.getElementById('alasanIzin').value, keterangan: ket, nama_ortu: ortu });
-          await fetch(`${API_URL}?${p.toString()}`);
-          localStorage.setItem(`izin_${userAktif.nis}_${new Date().toDateString()}`, "true");
-          Swal.fire('Berhasil', '', 'success').then(() => location.reload());
-        }
-      });
+      if(!ortu || !ket) return notify.error('Data Kosong', 'Harap lengkapi semua kolom laporan!');
+      
+      const confirm = await notify.confirm('Konfirmasi Laporan', 'Apakah data yang Anda masukkan sudah benar?');
+      if(confirm.isConfirmed) {
+          notify.showLoading('Mengirim Laporan...');
+          try {
+            const p = new URLSearchParams({ action: 'submitIzin', nis: userAktif.nis, nama_siswa: userAktif.nama, kelas: userAktif.kelas, alasan: document.getElementById('alasanIzin').value, keterangan: ket, nama_ortu: ortu });
+            const resp = await fetch(`${API_URL}?${p.toString()}`);
+            const result = await resp.json();
+            Swal.close();
+
+            if (result.status === "success") {
+              localStorage.setItem(`izin_${userAktif.nis}_${new Date().toDateString()}`, "true");
+              await notify.success('Berhasil!', 'Laporan Anda telah terarsip ke database.');
+              location.reload();
+            } else {
+              notify.error('Gagal Kirim', result.message);
+            }
+          } catch (e) { notify.error('Error', 'Terjadi kesalahan pada koneksi.'); }
+      }
     }
 
-    function cetakRekapPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'mm', [215.9, 330.2]); 
-      const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-      doc.setFontSize(14).setFont(undefined, 'bold').text("REKAPITULASI KEHADIRAN SISWA", 107.9, 15, { align: 'center' });
-      doc.autoTable({ 
-        html: '#tableRekapUtama', startY: 28, theme: 'grid',
-        styles: { fontSize: 8.5, halign: 'center' },
-        headStyles: { fillColor: [30, 27, 75], halign: 'center' },
-        didDrawPage: (data) => {
-          const finalY = data.cursor.y + 15;
-          doc.text(`Jakarta, ${tgl}`, 135, finalY);
-          doc.text("Wali Kelas,", 135, finalY + 6);
-          doc.setFont(undefined, 'bold').text(userAktif.nama, 135, finalY + 22);
-        
-        }
-      });
-      doc.save(`Rekap_${userAktif.kelas}.pdf`);
+ function cetakRekapPDF() {
+  const { jsPDF } = window.jspdf;
+  // Ukuran F4: 215.9 x 330.2 mm
+  const doc = new jsPDF('p', 'mm', [215.9, 330.2]); 
+  const tglStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  const judulLaporan = `REKAPITULASI IZIN SISWA KELAS ${userAktif.kelas}`;
+  
+  // Header Rapat (Menghemat Ruang Atas)
+  doc.setFontSize(14).setFont(undefined, 'bold').text(judulLaporan, 107.9, 15, { align: 'center' });
+  doc.setFontSize(14).setFont(undefined, 'normal').text(`Dicetak pada: ${tglStr}`, 107.9, 21, { align: 'center' });
+
+  doc.autoTable({ 
+    html: '#tableRekapUtama', 
+    startY: 30, 
+    theme: 'grid',
+    columns: [
+      { header: 'No', dataKey: 0 },
+      { header: 'NIS', dataKey: 1 },
+      { header: 'Nama Siswa', dataKey: 2 },
+      { header: 'S', dataKey: 4 },
+      { header: 'I', dataKey: 5 },
+      { header: 'A', dataKey: 6 },
+      { header: 'Jumlah', dataKey: 7 },
+    ],
+    // Pengaturan agar muat banyak dalam 1 halaman
+    styles: { 
+      fontSize: 11,      // Font diperkecil
+      cellPadding: 1.2,   // Jarak teks ke garis dirapatkan
+      halign: 'center',
+      textColor: [0, 0, 0],
+      lineColor: [0, 0, 0],
+      lineWidth: 0.15,
+    },
+    headStyles: { 
+      fillColor: [255, 255, 255], 
+      textColor: [0, 0, 0],
+      fontStyle: 'bold',
+      lineWidth: 0.25
+    },
+    columnStyles: {
+      2: { halign: 'left', cellWidth: 'auto' }, // Nama Siswa lebih fleksibel
+      7: { fontStyle: 'bold', fillColor: [245, 245, 245] }
+    },
+    margin: { horizontal: 15, bottom: 40 }, // Margin dipersempit untuk ruang tabel
+    didDrawPage: (data) => {
+       // Posisi Tanda Tangan Kompak
+       let finalY = data.cursor.y + 8;
+       
+       // Proteksi jika tabel sampai ke dasar, tanda tangan tetap di halaman 1 (posisi absolut bawah)
+       if (finalY > 295) finalY = 295; 
+
+       const sX = 145;
+       doc.setFontSize(11).setFont(undefined, 'normal').text(`Jakarta, ${tglStr}`, sX, finalY);
+       doc.text("Wali Kelas / Petugas,", sX, finalY + 5);
+       doc.setFont(undefined, 'bold').text(userAktif.nama || "..........................", sX, finalY + 22);
+
     }
+  });
+
+  doc.save(`REKAP_KLS_${userAktif.kelas}.pdf`);
+}
+
+    function tampilkanSudahIzin() {
+      document.getElementById('formKontenSiswa').innerHTML = `
+        <div class='p-8 bg-indigo-500/10 border border-indigo-500/20 rounded-3xl text-center'>
+            <i data-lucide='check-circle' class='mx-auto mb-4 text-indigo-400 w-12 h-12'></i>
+            <p class='text-sm font-bold text-indigo-300 uppercase'>Laporan Terarsip!</p>
+            <p class='text-[10px] text-slate-500 mt-2'>Anda sudah melakukan absensi hari ini.</p>
+        </div>
+        <button onclick='location.reload()' class='w-full text-rose-500 font-bold text-sm mt-6 uppercase'>Logout</button>`;
+      lucide.createIcons();
+    }
+
+    function switchTable() { document.getElementById('sectionHariIni').classList.toggle('hidden-section'); document.getElementById('sectionRekap').classList.toggle('hidden-section'); }
+    function toggleGrafik() { document.getElementById('sectionGrafik').classList.toggle('hidden-section'); if(!document.getElementById('sectionGrafik').classList.contains('hidden-section')) updateChart(); }
 
     const sCanvas = document.getElementById('starCanvas');
     const sCtx = sCanvas.getContext('2d');
     let stars = [];
-    function initStars() {
-      sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
-      stars = []; for (let i = 0; i < 150; i++) stars.push({ x: Math.random() * sCanvas.width, y: Math.random() * sCanvas.height, size: Math.random() * 1.5, speed: Math.random() * 0.5 + 0.2 });
-    }
-    function drawStars() {
-      sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
-      sCtx.fillStyle = "white";
-      for (let s of stars) { sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2); sCtx.fill(); s.y += s.speed; if (s.y > sCanvas.height) s.y = -5; }
-      requestAnimationFrame(drawStars);
-    }
+    function initStars() { sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight; stars = []; for (let i = 0; i < 150; i++) stars.push({ x: Math.random() * sCanvas.width, y: Math.random() * sCanvas.height, size: Math.random() * 1.5, speed: Math.random() * 0.4 + 0.1 }); }
+    function drawStars() { sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height); sCtx.fillStyle = "white"; for (let s of stars) { sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2); sCtx.fill(); s.y += s.speed; if (s.y > sCanvas.height) s.y = -5; } requestAnimationFrame(drawStars); }
     window.addEventListener('resize', initStars); initStars(); drawStars();
     lucide.createIcons();
   </script>
