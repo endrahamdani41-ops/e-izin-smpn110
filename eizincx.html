@@ -240,10 +240,10 @@
         headStyles: { fillColor: [30, 27, 75], halign: 'center' },
         didDrawPage: (data) => {
           const finalY = data.cursor.y + 15;
-          doc.text(`Jakarta, ${tgl}`, 145, finalY);
-          doc.text("Wali Kelas,", 145, finalY + 6);
-          doc.setFont(undefined, 'bold').text(userAktif.nama, 145, finalY + 22);
-          doc.setFont(undefined, 'normal').text("__________________________", 145, finalY + 23);
+          doc.text(`Jakarta, ${tgl}`, 135, finalY);
+          doc.text("Wali Kelas,", 135, finalY + 6);
+          doc.setFont(undefined, 'bold').text(userAktif.nama, 135, finalY + 22);
+        
         }
       });
       doc.save(`Rekap_${userAktif.kelas}.pdf`);
