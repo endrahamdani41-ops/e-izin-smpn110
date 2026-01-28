@@ -43,7 +43,6 @@
             }
         }
 
-        /* CSS TOMBOL 3D */
         .btn-3d {
             position: relative;
             background: #4f46e5;
@@ -99,7 +98,6 @@
         <div class="glass p-8 rounded-[2.5rem] text-center shadow-2xl border-t-4 border-indigo-500 login-glow">
             <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" alt="Logo Sekolah" class="w-20 mx-auto mb-4">
             <h1 class="text-2xl font-black italic mb-8 tracking-tighter text-indigo-400">E - I Z I N<br>SMPN  110  JAKARTA</h1>
-
             <input type="password" id="loginInput" placeholder="KODE AKSES" class="uppercase text-lg h-14">
             <button onclick="handleLogin()" class="btn-3d w-full h-14 rounded-xl font-black mt-6">MASUK</button>
         </div>
@@ -144,8 +142,8 @@
         </div>
 
         <div id="filterContainer" class="hidden-section w-full max-w-xs mx-auto">
-            <select id="gradeFilter" onchange="renderTodayTable()" class="!h-10 text-xs">
-                <option value="ALL">-- SEMUA KELAS --</option>
+            <select id="gradeFilter" onchange="applyFilters()" class="!h-10 text-xs">
+                <option value="ALL">-- SEMUA TINGKAT --</option>
                 <option value="7">KELAS 7</option>
                 <option value="8">KELAS 8</option>
                 <option value="9">KELAS 9</option>
@@ -155,7 +153,7 @@
         <div id="view-data-container">
             <div id="section-today">
                 <h3 class="text-blue-400 font-black text-[10px] uppercase ml-2 mb-2">LAPORAN HARIAN</h3>
-                <div class="table-container"><table id="tableToday"><thead><tr><th>NO</th><th>TANGGAL & WAKTU</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>NAMA ORANG TUA</th><th>KETERANGAN</th></tr></thead><tbody id="todayTableBody"></tbody></table></div>
+                <div class="table-container"><table id="tableToday"><thead><tr><th>NO</th><th>WAKTU & TANGGAL</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>ORTU</th><th>KETERANGAN</th></tr></thead><tbody id="todayTableBody"></tbody></table></div>
             </div>
             <div id="section-rekap" class="hidden-section">
                 <h3 class="text-amber-400 font-black text-[10px] uppercase ml-2 mb-2">REKAPITULASI</h3>
@@ -215,6 +213,11 @@
             renderTodayTable(); renderRekapTable();
         }
 
+        function applyFilters() {
+            renderTodayTable();
+            renderRekapTable();
+        }
+
         function renderTodayTable() {
             const filterVal = document.getElementById('gradeFilter').value;
             let list = cloudData.izin_detail.filter(i => {
@@ -229,23 +232,27 @@
                 const dt = new Date(i.timestamp);
                 const dateStr = dt.toLocaleDateString('id-ID');
                 const timeStr = dt.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
-                return `<tr>
-                    <td>${idx+1}</td>
-                    <td>${dateStr} ${timeStr}</td>
-                    <td class="font-bold text-left">${i.nama}</td>
-                    <td class="text-indigo-400 font-bold">${i.kelas}</td>
-                    <td>${i.alasan}</td>
-                    <td>${i.orangtua}</td>
-                    <td>${i.keterangan}</td>
-                </tr>`;
+                return `<tr><td>${idx+1}</td><td>${dateStr} ${timeStr}</td><td class="font-bold text-left">${i.nama}</td><td class="text-indigo-400 font-bold">${i.kelas}</td><td>${i.alasan}</td><td>${i.orangtua}</td><td>${i.keterangan}</td></tr>`;
             }).join('');
         }
 
         function renderRekapTable() {
+            const filterVal = document.getElementById('gradeFilter').value;
             const body = document.getElementById('rekapTableBody');
             const isPiket = userAktif.role === 'piket';
-            document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
-            const list = cloudData.siswa.filter(s => !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas));
+            
+            // Kolom Kelas ditambahkan setelah kolom Nama
+            document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>KELAS</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
+            
+            const list = cloudData.siswa.filter(s => {
+                const roleMatch = !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas);
+                // Filter dropdown digunakan untuk mencari tingkatan kelas 7,8,9
+                if (userAktif.role === 'piket' && filterVal !== 'ALL') {
+                    return roleMatch && s.kelas.startsWith(filterVal);
+                }
+                return roleMatch;
+            });
+
             body.innerHTML = list.map((s, idx) => {
                 let sv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Sakit').length;
                 let iv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Izin').length;
@@ -254,51 +261,46 @@
                     const o = cloudData.override[s.nama];
                     sv = o.sakit !== "" ? o.sakit : sv; iv = o.izin !== "" ? o.izin : iv; av = o.alpha !== "" ? o.alpha : av;
                 }
-                return `<tr><td>${idx+1}</td><td>${s.nis}</td><td class="font-bold text-left">${s.nama}</td><td>${sv}</td><td>${iv}</td><td>${av}</td><td class="bg-indigo-500/10 font-bold">${parseInt(sv)+parseInt(iv)+parseInt(av)}</td>
-                ${isPiket ? '' : `<td><button onclick="editData('${s.nama}', ${sv}, ${iv}, ${av})" class="bg-indigo-600 px-3 py-1 rounded-lg">EDIT</button></td>`}</tr>`;
+                return `<tr>
+                    <td>${idx+1}</td>
+                    <td>${s.nis}</td>
+                    <td class="font-bold text-left">${s.nama}</td>
+                    <td class="text-indigo-400 font-bold">${s.kelas}</td>
+                    <td>${sv}</td><td>${iv}</td><td>${av}</td>
+                    <td class="bg-indigo-500/10 font-bold">${parseInt(sv)+parseInt(iv)+parseInt(av)}</td>
+                    ${isPiket ? '' : `<td><button onclick="editData('${s.nama}', ${sv}, ${iv}, ${av})" class="bg-indigo-600 px-3 py-1 rounded-lg">EDIT</button></td>`}
+                </tr>`;
             }).join('');
         }
 
+        function changeMode(m) {
+            document.getElementById('section-chart').classList.toggle('hidden-section', m !== 'chart');
+            document.getElementById('section-today').classList.toggle('hidden-section', m !== 'today');
+            document.getElementById('section-rekap').classList.toggle('hidden-section', m !== 'rekap');
+            
+            // Filter ditampilkan untuk piket agar bisa digunakan mencari kelas
+            if (userAktif && userAktif.role === 'piket') {
+                if (m === 'today' || m === 'rekap') document.getElementById('filterContainer').classList.remove('hidden-section');
+                else document.getElementById('filterContainer').classList.add('hidden-section');
+            }
+            if (m === 'chart') setTimeout(updateChart, 100);
+            lucide.createIcons();
+        }
+
+        // Fungsi lainnya (generatePDF, previewSurat, submitIzin, editData, updateChart) tetap sama sesuai instruksi
         async function editData(nama, s, i, a) {
             const { value: formValues } = await Swal.fire({
                 title: `Edit Data: ${nama}`,
-                html: `
-                    <div class="flex flex-col gap-3">
-                        <label class="text-xs text-slate-400 text-left">Sakit</label>
-                        <input id="swal-sakit" type="number" value="${s}" class="swal2-input !m-0">
-                        <label class="text-xs text-slate-400 text-left">Izin</label>
-                        <input id="swal-izin" type="number" value="${i}" class="swal2-input !m-0">
-                        <label class="text-xs text-slate-400 text-left">Alpha</label>
-                        <input id="swal-alpha" type="number" value="${a}" class="swal2-input !m-0">
-                    </div>`,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonColor: '#6366f1',
-                preConfirm: () => [
-                    document.getElementById('swal-sakit').value,
-                    document.getElementById('swal-izin').value,
-                    document.getElementById('swal-alpha').value
-                ]
+                html: `<div class="flex flex-col gap-3"><label class="text-xs text-slate-400 text-left">Sakit</label><input id="swal-sakit" type="number" value="${s}" class="swal2-input !m-0"><label class="text-xs text-slate-400 text-left">Izin</label><input id="swal-izin" type="number" value="${i}" class="swal2-input !m-0"><label class="text-xs text-slate-400 text-left">Alpha</label><input id="swal-alpha" type="number" value="${a}" class="swal2-input !m-0"></div>`,
+                focusConfirm: false, showCancelButton: true, confirmButtonColor: '#6366f1',
+                preConfirm: () => [document.getElementById('swal-sakit').value, document.getElementById('swal-izin').value, document.getElementById('swal-alpha').value]
             });
-
             if (formValues) {
                 Swal.fire({title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ 
-                        action: 'override', 
-                        nama: nama, 
-                        sakit: formValues[0], 
-                        izin: formValues[1], 
-                        alpha: formValues[2] 
-                    })
-                });
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'override', nama: nama, sakit: formValues[0], izin: formValues[1], alpha: formValues[2] }) });
                 const result = await res.json();
-                if(result.status === "success") {
-                    Swal.fire('Berhasil', 'Data diperbarui', 'success').then(() => syncData());
-                } else {
-                    Swal.fire('Gagal', result.message, 'error');
-                }
+                if(result.status === "success") Swal.fire('Berhasil', 'Data diperbarui', 'success').then(() => syncData());
+                else Swal.fire('Gagal', result.message, 'error');
             }
         }
 
@@ -319,20 +321,8 @@
             if (myChartInstance) myChartInstance.destroy();
             myChartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: ['SAKIT', 'IZIN', 'ALPHA'],
-                    datasets: [{
-                        label: 'Data Absensi',
-                        data: [sCount, iCount, aCount],
-                        backgroundColor: ['#3b82f6', '#fbbf24', '#f43f5e'],
-                        borderRadius: 10
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } }
-                }
+                data: { labels: ['SAKIT', 'IZIN', 'ALPHA'], datasets: [{ label: 'Data Absensi', data: [sCount, iCount, aCount], backgroundColor: ['#3b82f6', '#fbbf24', '#f43f5e'], borderRadius: 10 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
             });
         }
 
@@ -342,21 +332,14 @@
             const isToday = !document.getElementById('section-today').classList.contains('hidden-section');
             const tableId = isToday ? '#tableToday' : '#tableRekap';
             doc.setFontSize(14); doc.setFont("helvetica", "bold");
-            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 15, { align: "center" });
-            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 22, { align: "center" });
-            doc.autoTable({ 
-                html: tableId, startY: 31, theme: 'grid',
-                columns: isToday ? [0,1,2,3,4,6] : [0,1,2,3,4,5,6],
-                styles: { halign: 'center', fontSize: 8, lineColor: [0,0,0], lineWidth: 0.1, textColor: [0,0,0] },
-                headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold' }
-            });
-            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 17, { align: "center" });
+            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 24, { align: "center" });
+            doc.autoTable({ html: tableId, startY: 35, theme: 'grid', columns: isToday ? [0,1,2,3,4,6] : [0,1,2,3,4,5,7], styles: { halign: 'center', fontSize: 8, lineColor: [0,0,0], lineWidth: 0.1, textColor: [0,0,0] }, headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold' } });
+            const finalY = doc.lastAutoTable.finalY + 15;
             const tglStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            doc.setFontSize(10); doc.setFont("helvetica", "normal");
-            doc.text(`Jakarta, ${tglStr}`, 140, finalY);
+            doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(`Jakarta, ${tglStr}`, 140, finalY);
             const jabatan = userAktif.role === 'walikelas' ? `Wali Kelas ${userAktif.kelas},` : "Petugas Piket,";
-            doc.text(jabatan, 140, finalY + 7); doc.setFont("helvetica", "bold");
-            doc.text(`${userAktif.nama}`, 140, finalY + 28);
+            doc.text(jabatan, 140, finalY + 7); doc.setFont("helvetica", "bold"); doc.text(`${userAktif.nama}`, 140, finalY + 28);
             doc.save(`Laporan_${userAktif.kelas}.pdf`);
         }
 
@@ -366,47 +349,17 @@
             const ket = document.getElementById('inputKet').value;
             const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             if(!alasan || !ortu) { Swal.fire('Peringatan', 'Lengkapi data!', 'warning'); return; }
-            const kontenSurat = `
-                <div class="surat-text">
-                    <p>Jakarta, ${tgl}</p><br>
-                    <p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br>
-                    <p>Dengan hormat,</p>
-                    <p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br>
-                    <p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br>
-                    <p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()}</b> ${ket || '-'}.</p>
-                    <p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br>
-                    <p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p>
-                </div>`;
-            Swal.fire({
-                title: 'Konfirmasi Surat Izin', html: kontenSurat,
-                showCancelButton: true, confirmButtonText: 'Kirim Sekarang',
-                confirmButtonColor: '#6366f1', width: '500px'
-            }).then((result) => { if (result.isConfirmed) submitIzin(); });
+            const kontenSurat = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br><p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br><p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()}</b> ${ket || '-'}.</p><p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p></div>`;
+            Swal.fire({ title: 'Konfirmasi Surat Izin', html: kontenSurat, showCancelButton: true, confirmButtonText: 'Kirim Sekarang', confirmButtonColor: '#6366f1', width: '500px' }).then((result) => { if (result.isConfirmed) submitIzin(); });
         }
 
         async function submitIzin() {
-            const payload = { 
-                nama: userAktif.nama, alasan: document.getElementById('inputAlasan').value, 
-                orangtua: document.getElementById('inputOrtu').value, keterangan: document.getElementById('inputKet').value, 
-                kelas: userAktif.kelas, petugas: userAktif.nama 
-            };
+            const payload = { nama: userAktif.nama, alasan: document.getElementById('inputAlasan').value, orangtua: document.getElementById('inputOrtu').value, keterangan: document.getElementById('inputKet').value, kelas: userAktif.kelas, petugas: userAktif.nama };
             Swal.fire({title: 'Mengirim...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
             const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             const result = await res.json();
             if(result.status === "success") Swal.fire('Berhasil', 'Data terkirim.', 'success').then(()=>location.reload());
             else Swal.fire('Gagal', result.message, 'error');
-        }
-
-        function changeMode(m) {
-            document.getElementById('section-chart').classList.toggle('hidden-section', m !== 'chart');
-            document.getElementById('section-today').classList.toggle('hidden-section', m !== 'today');
-            document.getElementById('section-rekap').classList.toggle('hidden-section', m !== 'rekap');
-            if (userAktif && userAktif.role === 'piket') {
-                if (m === 'today') document.getElementById('filterContainer').classList.remove('hidden-section');
-                else document.getElementById('filterContainer').classList.add('hidden-section');
-            }
-            if (m === 'chart') setTimeout(updateChart, 100);
-            lucide.createIcons();
         }
     </script>
 </body>
