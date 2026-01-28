@@ -85,11 +85,8 @@
         input, select { height: 3.5rem !important; }
         textarea { padding: 1rem; }
 
-        /* Format otomatis saat input */
         #inputOrtu { text-transform: capitalize; }
         #inputKet { text-transform: lowercase; }
-
-        /* Format otomatis di tabel */
         .td-ortu { text-transform: capitalize; }
         .td-ket { text-transform: lowercase; }
 
@@ -264,7 +261,6 @@
             const body = document.getElementById('rekapTableBody');
             const isPiket = userAktif.role === 'piket';
             
-            // Tambah kolom Kelas setelah nama
             document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>KELAS</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
             
             const list = cloudData.siswa.filter(s => {
@@ -301,11 +297,82 @@
             document.getElementById('section-rekap').classList.toggle('hidden-section', m !== 'rekap');
             
             if (userAktif && userAktif.role === 'piket') {
-                if (m === 'today' || m === 'rekap') document.getElementById('filterContainer').classList.remove('hidden-section');
+                if (m === 'today' || m !== 'chart') document.getElementById('filterContainer').classList.remove('hidden-section');
                 else document.getElementById('filterContainer').classList.add('hidden-section');
             }
             if (m === 'chart') setTimeout(updateChart, 100);
             lucide.createIcons();
+        }
+
+        function previewSurat() {
+            const alasan = document.getElementById('inputAlasan').value;
+            const ortu = document.getElementById('inputOrtu').value;
+            const ket = document.getElementById('inputKet').value;
+            const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            if(!alasan || !ortu) { Swal.fire('Peringatan', 'Lengkapi data!', 'warning'); return; }
+            
+            const kontenSurat = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br><p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br><p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()}</b> ${ket || '-'}.</p><p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p></div>`;
+            
+            Swal.fire({ 
+                title: 'Konfirmasi Surat Izin', html: kontenSurat, 
+                showCancelButton: true, confirmButtonText: 'Kirim Sekarang', 
+                confirmButtonColor: '#6366f1', width: '500px' 
+            }).then((result) => { if (result.isConfirmed) submitIzin(); });
+        }
+
+        async function submitIzin() {
+            const namaSiswa = userAktif.nama;
+            const kelasSiswa = userAktif.kelas;
+            const alasanIzin = document.getElementById('inputAlasan').value;
+            const namaOrtu = document.getElementById('inputOrtu').value;
+            const ketIzin = document.getElementById('inputKet').value || '-';
+            const tglSkrg = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const payload = { 
+                nama: namaSiswa, alasan: alasanIzin, 
+                orangtua: namaOrtu, keterangan: ketIzin, 
+                kelas: kelasSiswa, petugas: namaSiswa 
+            };
+
+            Swal.fire({title: 'Mengirim...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+            
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+                
+                if(result.status === "success") {
+                    // FORMAT PESAN WHATSAPP
+                    const textWA = `*SURAT IZIN DIGITAL SMPN 110*%0A%0A` +
+                                 `Jakarta, ${tglSkrg}%0A%0A` +
+                                 `Yth. Bapak/Ibu Wali Kelas ${kelasSiswa}%0A` +
+                                 `di Tempat%0A%0A` +
+                                 `Dengan hormat,%0A%0A` +
+                                 `Saya orang tua dari:%0A%0A` +
+                                 `Nama : *${namaSiswa}*%0A` +
+                                 `Kelas : *${kelasSiswa}*%0A%0A` +
+                                 `Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan *${alasanIzin.toLowerCase()} ${ketIzin}*.%0A%0A` +
+                                 `Demikian surat izin ini kami sampaikan. Terima kasih.%0A%0A` +
+                                 `Hormat kami,%0A%0A*${namaOrtu.toUpperCase()}*`;
+
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Data tersimpan. Sekarang kirim pesan ke Wali Kelas via WhatsApp?',
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: 'Buka WhatsApp',
+                        cancelButtonText: 'Tutup'
+                    }).then((waRes) => {
+                        if (waRes.isConfirmed) {
+                            window.open(`https://api.whatsapp.com/send?text=${textWA}`, '_blank');
+                        }
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Gagal', result.message, 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'Gagal menghubungi server', 'error');
+            }
         }
 
         async function editData(nama, s, i, a) {
@@ -361,25 +428,6 @@
             const jabatan = userAktif.role === 'walikelas' ? `Wali Kelas ${userAktif.kelas},` : "Petugas Piket,";
             doc.text(jabatan, 140, finalY + 7); doc.setFont("helvetica", "bold"); doc.text(`${userAktif.nama}`, 140, finalY + 28);
             doc.save(`Laporan_${userAktif.kelas}.pdf`);
-        }
-
-        function previewSurat() {
-            const alasan = document.getElementById('inputAlasan').value;
-            const ortu = document.getElementById('inputOrtu').value;
-            const ket = document.getElementById('inputKet').value;
-            const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            if(!alasan || !ortu) { Swal.fire('Peringatan', 'Lengkapi data!', 'warning'); return; }
-            const kontenSurat = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br><p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br><p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()} ${ket.toLowerCase()}</b>.</p><p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p></div>`;
-            Swal.fire({ title: 'Konfirmasi Surat Izin', html: kontenSurat, showCancelButton: true, confirmButtonText: 'Kirim Sekarang', confirmButtonColor: '#6366f1', width: '500px' }).then((result) => { if (result.isConfirmed) submitIzin(); });
-        }
-
-        async function submitIzin() {
-            const payload = { nama: userAktif.nama, alasan: document.getElementById('inputAlasan').value, orangtua: document.getElementById('inputOrtu').value, keterangan: document.getElementById('inputKet').value, kelas: userAktif.kelas, petugas: userAktif.nama };
-            Swal.fire({title: 'Mengirim...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-            const result = await res.json();
-            if(result.status === "success") Swal.fire('Berhasil', 'Data terkirim.', 'success').then(()=>location.reload());
-            else Swal.fire('Gagal', result.message, 'error');
         }
     </script>
 </body>
