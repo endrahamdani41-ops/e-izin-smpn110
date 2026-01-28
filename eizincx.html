@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-IZIN 110 | V11.0 FINAL FIX</title>
+    <title>E-IZIN SMPN 110</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,12 +13,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --indigo-primary: #6366f1; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: white; min-height: 100vh; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #020617; 
+            color: white; 
+            min-height: 100vh; 
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        .login-glow {
+            position: relative;
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            animation: borderGlow 3s infinite alternate;
+        }
+
+        @keyframes borderGlow {
+            0% { 
+                box-shadow: 0 0 10px rgba(99, 102, 241, 0.2), inset 0 0 5px rgba(99, 102, 241, 0.1);
+                border-color: rgba(99, 102, 241, 0.4);
+            }
+            100% { 
+                box-shadow: 0 0 25px rgba(99, 102, 241, 0.6), inset 0 0 10px rgba(99, 102, 241, 0.2);
+                border-color: rgba(99, 102, 241, 0.9);
+            }
+        }
+
+        /* CSS TOMBOL 3D */
+        .btn-3d {
+            position: relative;
+            background: #4f46e5;
+            border: none;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 0 #3730a3, 0 8px 15px rgba(0,0,0,0.4);
+            transition: all 0.1s ease;
+            cursor: pointer;
+            top: 0;
+        }
+
+        .btn-3d:active {
+            top: 4px;
+            box-shadow: 0 2px 0 #3730a3, 0 4px 10px rgba(0,0,0,0.4);
+        }
+
         .table-container { overflow-x: auto; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.1); background: #000; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center !important; font-size: 11px; }
+        th, td { 
+            padding: 12px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            text-align: center !important; 
+            font-size: 11px; 
+            white-space: nowrap; 
+        }
         th { background: #1e1b4b; color: #a5b4fc; font-weight: 800; text-transform: uppercase; }
+        
         .hidden-section { display: none !important; }
         
         input, select, textarea { 
@@ -42,19 +95,14 @@
 </head>
 <body class="p-4 flex flex-col items-center">
 
-
-
-    <div id="loginPage" class="w-full max-w-[320px] mt-24">
-	
-
-        <div class="glass p-8 rounded-[2.5rem] text-center shadow-2xl border-t-4 border-indigo-500">
+    <div id="loginPage" class="w-full max-w-[320px] mt-4">
+        <div class="glass p-8 rounded-[2.5rem] text-center shadow-2xl border-t-4 border-indigo-500 login-glow">
             <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" alt="Logo Sekolah" class="w-20 mx-auto mb-4">
-            
-            <h1 class="text-2xl font-black italic mb-8 tracking-tighter text-indigo-400">E-IZIN 110</h1>
+            <h1 class="text-2xl font-black italic mb-8 tracking-tighter text-indigo-400">E - I Z I N<br>SMPN  110  JAKARTA</h1>
+
             <input type="password" id="loginInput" placeholder="KODE AKSES" class="uppercase text-lg h-14">
-            <button onclick="handleLogin()" class="w-full h-14 bg-indigo-600 rounded-xl font-black mt-4 hover:bg-indigo-700">MASUK</button>
+            <button onclick="handleLogin()" class="btn-3d w-full h-14 rounded-xl font-black mt-6">MASUK</button>
         </div>
- 
     </div>
 
     <div id="studentPage" class="hidden-section w-full max-w-md space-y-6 mt-10">
@@ -107,7 +155,7 @@
         <div id="view-data-container">
             <div id="section-today">
                 <h3 class="text-blue-400 font-black text-[10px] uppercase ml-2 mb-2">LAPORAN HARIAN</h3>
-                <div class="table-container"><table id="tableToday"><thead><tr><th>NO</th><th>WAKTU & TANGGAL</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>ORTU</th><th>KETERANGAN</th></tr></thead><tbody id="todayTableBody"></tbody></table></div>
+                <div class="table-container"><table id="tableToday"><thead><tr><th>NO</th><th>TANGGAL & WAKTU</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>NAMA ORANG TUA</th><th>KETERANGAN</th></tr></thead><tbody id="todayTableBody"></tbody></table></div>
             </div>
             <div id="section-rekap" class="hidden-section">
                 <h3 class="text-amber-400 font-black text-[10px] uppercase ml-2 mb-2">REKAPITULASI</h3>
@@ -129,7 +177,7 @@
         async function handleLogin() {
             const pass = document.getElementById('loginInput').value.trim().toUpperCase();
             if(!pass) return;
-            Swal.fire({title: 'Tunggu Sebentar Ya !', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+            Swal.fire({title: 'Sabar Ya !', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
             const res = await fetch(`${SCRIPT_URL}?action=login&username=${pass}`);
             const data = await res.json();
             if (data.status === "success") {
@@ -183,7 +231,7 @@
                 const timeStr = dt.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
                 return `<tr>
                     <td>${idx+1}</td>
-                    <td class="whitespace-nowrap">${dateStr} ${timeStr}</td>
+                    <td>${dateStr} ${timeStr}</td>
                     <td class="font-bold text-left">${i.nama}</td>
                     <td class="text-indigo-400 font-bold">${i.kelas}</td>
                     <td>${i.alasan}</td>
@@ -257,22 +305,17 @@
         function updateChart() {
             const ctx = document.getElementById('myChart').getContext('2d');
             let sCount = 0, iCount = 0, aCount = 0;
-            
             const listSiswa = cloudData.siswa.filter(s => !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas));
-            
             listSiswa.forEach(s => {
                 let sv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Sakit').length;
                 let iv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Izin').length;
                 let av = cloudData.alpha.filter(a => a.nama === s.nama).length;
                 if (cloudData.override[s.nama]) {
                     const o = cloudData.override[s.nama];
-                    sv = o.sakit !== "" ? o.sakit : sv;
-                    iv = o.izin !== "" ? o.izin : iv;
-                    av = o.alpha !== "" ? o.alpha : av;
+                    sv = o.sakit !== "" ? o.sakit : sv; iv = o.izin !== "" ? o.izin : iv; av = o.alpha !== "" ? o.alpha : av;
                 }
                 sCount += parseInt(sv); iCount += parseInt(iv); aCount += parseInt(av);
             });
-
             if (myChartInstance) myChartInstance.destroy();
             myChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -286,8 +329,7 @@
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } }
                 }
@@ -299,27 +341,21 @@
             const doc = new jsPDF('p', 'mm', [210, 330]);
             const isToday = !document.getElementById('section-today').classList.contains('hidden-section');
             const tableId = isToday ? '#tableToday' : '#tableRekap';
-
             doc.setFontSize(14); doc.setFont("helvetica", "bold");
-            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 17, { align: "center" });
-            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 24, { align: "center" });
-
+            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 15, { align: "center" });
+            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 22, { align: "center" });
             doc.autoTable({ 
-                html: tableId, 
-                startY: 35, 
-                theme: 'grid',
+                html: tableId, startY: 31, theme: 'grid',
                 columns: isToday ? [0,1,2,3,4,6] : [0,1,2,3,4,5,6],
                 styles: { halign: 'center', fontSize: 8, lineColor: [0,0,0], lineWidth: 0.1, textColor: [0,0,0] },
                 headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold' }
             });
-
-            const finalY = doc.lastAutoTable.finalY + 15;
+            const finalY = doc.lastAutoTable.finalY + 10;
             const tglStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             doc.setFontSize(10); doc.setFont("helvetica", "normal");
             doc.text(`Jakarta, ${tglStr}`, 140, finalY);
             const jabatan = userAktif.role === 'walikelas' ? `Wali Kelas ${userAktif.kelas},` : "Petugas Piket,";
-            doc.text(jabatan, 140, finalY + 7);
-            doc.setFont("helvetica", "bold");
+            doc.text(jabatan, 140, finalY + 7); doc.setFont("helvetica", "bold");
             doc.text(`${userAktif.nama}`, 140, finalY + 28);
             doc.save(`Laporan_${userAktif.kelas}.pdf`);
         }
@@ -330,7 +366,6 @@
             const ket = document.getElementById('inputKet').value;
             const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             if(!alasan || !ortu) { Swal.fire('Peringatan', 'Lengkapi data!', 'warning'); return; }
-
             const kontenSurat = `
                 <div class="surat-text">
                     <p>Jakarta, ${tgl}</p><br>
@@ -342,25 +377,18 @@
                     <p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br>
                     <p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p>
                 </div>`;
-
             Swal.fire({
-                title: 'Konfirmasi Surat Izin',
-                html: kontenSurat,
-                showCancelButton: true,
-                confirmButtonText: 'Kirim Sekarang',
-                confirmButtonColor: '#6366f1',
-                width: '500px'
+                title: 'Konfirmasi Surat Izin', html: kontenSurat,
+                showCancelButton: true, confirmButtonText: 'Kirim Sekarang',
+                confirmButtonColor: '#6366f1', width: '500px'
             }).then((result) => { if (result.isConfirmed) submitIzin(); });
         }
 
         async function submitIzin() {
             const payload = { 
-                nama: userAktif.nama, 
-                alasan: document.getElementById('inputAlasan').value, 
-                orangtua: document.getElementById('inputOrtu').value, 
-                keterangan: document.getElementById('inputKet').value, 
-                kelas: userAktif.kelas, 
-                petugas: userAktif.nama 
+                nama: userAktif.nama, alasan: document.getElementById('inputAlasan').value, 
+                orangtua: document.getElementById('inputOrtu').value, keterangan: document.getElementById('inputKet').value, 
+                kelas: userAktif.kelas, petugas: userAktif.nama 
             };
             Swal.fire({title: 'Mengirim...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
             const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
@@ -373,21 +401,11 @@
             document.getElementById('section-chart').classList.toggle('hidden-section', m !== 'chart');
             document.getElementById('section-today').classList.toggle('hidden-section', m !== 'today');
             document.getElementById('section-rekap').classList.toggle('hidden-section', m !== 'rekap');
-            
-            // Logika Filter: Hanya muncul di mode 'today' untuk Piket
             if (userAktif && userAktif.role === 'piket') {
-                if (m === 'today') {
-                    document.getElementById('filterContainer').classList.remove('hidden-section');
-                } else {
-                    document.getElementById('filterContainer').classList.add('hidden-section');
-                }
+                if (m === 'today') document.getElementById('filterContainer').classList.remove('hidden-section');
+                else document.getElementById('filterContainer').classList.add('hidden-section');
             }
-
-            // Jalankan update chart jika mode grafik dipilih
-            if (m === 'chart') {
-                setTimeout(updateChart, 100);
-            }
-            
+            if (m === 'chart') setTimeout(updateChart, 100);
             lucide.createIcons();
         }
     </script>
