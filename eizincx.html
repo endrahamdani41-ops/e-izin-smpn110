@@ -85,8 +85,13 @@
         input, select { height: 3.5rem !important; }
         textarea { padding: 1rem; }
 
+        /* Format otomatis saat input */
         #inputOrtu { text-transform: capitalize; }
         #inputKet { text-transform: lowercase; }
+
+        /* Format otomatis di tabel */
+        .td-ortu { text-transform: capitalize; }
+        .td-ket { text-transform: lowercase; }
 
         .swal2-popup { background: #0f172a !important; color: white !important; border-radius: 2rem !important; }
         .surat-text { text-align: left !important; line-height: 1.6; font-size: 14px; color: #cbd5e1; }
@@ -153,11 +158,21 @@
         <div id="view-data-container">
             <div id="section-today">
                 <h3 class="text-blue-400 font-black text-[10px] uppercase ml-2 mb-2">LAPORAN HARIAN</h3>
-                <div class="table-container"><table id="tableToday"><thead><tr><th>NO</th><th>WAKTU & TANGGAL</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>ORTU</th><th>KETERANGAN</th></tr></thead><tbody id="todayTableBody"></tbody></table></div>
+                <div class="table-container">
+                    <table id="tableToday">
+                        <thead><tr><th>NO</th><th>WAKTU & TANGGAL</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>ORTU</th><th>KETERANGAN</th></tr></thead>
+                        <tbody id="todayTableBody"></tbody>
+                    </table>
+                </div>
             </div>
             <div id="section-rekap" class="hidden-section">
                 <h3 class="text-amber-400 font-black text-[10px] uppercase ml-2 mb-2">REKAPITULASI</h3>
-                <div class="table-container"><table id="tableRekap"><thead id="rekapHead"></thead><tbody id="rekapTableBody"></tbody></table></div>
+                <div class="table-container">
+                    <table id="tableRekap">
+                        <thead id="rekapHead"></thead>
+                        <tbody id="rekapTableBody"></tbody>
+                    </table>
+                </div>
             </div>
             <div id="section-chart" class="hidden-section">
                 <h3 class="text-indigo-400 font-black text-[10px] uppercase ml-2 mb-2">GRAFIK STATISTIK</h3>
@@ -232,7 +247,15 @@
                 const dt = new Date(i.timestamp);
                 const dateStr = dt.toLocaleDateString('id-ID');
                 const timeStr = dt.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
-                return `<tr><td>${idx+1}</td><td>${dateStr} ${timeStr}</td><td class="font-bold text-left">${i.nama}</td><td class="text-indigo-400 font-bold">${i.kelas}</td><td>${i.alasan}</td><td>${i.orangtua}</td><td>${i.keterangan}</td></tr>`;
+                return `<tr>
+                    <td>${idx+1}</td>
+                    <td>${dateStr} ${timeStr}</td>
+                    <td class="font-bold text-left">${i.nama}</td>
+                    <td class="text-indigo-400 font-bold">${i.kelas}</td>
+                    <td>${i.alasan}</td>
+                    <td class="td-ortu">${i.orangtua}</td>
+                    <td class="td-ket">${i.keterangan}</td>
+                </tr>`;
             }).join('');
         }
 
@@ -241,12 +264,11 @@
             const body = document.getElementById('rekapTableBody');
             const isPiket = userAktif.role === 'piket';
             
-            // Kolom Kelas ditambahkan setelah kolom Nama
+            // Tambah kolom Kelas setelah nama
             document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>KELAS</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
             
             const list = cloudData.siswa.filter(s => {
                 const roleMatch = !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas);
-                // Filter dropdown digunakan untuk mencari tingkatan kelas 7,8,9
                 if (userAktif.role === 'piket' && filterVal !== 'ALL') {
                     return roleMatch && s.kelas.startsWith(filterVal);
                 }
@@ -278,7 +300,6 @@
             document.getElementById('section-today').classList.toggle('hidden-section', m !== 'today');
             document.getElementById('section-rekap').classList.toggle('hidden-section', m !== 'rekap');
             
-            // Filter ditampilkan untuk piket agar bisa digunakan mencari kelas
             if (userAktif && userAktif.role === 'piket') {
                 if (m === 'today' || m === 'rekap') document.getElementById('filterContainer').classList.remove('hidden-section');
                 else document.getElementById('filterContainer').classList.add('hidden-section');
@@ -287,7 +308,6 @@
             lucide.createIcons();
         }
 
-        // Fungsi lainnya (generatePDF, previewSurat, submitIzin, editData, updateChart) tetap sama sesuai instruksi
         async function editData(nama, s, i, a) {
             const { value: formValues } = await Swal.fire({
                 title: `Edit Data: ${nama}`,
@@ -332,10 +352,10 @@
             const isToday = !document.getElementById('section-today').classList.contains('hidden-section');
             const tableId = isToday ? '#tableToday' : '#tableRekap';
             doc.setFontSize(14); doc.setFont("helvetica", "bold");
-            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 17, { align: "center" });
-            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 24, { align: "center" });
-            doc.autoTable({ html: tableId, startY: 35, theme: 'grid', columns: isToday ? [0,1,2,3,4,6] : [0,1,2,3,4,5,7], styles: { halign: 'center', fontSize: 8, lineColor: [0,0,0], lineWidth: 0.1, textColor: [0,0,0] }, headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold' } });
-            const finalY = doc.lastAutoTable.finalY + 15;
+            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 15, { align: "center" });
+            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 22, { align: "center" });
+            doc.autoTable({ html: tableId, startY: 31, theme: 'grid', columns: isToday ? [0,1,2,3,4,6] : [0,1,2,3,4,5,7], styles: { halign: 'center', fontSize: 8, lineColor: [0,0,0], lineWidth: 0.1, textColor: [0,0,0] }, headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold' } });
+            const finalY = doc.lastAutoTable.finalY + 10;
             const tglStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(`Jakarta, ${tglStr}`, 140, finalY);
             const jabatan = userAktif.role === 'walikelas' ? `Wali Kelas ${userAktif.kelas},` : "Petugas Piket,";
@@ -349,7 +369,7 @@
             const ket = document.getElementById('inputKet').value;
             const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             if(!alasan || !ortu) { Swal.fire('Peringatan', 'Lengkapi data!', 'warning'); return; }
-            const kontenSurat = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br><p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br><p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()}</b> ${ket || '-'}.</p><p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p></div>`;
+            const kontenSurat = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br><p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br><p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()} ${ket.toLowerCase()}</b>.</p><p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p></div>`;
             Swal.fire({ title: 'Konfirmasi Surat Izin', html: kontenSurat, showCancelButton: true, confirmButtonText: 'Kirim Sekarang', confirmButtonColor: '#6366f1', width: '500px' }).then((result) => { if (result.isConfirmed) submitIzin(); });
         }
 
