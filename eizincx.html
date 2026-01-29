@@ -157,7 +157,7 @@
                 <h3 class="text-blue-400 font-black text-[10px] uppercase ml-2 mb-2">LAPORAN HARIAN</h3>
                 <div class="table-container">
                     <table id="tableToday">
-                        <thead><tr><th>NO</th><th>WAKTU & TANGGAL</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>ORTU</th><th>KETERANGAN</th></tr></thead>
+                        <thead><tr><th>NO</th><th>TANGGAL & WAKTU</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>NAMA ORANG TUA</th><th>KETERANGAN</th></tr></thead>
                         <tbody id="todayTableBody"></tbody>
                     </table>
                 </div>
@@ -240,6 +240,15 @@
                 return roleMatch;
             });
 
+            // URUTKAN OTOMATIS BERDASARKAN KELAS LALU NAMA
+            list.sort((a, b) => {
+                if (a.kelas < b.kelas) return -1;
+                if (a.kelas > b.kelas) return 1;
+                if (a.nama < b.nama) return -1;
+                if (a.nama > b.nama) return 1;
+                return 0;
+            });
+
             document.getElementById('todayTableBody').innerHTML = list.map((i, idx) => {
                 const dt = new Date(i.timestamp);
                 const dateStr = dt.toLocaleDateString('id-ID');
@@ -263,12 +272,21 @@
             
             document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>KELAS</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
             
-            const list = cloudData.siswa.filter(s => {
+            let list = cloudData.siswa.filter(s => {
                 const roleMatch = !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas);
                 if (userAktif.role === 'piket' && filterVal !== 'ALL') {
                     return roleMatch && s.kelas.startsWith(filterVal);
                 }
                 return roleMatch;
+            });
+
+            // URUTKAN OTOMATIS BERDASARKAN KELAS LALU NAMA
+            list.sort((a, b) => {
+                if (a.kelas < b.kelas) return -1;
+                if (a.kelas > b.kelas) return 1;
+                if (a.nama < b.nama) return -1;
+                if (a.nama > b.nama) return 1;
+                return 0;
             });
 
             body.innerHTML = list.map((s, idx) => {
@@ -341,7 +359,6 @@
                 const result = await res.json();
                 
                 if(result.status === "success") {
-                    // FORMAT PESAN WHATSAPP
                     const textWA = `*SURAT IZIN DIGITAL SMPN 110*%0A%0A` +
                                  `Jakarta, ${tglSkrg}%0A%0A` +
                                  `Yth. Bapak/Ibu Wali Kelas ${kelasSiswa}%0A` +
