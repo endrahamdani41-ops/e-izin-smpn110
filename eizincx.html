@@ -3,177 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-IZIN SMPN 110</title>
+    <title>E-IZIN SMPN 110 | PIKET & WAKEL 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
-        :root { --indigo-primary: #6366f1; }
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #020617; 
-            color: white; 
-            min-height: 100vh; 
-            margin: 0;
-            overflow-x: hidden;
-            position: relative;
-        }
-
+        :root { --primary: #6366f1; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: white; min-height: 100vh; margin: 0; overflow-x: hidden; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
-        .login-glow {
-            position: relative;
-            border: 1px solid rgba(99, 102, 241, 0.5);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-            animation: borderGlow 3s infinite alternate;
-        }
-
-        @keyframes borderGlow {
-            0% { 
-                box-shadow: 0 0 10px rgba(99, 102, 241, 0.2), inset 0 0 5px rgba(99, 102, 241, 0.1);
-                border-color: rgba(99, 102, 241, 0.4);
-            }
-            100% { 
-                box-shadow: 0 0 25px rgba(99, 102, 241, 0.6), inset 0 0 10px rgba(99, 102, 241, 0.2);
-                border-color: rgba(99, 102, 241, 0.9);
-            }
-        }
-
-        .btn-3d {
-            position: relative;
-            background: #4f46e5;
-            border: none;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            box-shadow: 0 6px 0 #3730a3, 0 8px 15px rgba(0,0,0,0.4);
-            transition: all 0.1s ease;
-            cursor: pointer;
-            top: 0;
-        }
-
-        .btn-3d:active {
-            top: 4px;
-            box-shadow: 0 2px 0 #3730a3, 0 4px 10px rgba(0,0,0,0.4);
-        }
-
-        .table-container { overflow-x: auto; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.1); background: #000; }
+        .login-glow { border: 1px solid rgba(99, 102, 241, 0.5); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); animation: glow 3s infinite alternate; }
+        @keyframes glow { from { border-color: rgba(99, 102, 241, 0.4); } to { border-color: rgba(99, 102, 241, 1); } }
+        .btn-3d { background: #4f46e5; box-shadow: 0 6px 0 #3730a3; transition: all 0.1s ease; position: relative; }
+        .btn-3d:active { top: 4px; box-shadow: 0 2px 0 #3730a3; }
+        .table-container { overflow-x: auto; border-radius: 1.25rem; background: #000; border: 1px solid rgba(255,255,255,0.1); }
         table { width: 100%; border-collapse: collapse; }
-        th, td { 
-            padding: 12px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            text-align: center !important; 
-            font-size: 11px; 
-            white-space: nowrap; 
-        }
-        th { background: #1e1b4b; color: #a5b4fc; font-weight: 800; text-transform: uppercase; }
-        
+        th, td { padding: 12px 15px; border: 1px solid rgba(255,255,255,0.08); text-align: center !important; font-size: 11px; white-space: nowrap; }
+        th { background: #1e1b4b; color: #a5b4fc; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .hidden-section { display: none !important; }
+        input, select, textarea { background: #0f172a !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; border-radius: 0.75rem; text-align: center; outline: none; }
         
-        input, select, textarea { 
-            background: #0f172a !important; 
-            border: 1px solid rgba(255,255,255,0.1) !important; 
-            color: white !important; 
-            border-radius: 0.75rem; 
-            outline: none; 
-            width: 100%; 
-            text-align: center;
+        /* Layout Filter Rata Tengah & Spasi */
+        #filterContainer {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            margin: 2.8rem auto 2.2rem auto; /* Jarak aman agar tidak nempel dashboard */
         }
-        input, select { height: 3.5rem !important; }
-        textarea { padding: 1rem; }
-
-        #inputOrtu { text-transform: capitalize; }
-        #inputKet { text-transform: lowercase; }
-        .td-ortu { text-transform: capitalize; }
-        .td-ket { text-transform: lowercase; }
-
+        .font-mono-custom { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.3px; }
         .swal2-popup { background: #0f172a !important; color: white !important; border-radius: 2rem !important; }
-        .surat-text { text-align: left !important; line-height: 1.6; font-size: 14px; color: #cbd5e1; }
+        
+        /* Highlight Kolom Kelas untuk grouping */
+        .col-kelas { background: rgba(99, 102, 241, 0.07); font-weight: 800; color: #818cf8; }
     </style>
 </head>
 <body class="p-4 flex flex-col items-center">
 
-    <div id="loginPage" class="w-full max-w-[320px] mt-4">
-        <div class="glass p-8 rounded-[2.5rem] text-center shadow-2xl border-t-4 border-indigo-500 login-glow">
-            <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" alt="Logo Sekolah" class="w-20 mx-auto mb-4">
-            <h1 class="text-2xl font-black italic mb-8 tracking-tighter text-indigo-400">E - I Z I N<br>SMPN  110  JAKARTA</h1>
-            <input type="password" id="loginInput" placeholder="KODE AKSES" class="uppercase text-lg h-14">
-            <button onclick="handleLogin()" class="btn-3d w-full h-14 rounded-xl font-black mt-6">MASUK</button>
+    <div id="loginPage" class="w-full max-w-[340px] mt-12">
+        <div class="glass p-10 rounded-[2.5rem] text-center login-glow shadow-2xl">
+            <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" class="w-20 mx-auto mb-6">
+            <h1 class="text-2xl font-black italic mb-8 text-indigo-400 uppercase tracking-widest leading-tight">E - I Z I N<br>SMPN 110</h1>
+            <input type="password" id="loginInput" placeholder="KODE AKSES" class="uppercase text-lg w-full h-14 mb-4">
+            <button onclick="handleLogin()" class="btn-3d w-full h-14 rounded-xl font-black text-white tracking-wider">MASUK SISTEM</button>
         </div>
-    </div>
-
-    <div id="studentPage" class="hidden-section w-full max-w-md space-y-6 mt-10">
-        <div class="glass p-6 rounded-[2.5rem] text-center border-b-4 border-indigo-500">
-            <h2 class="text-xl font-black italic uppercase" id="studentTitle">-</h2>
-            <div class="text-indigo-400 font-bold text-[10px] uppercase">FORMULIR IZIN DIGITAL</div>
-        </div>
-        <div id="formContainer" class="glass p-6 rounded-[2rem]">
-            <form id="formIzin" class="flex flex-col gap-4">
-                <select id="inputAlasan" required>
-                    <option value="">-- PILIH ALASAN --</option>
-                    <option value="Sakit">SAKIT</option>
-                    <option value="Izin">IZIN</option>
-                </select>
-                <input type="text" id="inputOrtu" placeholder="Nama Orang Tua" required>
-                <textarea id="inputKet" placeholder="keterangan detail (contoh: demam tinggi)" rows="3"></textarea>
-                <button type="button" onclick="previewSurat()" id="btnSubmit" class="bg-indigo-600 h-14 rounded-xl font-black">KIRIM IZIN</button>
-            </form>
-        </div>
-        <div id="alreadySubmitted" class="hidden-section glass p-10 rounded-[2rem] text-center">
-            <div class="bg-emerald-500/20 text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check-circle-2" size="40"></i></div>
-            <h3 class="font-bold uppercase text-emerald-400">Berhasil Terkirim</h3>
-            <p class="text-slate-400 text-sm mt-2">Laporan izin Anda sudah tercatat di sistem.</p>
-        </div>
-        <button onclick="location.reload()" class="w-full text-rose-400 font-bold text-xs mt-2 italic">KELUAR</button>
     </div>
 
     <div id="mainDashboard" class="hidden-section w-full max-w-6xl space-y-6">
-        <div class="glass p-6 rounded-[2.5rem] text-center shadow-xl border-b-4 border-indigo-500">
-            <h2 class="text-xl font-black italic uppercase" id="userTitle">-</h2>
-            <div id="userSub" class="text-indigo-400 font-bold text-[10px] mb-5 uppercase tracking-widest">-</div>
-            <div class="flex justify-center gap-3">
-                <button onclick="changeMode('today')" class="p-3 bg-blue-600 rounded-xl"><i data-lucide="calendar"></i></button>
-                <button onclick="changeMode('rekap')" class="p-3 bg-amber-600 rounded-xl"><i data-lucide="database"></i></button>
-                <button id="btnNavChart" onclick="changeMode('chart')" class="p-3 bg-indigo-600 rounded-xl"><i data-lucide="bar-chart-3"></i></button>
-                <button id="btnNavPDF" onclick="generatePDF()" class="p-3 bg-emerald-600 rounded-xl"><i data-lucide="printer"></i></button>
-                <button onclick="location.reload()" class="p-3 bg-rose-900/50 rounded-xl text-rose-500"><i data-lucide="power"></i></button>
+        <div class="glass p-8 rounded-[2.5rem] text-center border-b-4 border-indigo-500 shadow-2xl relative overflow-hidden">
+            <h2 class="text-2xl font-black italic uppercase text-white mb-1" id="userTitle">-</h2>
+            <div id="userSub" class="text-indigo-400 font-bold text-[11px] mb-6 uppercase tracking-[0.2em]">-</div>
+            <div class="flex justify-center gap-4">
+                <button onclick="changeMode('today')" class="p-4 bg-blue-600 rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg"><i data-lucide="calendar"></i></button>
+                <button onclick="changeMode('rekap')" class="p-4 bg-amber-600 rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg"><i data-lucide="database"></i></button>
+                <button onclick="changeMode('chart')" class="p-4 bg-indigo-600 rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg"><i data-lucide="bar-chart-3"></i></button>
+                <button onclick="generatePDF()" class="p-4 bg-emerald-600 rounded-2xl hover:scale-110 active:scale-95 transition-all shadow-lg"><i data-lucide="printer"></i></button>
+                <button onclick="location.reload()" class="p-4 bg-rose-900/40 rounded-2xl text-rose-500 hover:bg-rose-900/60 transition-all"><i data-lucide="power"></i></button>
             </div>
         </div>
 
-        <div id="filterContainer" class="hidden-section w-full max-w-xs mx-auto">
-            <select id="gradeFilter" onchange="applyFilters()" class="!h-10 text-xs">
-                <option value="ALL">-- SEMUA TINGKAT --</option>
+        <div id="filterContainer">
+            <select id="gradeFilter" onchange="applyFilters()" class="!h-11 text-[11px] font-extrabold w-full max-w-[150px] shadow-xl">
+                <option value="ALL">SEMUA KELAS</option>
                 <option value="7">KELAS 7</option>
                 <option value="8">KELAS 8</option>
                 <option value="9">KELAS 9</option>
             </select>
+            <select id="timeFilter" onchange="applyFilters()" class="!h-11 text-[11px] font-extrabold w-full max-w-[150px] shadow-xl">
+                <option value="today">HARI INI</option>
+                <option value="week">1 MINGGU</option>
+                <option value="month">1 BULAN</option>
+                <option value="semester">1 SEMESTER</option>
+                <option value="all">SEMUA DATA</option>
+            </select>
         </div>
 
-        <div id="view-data-container">
+        <div id="view-content" class="pb-10">
             <div id="section-today">
-                <h3 class="text-blue-400 font-black text-[10px] uppercase ml-2 mb-2">LAPORAN HARIAN</h3>
-                <div class="table-container">
+                <div class="flex items-center gap-2 ml-2 mb-3">
+                    <div class="w-1.5 h-4 bg-blue-500 rounded-full"></div>
+                    <h3 class="text-blue-400 font-black text-[10px] uppercase tracking-widest">Laporan Izin Terinci</h3>
+                </div>
+                <div class="table-container shadow-2xl">
                     <table id="tableToday">
-                        <thead><tr><th>NO</th><th>TANGGAL & WAKTU</th><th>NAMA SISWA</th><th>KELAS</th><th>ALASAN</th><th>NAMA ORANG TUA</th><th>KETERANGAN</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>WAKTU LAPOR</th>
+                                <th>KELAS</th>
+                                <th>NAMA SISWA</th>
+                                <th>ALASAN</th>
+                                <th>ORANG TUA</th>
+                                <th>KETERANGAN</th>
+                            </tr>
+                        </thead>
                         <tbody id="todayTableBody"></tbody>
                     </table>
                 </div>
             </div>
+
             <div id="section-rekap" class="hidden-section">
-                <h3 class="text-amber-400 font-black text-[10px] uppercase ml-2 mb-2">REKAPITULASI</h3>
-                <div class="table-container">
+                <div class="flex items-center gap-2 ml-2 mb-3">
+                    <div class="w-1.5 h-4 bg-amber-500 rounded-full"></div>
+                    <h3 class="text-amber-400 font-black text-[10px] uppercase tracking-widest">Rekapitulasi Ketidakhadiran</h3>
+                </div>
+                <div class="table-container shadow-2xl">
                     <table id="tableRekap">
                         <thead id="rekapHead"></thead>
                         <tbody id="rekapTableBody"></tbody>
                     </table>
                 </div>
             </div>
+
             <div id="section-chart" class="hidden-section">
-                <h3 class="text-indigo-400 font-black text-[10px] uppercase ml-2 mb-2">GRAFIK STATISTIK</h3>
-                <div class="glass p-4 rounded-3xl"><canvas id="myChart" style="max-height: 300px;"></canvas></div>
+                <div class="glass p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
+                    <canvas id="myChart" style="max-height: 380px;"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -187,42 +136,28 @@
         async function handleLogin() {
             const pass = document.getElementById('loginInput').value.trim().toUpperCase();
             if(!pass) return;
-            Swal.fire({title: 'Sabar Ya !', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-            const res = await fetch(`${SCRIPT_URL}?action=login&username=${pass}`);
-            const data = await res.json();
-            if (data.status === "success") {
-                userAktif = data.user; Swal.close();
-                document.getElementById('loginPage').classList.add('hidden-section');
-                if (userAktif.role !== 'walikelas' && userAktif.role !== 'piket') {
-                    document.getElementById('studentPage').classList.remove('hidden-section');
-                    document.getElementById('studentTitle').innerText = userAktif.nama;
-                    if (data.sudahIzin) {
-                        document.getElementById('formContainer').classList.add('hidden-section');
-                        document.getElementById('alreadySubmitted').classList.remove('hidden-section');
-                    }
-                } else {
+            Swal.fire({title: 'Sabar ya !', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=login&username=${pass}`);
+                const data = await res.json();
+                if (data.status === "success") {
+                    userAktif = data.user;
                     await syncData();
+                    Swal.close();
+                    document.getElementById('loginPage').classList.add('hidden-section');
                     document.getElementById('mainDashboard').classList.remove('hidden-section');
                     document.getElementById('userTitle').innerText = userAktif.nama;
                     document.getElementById('userSub').innerText = `${userAktif.role} | ${userAktif.kelas}`;
-                    
-                    if (userAktif.role === 'walikelas') {
-                        document.getElementById('btnNavChart').classList.add('hidden-section');
-                        document.getElementById('btnNavPDF').classList.remove('hidden-section');
-                    } else if (userAktif.role === 'piket') {
-                        document.getElementById('btnNavChart').classList.remove('hidden-section');
-                        document.getElementById('btnNavPDF').classList.add('hidden-section');
-                    }
                     changeMode('today');
-                }
-                lucide.createIcons();
-            } else { Swal.fire('Gagal', 'Kode Akses Salah', 'error'); }
+                    lucide.createIcons();
+                } else { Swal.fire('Gagal', 'Kode Akses Salah', 'error'); }
+            } catch (e) { Swal.fire('Error', 'Koneksi Gagal', 'error'); }
         }
 
         async function syncData() {
             const res = await fetch(SCRIPT_URL);
             cloudData = await res.json();
-            renderTodayTable(); renderRekapTable();
+            applyFilters();
         }
 
         function applyFilters() {
@@ -231,38 +166,56 @@
         }
 
         function renderTodayTable() {
-            const filterVal = document.getElementById('gradeFilter').value;
+            const gradeVal = document.getElementById('gradeFilter').value;
+            const timeVal = document.getElementById('timeFilter').value;
+            const now = new Date();
+            const body = document.getElementById('todayTableBody');
+
             let list = cloudData.izin_detail.filter(i => {
-                const roleMatch = (userAktif.role === 'piket' || userAktif.role === 'ADMIN110') ? true : i.kelas === userAktif.kelas;
-                if (userAktif.role === 'piket' && filterVal !== 'ALL') {
-                    return roleMatch && i.kelas.startsWith(filterVal);
-                }
-                return roleMatch;
+                const roleMatch = (userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : i.kelas === userAktif.kelas;
+                let gradeMatch = true;
+                if (userAktif.role === 'piket' && gradeVal !== 'ALL') gradeMatch = i.kelas.startsWith(gradeVal);
+                
+                const itemDate = new Date(i.timestamp);
+                let timeMatch = true;
+                const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
+                if (timeVal === 'today') timeMatch = itemDate.toDateString() === now.toDateString();
+                else if (timeVal === 'week') timeMatch = diffDays <= 7;
+                else if (timeVal === 'month') timeMatch = diffDays <= 30;
+                else if (timeVal === 'semester') timeMatch = diffDays <= 180;
+
+                return roleMatch && gradeMatch && timeMatch;
             });
 
-            // URUTKAN OTOMATIS BERDASARKAN KELAS LALU NAMA
+            // LOGIKA SORTIR BERLAPIS (REVISI PIKET)
             list.sort((a, b) => {
-                if (a.kelas < b.kelas) return -1;
-                if (a.kelas > b.kelas) return 1;
-                if (a.nama < b.nama) return -1;
-                if (a.nama > b.nama) return 1;
-                return 0;
+                // 1. Kelas (7-1, 7-2, dst)
+                const kComp = a.kelas.localeCompare(b.kelas, undefined, {numeric: true});
+                if (kComp !== 0) return kComp;
+                // 2. Nama (A-Z)
+                const nComp = a.nama.localeCompare(b.nama);
+                if (nComp !== 0) return nComp;
+                // 3. Tanggal Terbaru (Desc)
+                return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
-            document.getElementById('todayTableBody').innerHTML = list.map((i, idx) => {
-                const dt = new Date(i.timestamp);
-                const dateStr = dt.toLocaleDateString('id-ID');
-                const timeStr = dt.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
-                return `<tr>
+            body.innerHTML = list.length ? list.map((i, idx) => {
+                const tglString = new Date(i.timestamp).toLocaleString('id-ID', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', hour12: false
+                }).replace(/\./g, ':');
+
+                return `
+                <tr class="hover:bg-white/[0.02] transition-colors">
                     <td>${idx+1}</td>
-                    <td>${dateStr} ${timeStr}</td>
-                    <td class="font-bold text-left">${i.nama}</td>
-                    <td class="text-indigo-400 font-bold">${i.kelas}</td>
-                    <td>${i.alasan}</td>
-                    <td class="td-ortu">${i.orangtua}</td>
-                    <td class="td-ket">${i.keterangan}</td>
+                    <td class="font-mono-custom text-slate-400 text-[10px]">${tglString}</td>
+                    <td class="col-kelas">${i.kelas}</td>
+                    <td class="font-bold text-left text-indigo-50">${i.nama}</td>
+                    <td><span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-bold text-[10px]">${i.alasan}</span></td>
+                    <td class="capitalize text-slate-400 text-[10px]">${i.orangtua}</td>
+                    <td class="text-left text-[10px] italic text-slate-500 max-w-[200px] truncate">${i.keterangan || '-'}</td>
                 </tr>`;
-            }).join('');
+            }).join('') : '<tr><td colspan="7" class="py-16 text-slate-600 italic">Data Tidak Tersedia</td></tr>';
         }
 
         function renderRekapTable() {
@@ -270,23 +223,21 @@
             const body = document.getElementById('rekapTableBody');
             const isPiket = userAktif.role === 'piket';
             
-            document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>KELAS</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
+            document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>KELAS</th><th>NAMA SISWA</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isPiket ? '' : '<th>AKSI</th>'}</tr>`;
             
             let list = cloudData.siswa.filter(s => {
-                const roleMatch = !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas);
-                if (userAktif.role === 'piket' && filterVal !== 'ALL') {
-                    return roleMatch && s.kelas.startsWith(filterVal);
-                }
-                return roleMatch;
+                if(s.role === 'piket' || s.role === 'walikelas') return false;
+                const roleMatch = (userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas;
+                let gradeMatch = true;
+                if (userAktif.role === 'piket' && filterVal !== 'ALL') gradeMatch = s.kelas.startsWith(filterVal);
+                return roleMatch && gradeMatch;
             });
 
-            // URUTKAN OTOMATIS BERDASARKAN KELAS LALU NAMA
+            // SORTIR REKAP: KELAS > NAMA
             list.sort((a, b) => {
-                if (a.kelas < b.kelas) return -1;
-                if (a.kelas > b.kelas) return 1;
-                if (a.nama < b.nama) return -1;
-                if (a.nama > b.nama) return 1;
-                return 0;
+                const kComp = a.kelas.localeCompare(b.kelas, undefined, {numeric: true});
+                if (kComp !== 0) return kComp;
+                return a.nama.localeCompare(b.nama);
             });
 
             body.innerHTML = list.map((s, idx) => {
@@ -297,122 +248,40 @@
                     const o = cloudData.override[s.nama];
                     sv = o.sakit !== "" ? o.sakit : sv; iv = o.izin !== "" ? o.izin : iv; av = o.alpha !== "" ? o.alpha : av;
                 }
-                return `<tr>
+                const total = parseInt(sv) + parseInt(iv) + parseInt(av);
+                return `
+                <tr class="hover:bg-white/[0.02]">
                     <td>${idx+1}</td>
-                    <td>${s.nis}</td>
-                    <td class="font-bold text-left">${s.nama}</td>
-                    <td class="text-indigo-400 font-bold">${s.kelas}</td>
-                    <td>${sv}</td><td>${iv}</td><td>${av}</td>
-                    <td class="bg-indigo-500/10 font-bold">${parseInt(sv)+parseInt(iv)+parseInt(av)}</td>
-                    ${isPiket ? '' : `<td><button onclick="editData('${s.nama}', ${sv}, ${iv}, ${av})" class="bg-indigo-600 px-3 py-1 rounded-lg">EDIT</button></td>`}
+                    <td class="col-kelas">${s.kelas}</td>
+                    <td class="text-left font-bold text-indigo-50">${s.nama}</td>
+                    <td class="text-blue-400">${sv}</td><td class="text-amber-400">${iv}</td><td class="text-rose-500">${av}</td>
+                    <td class="bg-indigo-500/10 font-black text-indigo-200">${total}</td>
+                    ${isPiket ? '' : `<td><button onclick="editData('${s.nama}',${sv},${iv},${av})" class="bg-indigo-600/30 hover:bg-indigo-600 px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all border border-indigo-500/30">EDIT</button></td>`}
                 </tr>`;
             }).join('');
         }
 
         function changeMode(m) {
-            document.getElementById('section-chart').classList.toggle('hidden-section', m !== 'chart');
-            document.getElementById('section-today').classList.toggle('hidden-section', m !== 'today');
-            document.getElementById('section-rekap').classList.toggle('hidden-section', m !== 'rekap');
-            
-            if (userAktif && userAktif.role === 'piket') {
-                if (m === 'today' || m !== 'chart') document.getElementById('filterContainer').classList.remove('hidden-section');
-                else document.getElementById('filterContainer').classList.add('hidden-section');
-            }
+            document.querySelectorAll('#view-content > div').forEach(div => div.classList.add('hidden-section'));
+            document.getElementById(`section-${m}`).classList.remove('hidden-section');
+            const fBox = document.getElementById('filterContainer');
+            const gradeFilter = document.getElementById('gradeFilter');
+            const timeFilter = document.getElementById('timeFilter');
+
+            if (m === 'today' || m === 'rekap') {
+                fBox.style.display = 'flex';
+                gradeFilter.style.display = (userAktif.role === 'walikelas') ? 'none' : 'block';
+                timeFilter.style.display = (m === 'rekap') ? 'none' : 'block';
+            } else { fBox.style.display = 'none'; }
             if (m === 'chart') setTimeout(updateChart, 100);
             lucide.createIcons();
-        }
-
-        function previewSurat() {
-            const alasan = document.getElementById('inputAlasan').value;
-            const ortu = document.getElementById('inputOrtu').value;
-            const ket = document.getElementById('inputKet').value;
-            const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            if(!alasan || !ortu) { Swal.fire('Peringatan', 'Lengkapi data!', 'warning'); return; }
-            
-            const kontenSurat = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya yang bertanda tangan di bawah ini, orang tua dari:</p><br><p><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</p></b><br><p>Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan <b>${alasan.toLowerCase()}</b> ${ket || '-'}.</p><p>Demikian surat izin ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><br><b>${ortu.toUpperCase()}</b></p></div>`;
-            
-            Swal.fire({ 
-                title: 'Konfirmasi Surat Izin', html: kontenSurat, 
-                showCancelButton: true, confirmButtonText: 'Kirim Sekarang', 
-                confirmButtonColor: '#6366f1', width: '500px' 
-            }).then((result) => { if (result.isConfirmed) submitIzin(); });
-        }
-
-        async function submitIzin() {
-            const namaSiswa = userAktif.nama;
-            const kelasSiswa = userAktif.kelas;
-            const alasanIzin = document.getElementById('inputAlasan').value;
-            const namaOrtu = document.getElementById('inputOrtu').value;
-            const ketIzin = document.getElementById('inputKet').value || '-';
-            const tglSkrg = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-            const payload = { 
-                nama: namaSiswa, alasan: alasanIzin, 
-                orangtua: namaOrtu, keterangan: ketIzin, 
-                kelas: kelasSiswa, petugas: namaSiswa 
-            };
-
-            Swal.fire({title: 'Mengirim...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-            
-            try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await res.json();
-                
-                if(result.status === "success") {
-                    const textWA = `*SURAT IZIN DIGITAL SMPN 110*%0A%0A` +
-                                 `Jakarta, ${tglSkrg}%0A%0A` +
-                                 `Yth. Bapak/Ibu Wali Kelas ${kelasSiswa}%0A` +
-                                 `di Tempat%0A%0A` +
-                                 `Dengan hormat,%0A%0A` +
-                                 `Saya orang tua dari:%0A%0A` +
-                                 `Nama : *${namaSiswa}*%0A` +
-                                 `Kelas : *${kelasSiswa}*%0A%0A` +
-                                 `Memberitahukan bahwa anak kami tidak dapat mengikuti KBM hari ini dikarenakan *${alasanIzin.toLowerCase()} ${ketIzin}*.%0A%0A` +
-                                 `Demikian surat izin ini kami sampaikan. Terima kasih.%0A%0A` +
-                                 `Hormat kami,%0A%0A*${namaOrtu.toUpperCase()}*`;
-
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: 'Data tersimpan. Sekarang kirim pesan ke Wali Kelas via WhatsApp?',
-                        icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonText: 'Buka WhatsApp',
-                        cancelButtonText: 'Tutup'
-                    }).then((waRes) => {
-                        if (waRes.isConfirmed) {
-                            window.open(`https://api.whatsapp.com/send?text=${textWA}`, '_blank');
-                        }
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire('Gagal', result.message, 'error');
-                }
-            } catch (err) {
-                Swal.fire('Error', 'Gagal menghubungi server', 'error');
-            }
-        }
-
-        async function editData(nama, s, i, a) {
-            const { value: formValues } = await Swal.fire({
-                title: `Edit Data: ${nama}`,
-                html: `<div class="flex flex-col gap-3"><label class="text-xs text-slate-400 text-left">Sakit</label><input id="swal-sakit" type="number" value="${s}" class="swal2-input !m-0"><label class="text-xs text-slate-400 text-left">Izin</label><input id="swal-izin" type="number" value="${i}" class="swal2-input !m-0"><label class="text-xs text-slate-400 text-left">Alpha</label><input id="swal-alpha" type="number" value="${a}" class="swal2-input !m-0"></div>`,
-                focusConfirm: false, showCancelButton: true, confirmButtonColor: '#6366f1',
-                preConfirm: () => [document.getElementById('swal-sakit').value, document.getElementById('swal-izin').value, document.getElementById('swal-alpha').value]
-            });
-            if (formValues) {
-                Swal.fire({title: 'Memproses...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'override', nama: nama, sakit: formValues[0], izin: formValues[1], alpha: formValues[2] }) });
-                const result = await res.json();
-                if(result.status === "success") Swal.fire('Berhasil', 'Data diperbarui', 'success').then(() => syncData());
-                else Swal.fire('Gagal', result.message, 'error');
-            }
         }
 
         function updateChart() {
             const ctx = document.getElementById('myChart').getContext('2d');
             let sCount = 0, iCount = 0, aCount = 0;
-            const listSiswa = cloudData.siswa.filter(s => !(s.role === 'walikelas' || s.role === 'piket') && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas));
-            listSiswa.forEach(s => {
+            const target = cloudData.siswa.filter(s => s.role !== 'piket' && s.role !== 'walikelas' && ((userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas));
+            target.forEach(s => {
                 let sv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Sakit').length;
                 let iv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Izin').length;
                 let av = cloudData.alpha.filter(a => a.nama === s.nama).length;
@@ -425,26 +294,32 @@
             if (myChartInstance) myChartInstance.destroy();
             myChartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: { labels: ['SAKIT', 'IZIN', 'ALPHA'], datasets: [{ label: 'Data Absensi', data: [sCount, iCount, aCount], backgroundColor: ['#3b82f6', '#fbbf24', '#f43f5e'], borderRadius: 10 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
+                data: { labels: ['SAKIT', 'IZIN', 'ALPHA'], datasets: [{ data: [sCount, iCount, aCount], backgroundColor: ['#3b82f6', '#fbbf24', '#f43f5e'], borderRadius: 15, barThickness: 45 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
 
         function generatePDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', [210, 330]);
+            const doc = new jsPDF('p', 'mm', 'a4');
             const isToday = !document.getElementById('section-today').classList.contains('hidden-section');
-            const tableId = isToday ? '#tableToday' : '#tableRekap';
-            doc.setFontSize(14); doc.setFont("helvetica", "bold");
-            doc.text(isToday ? "LAPORAN HARIAN IZIN SISWA" : "REKAPITULASI ABSENSI SISWA", 105, 15, { align: "center" });
-            doc.setFontSize(12); doc.text(`KELAS: ${userAktif.kelas}`, 105, 22, { align: "center" });
-            doc.autoTable({ html: tableId, startY: 31, theme: 'grid', columns: isToday ? [0,1,2,3,4,6] : [0,1,2,3,4,5,7], styles: { halign: 'center', fontSize: 8, lineColor: [0,0,0], lineWidth: 0.1, textColor: [0,0,0] }, headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold' } });
-            const finalY = doc.lastAutoTable.finalY + 10;
-            const tglStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(`Jakarta, ${tglStr}`, 140, finalY);
-            const jabatan = userAktif.role === 'walikelas' ? `Wali Kelas ${userAktif.kelas},` : "Petugas Piket,";
-            doc.text(jabatan, 140, finalY + 7); doc.setFont("helvetica", "bold"); doc.text(`${userAktif.nama}`, 140, finalY + 28);
-            doc.save(`Laporan_${userAktif.kelas}.pdf`);
+            doc.setFontSize(16); doc.text(isToday ? "LAPORAN IZIN HARIAN" : "REKAP ABSENSI", 105, 15, { align: "center" });
+            doc.autoTable({ html: isToday ? '#tableToday' : '#tableRekap', startY: 25, styles: { fontSize: 7, halign: 'center' }, headStyles: { fillColor: [30, 27, 75] } });
+            doc.save(`IZIN_SMP110_${Date.now()}.pdf`);
+        }
+
+        async function editData(nama, s, i, a) {
+            const { value: res } = await Swal.fire({
+                title: `Koreksi Data: ${nama}`,
+                html: `<input id="s" type="number" value="${s}" class="swal2-input" placeholder="Sakit"><input id="i" type="number" value="${i}" class="swal2-input" placeholder="Izin"><input id="a" type="number" value="${a}" class="swal2-input" placeholder="Alpha">`,
+                preConfirm: () => [document.getElementById('s').value, document.getElementById('i').value, document.getElementById('a').value]
+            });
+            if (res) {
+                Swal.fire({title:'Menyimpan...', didOpen:()=>Swal.showLoading()});
+                await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'override', nama: nama, sakit: res[0], izin: res[1], alpha: res[2] }) });
+                await syncData();
+                Swal.fire('Berhasil', 'Data manual telah diperbarui', 'success');
+            }
         }
     </script>
 </body>
